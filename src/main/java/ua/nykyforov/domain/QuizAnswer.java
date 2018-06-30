@@ -1,5 +1,7 @@
 package ua.nykyforov.domain;
 
+import com.google.common.base.MoreObjects;
+
 public class QuizAnswer {
     private final String text;
     private final boolean isCorrect;
@@ -23,5 +25,13 @@ public class QuizAnswer {
 
     public boolean isCorrect() {
         return isCorrect;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("text", text)
+                .add("isCorrect", isCorrect)
+                .toString();
     }
 }

@@ -9,6 +9,7 @@ import ua.nykyforov.domain.User;
 import ua.nykyforov.service.question.QuestionService;
 import ua.nykyforov.service.user.UserInteractionService;
 
+import java.util.Collection;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -26,14 +27,24 @@ public class QuizController {
 
     public QuizResult passTest() {
         User user = userInteractionService.askUserInfo();
-        logger.info("User={}", user.getName());
-        for (QuizQuestion question : questionService.getAllQuestions()) {
+        logger.debug("{}", user);
+        QuizResult quizResult = quiz();
+        userInteractionService.sendQuizResult(user, quizResult);
+        return null;
+    }
+
+    private QuizResult quiz() {
+        int correct = 0;
+        Collection<QuizQuestion> allQuestions = questionService.getAllQuestions();
+        for (QuizQuestion question : allQuestions) {
             List<QuizAnswer> answers = question.getAnswers();
             int answer = userInteractionService.askQuestion(question.getQuestionText(),
                     answers.stream().map(QuizAnswer::getText).collect(toList()));
-            logger.info("answer={}", answers.get(answer).getText());
+            QuizAnswer chosenAnswer = answers.get(answer);
+            logger.debug("{}", chosenAnswer);
+            if (chosenAnswer.isCorrect()) correct++;
         }
-        return null;
+        return new QuizResult(allQuestions.size(), correct);
     }
 
 }

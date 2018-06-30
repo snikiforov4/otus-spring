@@ -1,10 +1,14 @@
 package ua.nykyforov.service.user;
 
+import ua.nykyforov.domain.QuizResult;
 import ua.nykyforov.domain.User;
 
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
+
+import static com.google.common.math.DoubleMath.roundToInt;
+import static java.math.RoundingMode.UP;
 
 public class ConsoleUserInteractionService implements UserInteractionService {
 
@@ -50,6 +54,15 @@ public class ConsoleUserInteractionService implements UserInteractionService {
             }
         } while (isNotValid);
         return answer;
+    }
+
+    @Override
+    public void sendQuizResult(User user, QuizResult quizResult) {
+        System.out.println(String.format("%nTEST RESULT"));
+        System.out.println("=================================");
+        System.out.println(String.format("%s", user.getName()));
+        System.out.println(String.format("score: %d%%", roundToInt(quizResult.getCorrectRatio() * 100, UP)));
+        System.out.println("=================================");
     }
 
 }
