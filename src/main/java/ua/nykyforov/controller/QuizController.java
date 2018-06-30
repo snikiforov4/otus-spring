@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import ua.nykyforov.domain.QuizResult;
 import ua.nykyforov.domain.Question;
 import ua.nykyforov.domain.User;
-import ua.nykyforov.service.QuestionService;
+import ua.nykyforov.service.question.QuestionService;
 import ua.nykyforov.service.UserInteractionService;
 
 public class QuizController {

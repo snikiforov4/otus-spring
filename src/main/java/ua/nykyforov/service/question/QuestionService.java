@@ -1,4 +1,4 @@
-package ua.nykyforov.service;
+package ua.nykyforov.service.question;
 
 
 import ua.nykyforov.domain.Question;

@@ -5,7 +5,7 @@
            http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="stubQuestionDAO" class="ua.nykyforov.dao.StubQuestionDAO"/>
-    <bean id="simpleQuestionDAO" class="ua.nykyforov.service.SimpleQuestionService">
+    <bean id="simpleQuestionDAO" class="ua.nykyforov.service.question.SimpleQuestionService">
         <constructor-arg ref="stubQuestionDAO"/>
     </bean>
     <bean id="consoleUserInteractionService" class="ua.nykyforov.service.ConsoleUserInteractionService"/>
