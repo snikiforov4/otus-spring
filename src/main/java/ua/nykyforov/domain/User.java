@@ -2,32 +2,23 @@ package ua.nykyforov.domain;
 
 import com.google.common.base.MoreObjects;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class User {
-    private final String firstName;
-    private final String lastName;
+    private final String name;
 
-    public User(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public User(String name) {
+        this.name = checkNotNull(name, "name");
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getFullName() {
-        return String.format("%s %s", getFirstName(), getLastName());
+    public String getName() {
+        return name;
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("firstName", firstName)
-                .add("lastName", lastName)
+                .add("name", name)
                 .toString();
     }
 }

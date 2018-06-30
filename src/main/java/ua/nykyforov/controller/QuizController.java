@@ -21,7 +21,7 @@ public class QuizController {
 
     public QuizResult passTest() {
         User user = userInteractionService.askUserInfo();
-        logger.info("User={}", user.getFullName());
+        logger.info("User={}", user.getName());
         for (Question question : questionService.getAllQuestions()) {
             int answer = userInteractionService.askQuestion(question.getQuestion(), question.getAnswers());
             logger.info("answer={}", answer);

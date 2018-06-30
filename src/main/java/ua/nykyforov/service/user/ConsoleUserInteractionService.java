@@ -11,11 +11,9 @@ public class ConsoleUserInteractionService implements UserInteractionService {
     @Override
     public User askUserInfo() {
         Scanner sc = new Scanner(System.in);
-        System.out.println("Enter your first name:");
-        String firstName = sc.next();
-        System.out.println("Enter your last name:");
-        String lastName = sc.next();
-        return new User(firstName, lastName);
+        System.out.println("Enter your name:");
+        String name = sc.next();
+        return new User(name);
     }
 
     @Override
