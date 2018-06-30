@@ -56,7 +56,7 @@ public class CsvQuestionDAO implements QuestionDAO {
         int correctAnswer = Integer.parseInt(record.get(QuizHeader.CORRECT_ANSWERS));
         Map<String, String> map = record.toMap();
         for (int i = 1; i <= 5; i++) {
-            String answerValue = map.get("answer_" + i);
+            String answerValue = map.get("ANSWER_" + i);
             if (!isNullOrEmpty(answerValue)) {
                 answers.add(new QuizAnswer(answerValue, i == correctAnswer));
             }
