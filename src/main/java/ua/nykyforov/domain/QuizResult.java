@@ -3,22 +3,22 @@ package ua.nykyforov.domain;
 public class QuizResult {
 
     private final int allQuestionsSize;
-    private final int correct;
+    private final int correctAnswers;
 
-    public QuizResult(int allQuestionsSize, int correct) {
+    public QuizResult(int allQuestionsSize, int correctAnswers) {
         this.allQuestionsSize = allQuestionsSize;
-        this.correct = correct;
+        this.correctAnswers = correctAnswers;
     }
 
     public int getAllQuestionsSize() {
         return allQuestionsSize;
     }
 
-    public int getCorrect() {
-        return correct;
+    public int getCorrectAnswers() {
+        return correctAnswers;
     }
 
-    public float getCorrectRatio() {
-        return allQuestionsSize / correct;
+    public float getCorrectAnswersRatio() {
+        return (float) correctAnswers / allQuestionsSize;
     }
 }

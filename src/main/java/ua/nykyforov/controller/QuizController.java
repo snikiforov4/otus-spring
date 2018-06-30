@@ -25,12 +25,11 @@ public class QuizController {
         this.userInteractionService = userInteractionService;
     }
 
-    public QuizResult passTest() {
+    public void passTest() {
         User user = userInteractionService.askUserInfo();
         logger.debug("{}", user);
         QuizResult quizResult = quiz();
         userInteractionService.sendQuizResult(user, quizResult);
-        return null;
     }
 
     private QuizResult quiz() {

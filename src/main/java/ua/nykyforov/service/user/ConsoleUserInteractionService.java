@@ -7,9 +7,6 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
-import static com.google.common.math.DoubleMath.roundToInt;
-import static java.math.RoundingMode.UP;
-
 public class ConsoleUserInteractionService implements UserInteractionService {
 
     @Override
@@ -63,7 +60,7 @@ public class ConsoleUserInteractionService implements UserInteractionService {
         System.out.println(String.format("%nTEST RESULT"));
         System.out.println("=================================");
         System.out.println(String.format("%s", user.getFullName()));
-        System.out.println(String.format("score: %d%%", roundToInt(quizResult.getCorrectRatio() * 100, UP)));
+        System.out.println(String.format("score: %.00f%%", quizResult.getCorrectAnswersRatio() * 100));
         System.out.println("=================================");
     }
 
