@@ -3,10 +3,12 @@ package ua.nykyforov.service.user;
 
 import ua.nykyforov.domain.User;
 
+import java.util.List;
+
 public interface UserInteractionService {
 
     User askUserInfo();
 
-    String askQuestion(String question, Iterable<String> answers);
+    int askQuestion(String question, List<String> answers);
 
 }

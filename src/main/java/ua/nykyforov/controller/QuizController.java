@@ -23,7 +23,7 @@ public class QuizController {
         User user = userInteractionService.askUserInfo();
         logger.info("User={}", user.getFullName());
         for (Question question : questionService.getAllQuestions()) {
-            String answer = userInteractionService.askQuestion(question.getQuestion(), question.getAnswers());
+            int answer = userInteractionService.askQuestion(question.getQuestion(), question.getAnswers());
             logger.info("answer={}", answer);
         }
         return null;
