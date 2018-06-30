@@ -1,5 +1,7 @@
 package ua.nykyforov.domain;
 
+import com.google.common.base.MoreObjects;
+
 public class User {
     private final String firstName;
     private final String lastName;
@@ -17,8 +19,15 @@ public class User {
         return lastName;
     }
 
+    public String getFullName() {
+        return String.format("%s %s", getFirstName(), getLastName());
+    }
+
     @Override
     public String toString() {
-        return firstName + " " + lastName;
+        return MoreObjects.toStringHelper(this)
+                .add("firstName", firstName)
+                .add("lastName", lastName)
+                .toString();
     }
 }

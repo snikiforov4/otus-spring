@@ -16,4 +16,13 @@ public class ConsoleUserInteractionService implements UserInteractionService {
         return new User(firstName, lastName);
     }
 
+    @Override
+    public String askQuestion(String question, Iterable<String> answers) {
+        System.out.println(question);
+        for (String answer : answers) {
+            System.out.println(answer);
+        }
+        return new Scanner(System.in).next();
+    }
+
 }

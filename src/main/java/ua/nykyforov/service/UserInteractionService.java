@@ -7,4 +7,6 @@ public interface UserInteractionService {
 
     User askUserInfo();
 
+    String askQuestion(String question, Iterable<String> answers);
+
 }
