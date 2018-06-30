@@ -6,7 +6,7 @@ public class QuizAnswer {
     private final String text;
     private final boolean isCorrect;
 
-    private QuizAnswer(String text, boolean isCorrect) {
+    public QuizAnswer(String text, boolean isCorrect) {
         this.text = text;
         this.isCorrect = isCorrect;
     }
