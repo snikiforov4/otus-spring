@@ -1,6 +1,8 @@
 package ua.nykyforov.domain;
 
 
+import com.google.common.base.MoreObjects;
+
 import java.util.List;
 
 public final class Question {
@@ -18,5 +20,13 @@ public final class Question {
 
     public List<String> getAnswers() {
         return answers;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper("")
+                .add("question", question)
+                .add("answers", answers)
+                .toString();
     }
 }
