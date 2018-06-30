@@ -19,7 +19,7 @@ public class QuizController {
         this.userInteractionService = userInteractionService;
     }
 
-    public QuizResult play() {
+    public QuizResult passTest() {
         User user = userInteractionService.askUserInfo();
         logger.info("User={}", user.getFullName());
         for (Question question : questionService.getAllQuestions()) {
