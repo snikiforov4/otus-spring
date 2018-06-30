@@ -5,9 +5,13 @@
            http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="stubQuestionDAO" class="ua.nykyforov.dao.StubQuestionDAO"/>
-    <bean id="consoleUserInteractionService" class="ua.nykyforov.service.ConsoleUserInteractionService"/>
     <bean id="simpleQuestionDAO" class="ua.nykyforov.service.SimpleQuestionService">
         <constructor-arg ref="stubQuestionDAO"/>
+    </bean>
+    <bean id="consoleUserInteractionService" class="ua.nykyforov.service.ConsoleUserInteractionService"/>
+    <bean id="quizController" class="ua.nykyforov.controller.QuizController">
+        <constructor-arg ref="simpleQuestionDAO"/>
+        <constructor-arg ref="consoleUserInteractionService"/>
     </bean>
 
 </beans>
