@@ -1,10 +1,10 @@
 package ua.nykyforov.service.question;
 
 
-import ua.nykyforov.domain.Question;
+import ua.nykyforov.domain.QuizQuestion;
 
 import java.util.Collection;
 
 public interface QuestionService {
-    Collection<Question> getAllQuestions();
+    Collection<QuizQuestion> getAllQuestions();
 }

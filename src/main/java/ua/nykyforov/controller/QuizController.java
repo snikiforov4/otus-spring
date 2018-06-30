@@ -2,11 +2,16 @@ package ua.nykyforov.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ua.nykyforov.domain.QuizAnswer;
+import ua.nykyforov.domain.QuizQuestion;
 import ua.nykyforov.domain.QuizResult;
-import ua.nykyforov.domain.Question;
 import ua.nykyforov.domain.User;
 import ua.nykyforov.service.question.QuestionService;
 import ua.nykyforov.service.user.UserInteractionService;
+
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 public class QuizController {
     private static final Logger logger = LoggerFactory.getLogger(QuizController.class);
@@ -22,9 +27,11 @@ public class QuizController {
     public QuizResult passTest() {
         User user = userInteractionService.askUserInfo();
         logger.info("User={}", user.getName());
-        for (Question question : questionService.getAllQuestions()) {
-            int answer = userInteractionService.askQuestion(question.getQuestion(), question.getAnswers());
-            logger.info("answer={}", answer);
+        for (QuizQuestion question : questionService.getAllQuestions()) {
+            List<QuizAnswer> answers = question.getAnswers();
+            int answer = userInteractionService.askQuestion(question.getQuestionText(),
+                    answers.stream().map(QuizAnswer::getText).collect(toList()));
+            logger.info("answer={}", answers.get(answer).getText());
         }
         return null;
     }

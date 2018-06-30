@@ -2,7 +2,7 @@ package ua.nykyforov.service.question;
 
 
 import ua.nykyforov.dao.QuestionDAO;
-import ua.nykyforov.domain.Question;
+import ua.nykyforov.domain.QuizQuestion;
 
 import java.util.Collection;
 
@@ -14,7 +14,7 @@ public class SimpleQuestionService implements QuestionService {
         this.questionDAO = questionDAO;
     }
 
-    public Collection<Question> getAllQuestions() {
+    public Collection<QuizQuestion> getAllQuestions() {
         return questionDAO.getAllQuestions();
     }
 

@@ -1,15 +1,18 @@
 package ua.nykyforov.dao;
 
-import com.google.common.collect.ImmutableList;
-import ua.nykyforov.domain.Question;
+import ua.nykyforov.domain.QuizQuestion;
 
 import java.util.Collection;
 
+import static com.google.common.collect.ImmutableList.of;
+import static ua.nykyforov.domain.QuizAnswer.correct;
+import static ua.nykyforov.domain.QuizAnswer.incorrect;
+
 public class StubQuestionDAO implements QuestionDAO {
     @Override
-    public Collection<Question> getAllQuestions() {
-        return ImmutableList.of(
-                new Question("Do you like Spring Framework?", ImmutableList.of("Yes", "No"))
+    public Collection<QuizQuestion> getAllQuestions() {
+        return of(
+                new QuizQuestion("Do you like Spring Framework?", of(correct("Yes"), incorrect("No")))
         );
     }
 }
