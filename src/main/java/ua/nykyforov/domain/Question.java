@@ -5,7 +5,7 @@ import com.google.common.base.MoreObjects;
 
 import java.util.List;
 
-public final class Question {
+public class Question {
     private final String question;
     private final List<String> answers;
 
