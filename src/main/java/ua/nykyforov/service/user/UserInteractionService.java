@@ -1,4 +1,4 @@
-package ua.nykyforov.service;
+package ua.nykyforov.service.user;
 
 
 import ua.nykyforov.domain.User;

@@ -6,7 +6,7 @@ import ua.nykyforov.domain.QuizResult;
 import ua.nykyforov.domain.Question;
 import ua.nykyforov.domain.User;
 import ua.nykyforov.service.question.QuestionService;
-import ua.nykyforov.service.UserInteractionService;
+import ua.nykyforov.service.user.UserInteractionService;
 
 public class QuizController {
     private static final Logger logger = LoggerFactory.getLogger(QuizController.class);

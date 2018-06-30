@@ -8,7 +8,7 @@
     <bean id="simpleQuestionDAO" class="ua.nykyforov.service.question.SimpleQuestionService">
         <constructor-arg ref="stubQuestionDAO"/>
     </bean>
-    <bean id="consoleUserInteractionService" class="ua.nykyforov.service.ConsoleUserInteractionService"/>
+    <bean id="consoleUserInteractionService" class="ua.nykyforov.service.user.ConsoleUserInteractionService"/>
     <bean id="quizController" class="ua.nykyforov.controller.QuizController">
         <constructor-arg ref="simpleQuestionDAO"/>
         <constructor-arg ref="consoleUserInteractionService"/>
