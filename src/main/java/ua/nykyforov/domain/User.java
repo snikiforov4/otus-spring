@@ -5,20 +5,31 @@ import com.google.common.base.MoreObjects;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class User {
-    private final String name;
+    private final String firstName;
+    private final String lastName;
 
-    public User(String name) {
-        this.name = checkNotNull(name, "name");
+    public User(String firstName, String lastName) {
+        this.firstName = checkNotNull(firstName, "firstName");
+        this.lastName = checkNotNull(lastName, "lastName");
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getFullName() {
+        return String.format("%s %s", firstName, lastName);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("name", name)
+                .add("firstName", firstName)
+                .add("lastName", lastName)
                 .toString();
     }
 }
