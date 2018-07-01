@@ -26,10 +26,16 @@ import static com.google.common.collect.Lists.newArrayList;
 public class CsvQuestionDAO implements QuestionDAO {
     private static final Logger logger = LoggerFactory.getLogger(CsvQuestionDAO.class);
 
+    private final String pathToCsv;
+
+    public CsvQuestionDAO(String pathToCsv) {
+        this.pathToCsv = pathToCsv;
+    }
+
     @Override
     public Collection<QuizQuestion> getAllQuestions() {
         ImmutableList.Builder<QuizQuestion> builder = ImmutableList.builder();
-        URL url = checkNotNull(getClass().getClassLoader().getResource("quiz.csv"),
+        URL url = checkNotNull(getClass().getClassLoader().getResource(pathToCsv),
                 "resource could not be found");
         try(CSVParser parser = CSVFormat.RFC4180.withHeader(QuizHeader.class)
                 .parse(new BufferedReader(new InputStreamReader(url.openStream())))) {

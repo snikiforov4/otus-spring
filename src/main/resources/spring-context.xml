@@ -4,7 +4,9 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="csvQuestionDAO" class="ua.nykyforov.dao.CsvQuestionDAO"/>
+    <bean id="csvQuestionDAO" class="ua.nykyforov.dao.CsvQuestionDAO">
+        <constructor-arg value="quiz.csv"/>
+    </bean>
     <bean id="simpleQuestionDAO" class="ua.nykyforov.service.question.SimpleQuestionService">
         <constructor-arg ref="csvQuestionDAO"/>
     </bean>
