@@ -25,6 +25,9 @@ import static com.google.common.collect.Lists.newArrayList;
 
 public class CsvQuestionDAO implements QuestionDAO {
     private static final Logger logger = LoggerFactory.getLogger(CsvQuestionDAO.class);
+    private static final String QUESTION_FIELD = "question";
+    private static final String CORRECT_ANSWERS_FIELD = "correct_answers";
+    private static final String ANSWER_FIELD = "answer_%d";
 
     private final String pathToCsv;
 
@@ -37,12 +40,11 @@ public class CsvQuestionDAO implements QuestionDAO {
         ImmutableList.Builder<QuizQuestion> builder = ImmutableList.builder();
         URL url = checkNotNull(getClass().getClassLoader().getResource(pathToCsv),
                 "resource could not be found");
-        try(CSVParser parser = CSVFormat.RFC4180.withHeader(QuizHeader.class)
+        try(CSVParser parser = CSVFormat.RFC4180.withFirstRecordAsHeader()
                 .parse(new BufferedReader(new InputStreamReader(url.openStream())))) {
             List<CSVRecord> records = parser.getRecords();
-            for (int i = 1, recordsSize = records.size(); i < recordsSize; i++) {
-                CSVRecord record = records.get(i);
-                String question = record.get(QuizHeader.QUESTION);
+            for (CSVRecord record : records) {
+                String question = record.get(QUESTION_FIELD);
                 List<QuizAnswer> answers = buildQuizAnswers(record);
                 builder.add(new QuizQuestion(question, answers));
             }
@@ -59,10 +61,10 @@ public class CsvQuestionDAO implements QuestionDAO {
 
     private List<QuizAnswer> buildQuizAnswers(CSVRecord record) {
         List<QuizAnswer> answers = newArrayList();
-        int correctAnswer = Integer.parseInt(record.get(QuizHeader.CORRECT_ANSWERS));
+        int correctAnswer = Integer.parseInt(record.get(CORRECT_ANSWERS_FIELD));
         Map<String, String> map = record.toMap();
         for (int i = 1; i <= 5; i++) {
-            String answerValue = map.get("ANSWER_" + i);
+            String answerValue = map.get(String.format(ANSWER_FIELD, i));
             if (!isNullOrEmpty(answerValue)) {
                 answers.add(new QuizAnswer(answerValue, i == correctAnswer));
             }
