@@ -15,4 +15,5 @@ public class AppConfig {
     public static PropertySourcesPlaceholderConfigurer propertyConfig() {
         return new PropertySourcesPlaceholderConfigurer();
     }
+
 }

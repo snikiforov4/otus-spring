@@ -38,7 +38,7 @@ public class QuizController {
 
     private QuizResult quiz() {
         int correct = 0;
-        Collection<QuizQuestion> allQuestions = questionService.getAllQuestions();
+        Collection<QuizQuestion> allQuestions = questionService.getDefaultNumberOfQuestions();
         for (QuizQuestion question : allQuestions) {
             List<QuizAnswer> answers = question.getAnswers();
             int answer = userInteractionService.askQuestion(question.getQuestionText(),
