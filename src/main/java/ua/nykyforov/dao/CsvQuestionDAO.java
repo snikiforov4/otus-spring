@@ -7,6 +7,9 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 import ua.nykyforov.domain.QuizAnswer;
 import ua.nykyforov.domain.QuizQuestion;
 
@@ -23,6 +26,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayList;
 
+@Service
 public class CsvQuestionDAO implements QuestionDAO {
     private static final Logger logger = LoggerFactory.getLogger(CsvQuestionDAO.class);
     private static final String QUESTION_FIELD = "question";
@@ -31,7 +35,8 @@ public class CsvQuestionDAO implements QuestionDAO {
 
     private final String pathToCsv;
 
-    public CsvQuestionDAO(String pathToCsv) {
+    @Autowired
+    public CsvQuestionDAO(@Value("quiz.csv") String pathToCsv) {
         this.pathToCsv = pathToCsv;
     }
 

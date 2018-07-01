@@ -1,5 +1,6 @@
 package ua.nykyforov.service.user;
 
+import org.springframework.stereotype.Service;
 import ua.nykyforov.domain.QuizResult;
 import ua.nykyforov.domain.User;
 
@@ -7,6 +8,7 @@ import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
+@Service
 public class ConsoleUserInteractionService implements UserInteractionService {
 
     @Override

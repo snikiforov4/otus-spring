@@ -2,6 +2,8 @@ package ua.nykyforov.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ua.nykyforov.domain.QuizAnswer;
 import ua.nykyforov.domain.QuizQuestion;
 import ua.nykyforov.domain.QuizResult;
@@ -14,12 +16,14 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
+@Service
 public class QuizController {
     private static final Logger logger = LoggerFactory.getLogger(QuizController.class);
 
     private final QuestionService questionService;
     private final UserInteractionService userInteractionService;
 
+    @Autowired
     public QuizController(QuestionService questionService, UserInteractionService userInteractionService) {
         this.questionService = questionService;
         this.userInteractionService = userInteractionService;
