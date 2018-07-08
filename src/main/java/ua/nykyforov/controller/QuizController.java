@@ -14,6 +14,7 @@ import ua.nykyforov.service.user.UserInteractionService;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import static java.util.stream.Collectors.toList;
 
@@ -24,14 +25,17 @@ public class QuizController {
     private final QuestionService questionService;
     private final UserInteractionService userInteractionService;
     private final int defaultNumberOfQuestions;
+    private final Locale defaultLocale;
 
     @Autowired
     public QuizController(QuestionService questionService,
                           UserInteractionService userInteractionService,
-                          @Value("${quiz.defaultQuestions}") int defaultNumberOfQuestions) {
+                          @Value("${quiz.defaultQuestions}") int defaultNumberOfQuestions,
+                          @Value("${quiz.defaultLocale}") String defaultLocale) {
         this.questionService = questionService;
         this.userInteractionService = userInteractionService;
         this.defaultNumberOfQuestions = defaultNumberOfQuestions;
+        this.defaultLocale = Locale.forLanguageTag(defaultLocale);
     }
 
     public void passTest() {
