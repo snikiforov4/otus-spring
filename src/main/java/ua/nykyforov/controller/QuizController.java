@@ -39,10 +39,10 @@ public class QuizController {
     }
 
     public void passTest() {
-        User user = userInteractionService.askUserInfo();
+        User user = userInteractionService.askUserInfo(defaultLocale);
         logger.debug("{}", user);
         QuizResult quizResult = quiz();
-        userInteractionService.sendQuizResult(user, quizResult);
+        userInteractionService.sendQuizResult(user, quizResult, defaultLocale);
     }
 
     private QuizResult quiz() {
@@ -51,7 +51,7 @@ public class QuizController {
         for (QuizQuestion question : allQuestions) {
             List<QuizAnswer> answers = question.getAnswers();
             int answer = userInteractionService.askQuestion(question.getQuestionText(),
-                    answers.stream().map(QuizAnswer::getText).collect(toList()));
+                    answers.stream().map(QuizAnswer::getText).collect(toList()), defaultLocale);
             QuizAnswer chosenAnswer = answers.get(answer);
             logger.debug("{}", chosenAnswer);
             if (chosenAnswer.isCorrect()) correct++;

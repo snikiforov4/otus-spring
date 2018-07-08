@@ -1,6 +1,6 @@
-question,correct_answers,answer_1,answer_2,answer_3,answer_4,answer_5 
-"Which is the least populated country in the world?",3,Liechtenstein,Monaco,Vatican City,San Marino,
-"Which is the fastest animal on the land?",2,Lion,Cheetah,Antelope,Ostrich,Springbok
-"Which is the longest river on the earth?",1,Nile,Dnipro,Yangtze,Volga,
-"At room temperature, which is the only metal that is in liquid form?",3,Iron,Aluminum,Mercury,Silver,
-"The kiwi is a flightless bird that lives in what country?",1,New Zealand,Fiji,Canada,Mexico,
+question,correct_answers,answer_1,answer_2,answer_3,answer_4,answer_5
+question1,3,answer1.1,answer1.2,answer1.3,answer1.4,
+question2,2,answer2.1,answer2.2,answer2.3,answer2.4,answer2.5
+question3,1,answer3.1,answer3.2,answer3.3,answer3.4,
+question4,3,answer4.1,answer4.2,answer4.3,answer4.4,
+question5,1,answer5.1,answer5.2,answer5.3,answer5.4,
