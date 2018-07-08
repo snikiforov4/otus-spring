@@ -3,6 +3,7 @@ package ua.nykyforov.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ua.nykyforov.domain.QuizAnswer;
 import ua.nykyforov.domain.QuizQuestion;
@@ -22,11 +23,15 @@ public class QuizController {
 
     private final QuestionService questionService;
     private final UserInteractionService userInteractionService;
+    private final int defaultNumberOfQuestions;
 
     @Autowired
-    public QuizController(QuestionService questionService, UserInteractionService userInteractionService) {
+    public QuizController(QuestionService questionService,
+                          UserInteractionService userInteractionService,
+                          @Value("${quiz.defaultQuestions}") int defaultNumberOfQuestions) {
         this.questionService = questionService;
         this.userInteractionService = userInteractionService;
+        this.defaultNumberOfQuestions = defaultNumberOfQuestions;
     }
 
     public void passTest() {
@@ -38,7 +43,7 @@ public class QuizController {
 
     private QuizResult quiz() {
         int correct = 0;
-        Collection<QuizQuestion> allQuestions = questionService.getDefaultNumberOfQuestions();
+        Collection<QuizQuestion> allQuestions = questionService.getLimitNumberOfQuestions(defaultNumberOfQuestions);
         for (QuizQuestion question : allQuestions) {
             List<QuizAnswer> answers = question.getAnswers();
             int answer = userInteractionService.askQuestion(question.getQuestionText(),

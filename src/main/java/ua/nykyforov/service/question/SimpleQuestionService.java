@@ -15,22 +15,14 @@ import static com.google.common.collect.ImmutableList.toImmutableList;
 public class SimpleQuestionService implements QuestionService {
 
     private final QuestionDAO questionDAO;
-    private final int defaultNumberOfQuestions;
 
     @Autowired
-    public SimpleQuestionService(QuestionDAO questionDAO,
-                                 @Value("${quiz.defaultQuestions}") int defaultNumberOfQuestions) {
+    public SimpleQuestionService(QuestionDAO questionDAO) {
         this.questionDAO = questionDAO;
-        this.defaultNumberOfQuestions = defaultNumberOfQuestions;
     }
 
     public Collection<QuizQuestion> getAllQuestions() {
         return questionDAO.getAllQuestions();
-    }
-
-    @Override
-    public Collection<QuizQuestion> getDefaultNumberOfQuestions() {
-        return getLimitNumberOfQuestions(defaultNumberOfQuestions);
     }
 
     @Override

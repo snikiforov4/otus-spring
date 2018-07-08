@@ -7,6 +7,5 @@ import java.util.Collection;
 
 public interface QuestionService {
     Collection<QuizQuestion> getAllQuestions();
-    Collection<QuizQuestion> getDefaultNumberOfQuestions();
     Collection<QuizQuestion> getLimitNumberOfQuestions(int limit);
 }
