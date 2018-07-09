@@ -1,4 +1,4 @@
-package ua.nykyforov.service.user;
+package ua.nykyforov.service.quiz.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;

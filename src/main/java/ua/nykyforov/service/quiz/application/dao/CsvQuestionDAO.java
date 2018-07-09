@@ -1,4 +1,4 @@
-package ua.nykyforov.dao;
+package ua.nykyforov.service.quiz.application.dao;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ua.nykyforov.service.quiz.core.business.QuestionDAO;
+import ua.nykyforov.service.quiz.core.dao.QuestionDAO;
 import ua.nykyforov.service.quiz.core.model.QuizAnswer;
 import ua.nykyforov.service.quiz.core.model.QuizQuestion;
 

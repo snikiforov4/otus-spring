@@ -1,4 +1,4 @@
-package ua.nykyforov.config;
+package ua.nykyforov.service.quiz.application;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -9,7 +9,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 @Configuration
-@ComponentScan(basePackages = {"ua.nykyforov.controller", "ua.nykyforov.dao", "ua.nykyforov.service"})
+@ComponentScan
 @PropertySource("classpath:app.properties")
 public class AppConfig {
 

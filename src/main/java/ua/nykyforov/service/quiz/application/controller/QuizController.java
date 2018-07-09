@@ -1,4 +1,4 @@
-package ua.nykyforov.controller;
+package ua.nykyforov.service.quiz.application.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

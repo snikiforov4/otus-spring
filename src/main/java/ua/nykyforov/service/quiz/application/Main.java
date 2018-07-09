@@ -1,9 +1,8 @@
-package ua.nykyforov.service.quiz;
+package ua.nykyforov.service.quiz.application;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import ua.nykyforov.config.AppConfig;
-import ua.nykyforov.controller.QuizController;
+import ua.nykyforov.service.quiz.application.controller.QuizController;
 
 public class Main {
 

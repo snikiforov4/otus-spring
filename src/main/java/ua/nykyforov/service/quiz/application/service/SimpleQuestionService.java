@@ -1,10 +1,10 @@
-package ua.nykyforov.service.question;
+package ua.nykyforov.service.quiz.application.service;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.nykyforov.service.quiz.core.application.QuestionService;
-import ua.nykyforov.service.quiz.core.business.QuestionDAO;
+import ua.nykyforov.service.quiz.core.dao.QuestionDAO;
 import ua.nykyforov.service.quiz.core.model.QuizQuestion;
 
 import java.util.Collection;

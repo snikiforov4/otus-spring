@@ -1,4 +1,4 @@
-package ua.nykyforov.service.quiz.core.business;
+package ua.nykyforov.service.quiz.core.dao;
 
 import ua.nykyforov.service.quiz.core.model.QuizQuestion;
 
