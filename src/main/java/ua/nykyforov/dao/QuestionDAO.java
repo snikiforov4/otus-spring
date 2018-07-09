@@ -1,6 +1,6 @@
 package ua.nykyforov.dao;
 
-import ua.nykyforov.domain.QuizQuestion;
+import ua.nykyforov.service.quiz.domain.model.QuizQuestion;
 
 import java.util.Collection;
 

@@ -5,11 +5,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ua.nykyforov.domain.QuizAnswer;
-import ua.nykyforov.domain.QuizQuestion;
-import ua.nykyforov.domain.QuizResult;
-import ua.nykyforov.domain.User;
 import ua.nykyforov.service.question.QuestionService;
+import ua.nykyforov.service.quiz.domain.model.QuizAnswer;
+import ua.nykyforov.service.quiz.domain.model.QuizQuestion;
+import ua.nykyforov.service.quiz.domain.model.QuizResult;
+import ua.nykyforov.service.quiz.domain.model.User;
 import ua.nykyforov.service.user.UserInteractionService;
 
 import java.util.Collection;

@@ -3,8 +3,8 @@ package ua.nykyforov.service.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import ua.nykyforov.domain.QuizResult;
-import ua.nykyforov.domain.User;
+import ua.nykyforov.service.quiz.domain.model.QuizResult;
+import ua.nykyforov.service.quiz.domain.model.User;
 
 import java.util.InputMismatchException;
 import java.util.List;
