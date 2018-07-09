@@ -1,4 +1,4 @@
-package ua.nykyforov;
+package ua.nykyforov.service.quiz;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
