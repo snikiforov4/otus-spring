@@ -10,8 +10,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ua.nykyforov.service.quiz.domain.model.QuizAnswer;
-import ua.nykyforov.service.quiz.domain.model.QuizQuestion;
+import ua.nykyforov.service.quiz.core.business.QuestionDAO;
+import ua.nykyforov.service.quiz.core.model.QuizAnswer;
+import ua.nykyforov.service.quiz.core.model.QuizQuestion;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

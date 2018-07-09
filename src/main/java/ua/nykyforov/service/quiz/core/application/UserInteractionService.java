@@ -1,8 +1,8 @@
-package ua.nykyforov.service.user;
+package ua.nykyforov.service.quiz.core.application;
 
 
-import ua.nykyforov.service.quiz.domain.model.QuizResult;
-import ua.nykyforov.service.quiz.domain.model.User;
+import ua.nykyforov.service.quiz.core.model.QuizResult;
+import ua.nykyforov.service.quiz.core.model.User;
 
 import java.util.List;
 import java.util.Locale;

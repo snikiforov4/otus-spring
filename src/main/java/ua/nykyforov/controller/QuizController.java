@@ -5,12 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ua.nykyforov.service.question.QuestionService;
-import ua.nykyforov.service.quiz.domain.model.QuizAnswer;
-import ua.nykyforov.service.quiz.domain.model.QuizQuestion;
-import ua.nykyforov.service.quiz.domain.model.QuizResult;
-import ua.nykyforov.service.quiz.domain.model.User;
-import ua.nykyforov.service.user.UserInteractionService;
+import ua.nykyforov.service.quiz.core.application.QuestionService;
+import ua.nykyforov.service.quiz.core.application.UserInteractionService;
+import ua.nykyforov.service.quiz.core.model.QuizAnswer;
+import ua.nykyforov.service.quiz.core.model.QuizQuestion;
+import ua.nykyforov.service.quiz.core.model.QuizResult;
+import ua.nykyforov.service.quiz.core.model.User;
 
 import java.util.Collection;
 import java.util.List;

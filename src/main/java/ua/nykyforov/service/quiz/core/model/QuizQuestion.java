@@ -1,4 +1,4 @@
-package ua.nykyforov.service.quiz.domain.model;
+package ua.nykyforov.service.quiz.core.model;
 
 
 import com.google.common.base.MoreObjects;

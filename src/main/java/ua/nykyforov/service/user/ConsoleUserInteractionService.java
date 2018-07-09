@@ -3,8 +3,9 @@ package ua.nykyforov.service.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import ua.nykyforov.service.quiz.domain.model.QuizResult;
-import ua.nykyforov.service.quiz.domain.model.User;
+import ua.nykyforov.service.quiz.core.application.UserInteractionService;
+import ua.nykyforov.service.quiz.core.model.QuizResult;
+import ua.nykyforov.service.quiz.core.model.User;
 
 import java.util.InputMismatchException;
 import java.util.List;

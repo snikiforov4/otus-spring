@@ -1,7 +1,7 @@
-package ua.nykyforov.service.question;
+package ua.nykyforov.service.quiz.core.application;
 
 
-import ua.nykyforov.service.quiz.domain.model.QuizQuestion;
+import ua.nykyforov.service.quiz.core.model.QuizQuestion;
 
 import java.util.Collection;
 
