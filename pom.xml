@@ -12,7 +12,8 @@
         <slf4j.version>1.7.25</slf4j.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <exec.mainClass>ua.nykyforov.service.quiz.application.Main</exec.mainClass>
+        <mainClass>ua.nykyforov.service.quiz.application.Main</mainClass>
+        <exec.mainClass>${mainClass}</exec.mainClass>
     </properties>
 
     <build>
@@ -21,6 +22,17 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>1.6.0</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>${mainClass}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
             </plugin>
         </plugins>
     </build>
