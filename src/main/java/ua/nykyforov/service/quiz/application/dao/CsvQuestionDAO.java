@@ -45,7 +45,7 @@ public class CsvQuestionDAO implements QuestionDAO {
     public Collection<QuizQuestion> getAllQuestions() {
         ImmutableList.Builder<QuizQuestion> builder = ImmutableList.builder();
         URL url = checkNotNull(getClass().getClassLoader().getResource(pathToCsv),
-                "resource could not be found");
+                "resource cannot be found");
         try(CSVParser parser = CSVFormat.RFC4180.withFirstRecordAsHeader()
                 .parse(new BufferedReader(new InputStreamReader(url.openStream())))) {
             List<CSVRecord> records = parser.getRecords();
