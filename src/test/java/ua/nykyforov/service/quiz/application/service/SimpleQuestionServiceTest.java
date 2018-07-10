@@ -17,8 +17,7 @@ import ua.nykyforov.service.quiz.core.model.QuizQuestion;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,7 +45,7 @@ class SimpleQuestionServiceTest {
             Collection<QuizQuestion> actualQuestions = sut.getAllQuestions();
 
             verify(questionDAO, times(1)).getAllQuestions();
-            assertEquals(questionsStub, actualQuestions);
+            assertSame(questionsStub, actualQuestions);
         }
 
     }
@@ -64,7 +63,7 @@ class SimpleQuestionServiceTest {
             Collection<QuizQuestion> actualQuestions = sut.getLimitNumberOfQuestions(limit);
 
             verify(questionDAO, times(1)).getAllQuestions();
-            assertEquals(questionsStub, actualQuestions);
+            assertSame(questionsStub, actualQuestions);
         }
 
         @ParameterizedTest
