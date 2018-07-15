@@ -8,8 +8,8 @@ import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ua.nykyforov.service.quiz.application.config.QuizConfig;
 import ua.nykyforov.service.quiz.core.dao.QuestionDAO;
 import ua.nykyforov.service.quiz.core.model.QuizAnswer;
 import ua.nykyforov.service.quiz.core.model.QuizQuestion;
@@ -34,17 +34,17 @@ public class CsvQuestionDAO implements QuestionDAO {
     private static final String CORRECT_ANSWERS_FIELD = "correct_answers";
     private static final String ANSWER_FIELD = "answer_%d";
 
-    private final String pathToCsv;
+    private final QuizConfig quizConfig;
 
     @Autowired
-    public CsvQuestionDAO(@Value("${quiz.path-to-csv}") String pathToCsv) {
-        this.pathToCsv = pathToCsv;
+    public CsvQuestionDAO(QuizConfig quizConfig) {
+        this.quizConfig = quizConfig;
     }
 
     @Override
     public Collection<QuizQuestion> getAllQuestions() {
         ImmutableList.Builder<QuizQuestion> builder = ImmutableList.builder();
-        URL url = checkNotNull(getClass().getClassLoader().getResource(pathToCsv),
+        URL url = checkNotNull(getClass().getClassLoader().getResource(quizConfig.getPathToCsv()),
                 "resource cannot be found");
         try(CSVParser parser = CSVFormat.RFC4180.withFirstRecordAsHeader()
                 .parse(new BufferedReader(new InputStreamReader(url.openStream())))) {

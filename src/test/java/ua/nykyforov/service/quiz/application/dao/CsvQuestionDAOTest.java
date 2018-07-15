@@ -1,6 +1,7 @@
 package ua.nykyforov.service.quiz.application.dao;
 
 import org.junit.jupiter.api.Test;
+import ua.nykyforov.service.quiz.application.config.QuizConfig;
 import ua.nykyforov.service.quiz.core.model.QuizQuestion;
 
 import java.util.Collection;
@@ -13,7 +14,7 @@ class CsvQuestionDAOTest {
 
     @Test
     void shouldReadAllQuestionsFromFile() {
-        sut = new CsvQuestionDAO("data/quiz-1.csv");
+        sut = new CsvQuestionDAO(createConfigWithPathToCsv("data/quiz-1.csv"));
         Collection<QuizQuestion> allQuestions = sut.getAllQuestions();
 
         assertNotNull(allQuestions);
@@ -22,7 +23,7 @@ class CsvQuestionDAOTest {
 
     @Test
     void shouldReadCorrectQuestionData() {
-        sut = new CsvQuestionDAO("data/quiz-2.csv");
+        sut = new CsvQuestionDAO(createConfigWithPathToCsv("data/quiz-2.csv"));
         Collection<QuizQuestion> allQuestions = sut.getAllQuestions();
         assertNotNull(allQuestions, "questions");
         assertEquals(1, allQuestions.size(), "only one question should be present");
@@ -38,7 +39,12 @@ class CsvQuestionDAOTest {
                 () -> assertEquals("a3", question.getAnswers().get(2).getText()),
                 () -> assertFalse(question.getAnswers().get(2).isCorrect())
         );
+    }
 
+    private QuizConfig createConfigWithPathToCsv(String path) {
+        QuizConfig quizConfig = new QuizConfig();
+        quizConfig.setPathToCsv(path);
+        return quizConfig;
     }
 
 }

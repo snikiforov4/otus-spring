@@ -3,8 +3,8 @@ package ua.nykyforov.service.quiz.application.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ua.nykyforov.service.quiz.application.config.QuizConfig;
 import ua.nykyforov.service.quiz.core.application.QuestionService;
 import ua.nykyforov.service.quiz.core.application.UserInteractionService;
 import ua.nykyforov.service.quiz.core.model.QuizAnswer;
@@ -14,7 +14,6 @@ import ua.nykyforov.service.quiz.core.model.User;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Locale;
 
 import static java.util.stream.Collectors.toList;
 
@@ -24,34 +23,34 @@ public class QuizController {
 
     private final QuestionService questionService;
     private final UserInteractionService userInteractionService;
-    private final int defaultNumberOfQuestions;
-    private final Locale defaultLocale;
+    private final QuizConfig quizConfig;
 
     @Autowired
     public QuizController(QuestionService questionService,
                           UserInteractionService userInteractionService,
-                          @Value("${quiz.default-number-of-questions}") int defaultNumberOfQuestions,
-                          @Value("${quiz.default-locale}") String defaultLocale) {
+                          QuizConfig quizConfig) {
         this.questionService = questionService;
         this.userInteractionService = userInteractionService;
-        this.defaultNumberOfQuestions = defaultNumberOfQuestions;
-        this.defaultLocale = Locale.forLanguageTag(defaultLocale);
+        this.quizConfig = quizConfig;
     }
 
     public void passTest() {
-        User user = userInteractionService.askUserInfo(defaultLocale);
+        User user = userInteractionService.askUserInfo(quizConfig.getSettings().getLocale());
         logger.debug("{}", user);
         QuizResult quizResult = quiz();
-        userInteractionService.sendQuizResult(user, quizResult, defaultLocale);
+        userInteractionService.sendQuizResult(user, quizResult, quizConfig.getSettings().getLocale());
     }
 
     private QuizResult quiz() {
         int correct = 0;
-        Collection<QuizQuestion> allQuestions = questionService.getLimitNumberOfQuestions(defaultNumberOfQuestions);
+        Collection<QuizQuestion> allQuestions = questionService
+                .getLimitNumberOfQuestions(quizConfig.getSettings().getNumberOfQuestions());
         for (QuizQuestion question : allQuestions) {
             List<QuizAnswer> answers = question.getAnswers();
-            int answer = userInteractionService.askQuestion(question.getQuestionText(),
-                    answers.stream().map(QuizAnswer::getText).collect(toList()), defaultLocale);
+            int answer = userInteractionService.askQuestion(
+                    question.getQuestionText(),
+                    answers.stream().map(QuizAnswer::getText).collect(toList()),
+                    quizConfig.getSettings().getLocale());
             QuizAnswer chosenAnswer = answers.get(answer);
             logger.debug("{}", chosenAnswer);
             if (chosenAnswer.isCorrect()) correct++;
