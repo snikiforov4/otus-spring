@@ -30,8 +30,8 @@ public class QuizController {
     @Autowired
     public QuizController(QuestionService questionService,
                           UserInteractionService userInteractionService,
-                          @Value("${quiz.defaultQuestions}") int defaultNumberOfQuestions,
-                          @Value("${quiz.defaultLocale}") String defaultLocale) {
+                          @Value("${quiz.default-number-of-questions}") int defaultNumberOfQuestions,
+                          @Value("${quiz.default-locale}") String defaultLocale) {
         this.questionService = questionService;
         this.userInteractionService = userInteractionService;
         this.defaultNumberOfQuestions = defaultNumberOfQuestions;
