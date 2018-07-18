@@ -6,6 +6,7 @@ import ua.nykyforov.service.quiz.core.model.QuizQuestion;
 
 import java.util.Collection;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CsvQuestionDAOTest {
@@ -17,26 +18,28 @@ class CsvQuestionDAOTest {
         sut = new CsvQuestionDAO(createConfigWithPathToCsv("data/quiz-1.csv"));
         Collection<QuizQuestion> allQuestions = sut.getAllQuestions();
 
-        assertNotNull(allQuestions);
-        assertEquals(6, allQuestions.size());
+        assertThat(allQuestions).isNotNull();
+        assertThat(allQuestions).hasSize(6);
     }
 
     @Test
     void shouldReadCorrectQuestionData() {
         sut = new CsvQuestionDAO(createConfigWithPathToCsv("data/quiz-2.csv"));
         Collection<QuizQuestion> allQuestions = sut.getAllQuestions();
-        assertNotNull(allQuestions, "questions");
-        assertEquals(1, allQuestions.size(), "only one question should be present");
+
+        assertThat(allQuestions).isNotNull();
+        assertThat(allQuestions).hasSize(1);
         QuizQuestion question = allQuestions.iterator().next();
-        assertNotNull(question, "question");
-        assertAll("data read correctly",
-                () -> assertEquals("q1", question.getQuestionText()),
-                () -> assertEquals(3, question.getAnswers().size()),
-                () -> assertEquals("a1", question.getAnswers().get(0).getText()),
+
+        assertThat(question).isNotNull();
+        assertThat(question.getAnswers()).hasSize(3);
+        assertAll("Data read correctly",
+                () -> assertThat(question.getQuestionText()).isEqualTo("q1"),
+                () -> assertThat(question.getAnswers().get(0).getText()).isEqualTo("a1"),
                 () -> assertFalse(question.getAnswers().get(0).isCorrect()),
-                () -> assertEquals("a2", question.getAnswers().get(1).getText()),
+                () -> assertThat(question.getAnswers().get(1).getText()).isEqualTo("a2"),
                 () -> assertTrue(question.getAnswers().get(1).isCorrect()),
-                () -> assertEquals("a3", question.getAnswers().get(2).getText()),
+                () -> assertThat(question.getAnswers().get(2).getText()).isEqualTo("a3"),
                 () -> assertFalse(question.getAnswers().get(2).isCorrect())
         );
     }

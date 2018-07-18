@@ -17,7 +17,8 @@ import ua.nykyforov.service.quiz.core.model.QuizQuestion;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -79,8 +80,8 @@ class SimpleQuestionServiceTest {
 
             Collection<QuizQuestion> actualQuestions = sut.getLimitNumberOfQuestions(limit);
 
-            assertNotNull(actualQuestions, "returned collection of questions");
-            assertEquals(expectedSize, actualQuestions.size(), "wrong size of question collection");
+            assertThat(actualQuestions).isNotNull();
+            assertThat(actualQuestions).hasSize(expectedSize);
         }
 
         private List<Object> createListWithNumberOfQuestions(int numberOfQuestions) {
