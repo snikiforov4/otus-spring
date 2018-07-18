@@ -14,8 +14,7 @@ import ua.nykyforov.service.quiz.core.model.User;
 
 import java.util.Collection;
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
+import java.util.Locale;
 
 @Service
 public class QuizController {
@@ -35,27 +34,28 @@ public class QuizController {
     }
 
     public void passTest() {
-        User user = userInteractionService.askUserInfo(quizConfig.getSettings().getLocale());
+        Locale locale = quizConfig.getSettings().getLocale();
+        User user = userInteractionService.askUserInfo(locale);
         logger.debug("{}", user);
         QuizResult quizResult = quiz();
-        userInteractionService.sendQuizResult(user, quizResult, quizConfig.getSettings().getLocale());
+        userInteractionService.sendQuizResult(user, quizResult, locale);
     }
 
     private QuizResult quiz() {
-        int correct = 0;
+        int correctAnswers = 0;
         Collection<QuizQuestion> allQuestions = questionService
                 .getLimitNumberOfQuestions(quizConfig.getSettings().getNumberOfQuestions());
-        for (QuizQuestion question : allQuestions) {
-            List<QuizAnswer> answers = question.getAnswers();
+        for (QuizQuestion quizQuestion : allQuestions) {
+            List<QuizAnswer> answers = quizQuestion.getAnswers();
             int answer = userInteractionService.askQuestion(
-                    question.getQuestionText(),
-                    answers.stream().map(QuizAnswer::getText).collect(toList()),
+                    quizQuestion.getQuestionText(),
+                    quizQuestion.getTextAnswers(),
                     quizConfig.getSettings().getLocale());
             QuizAnswer chosenAnswer = answers.get(answer);
             logger.debug("{}", chosenAnswer);
-            if (chosenAnswer.isCorrect()) correct++;
+            if (chosenAnswer.isCorrect()) correctAnswers++;
         }
-        return new QuizResult(allQuestions.size(), correct);
+        return new QuizResult(allQuestions.size(), correctAnswers);
     }
 
 }

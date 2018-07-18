@@ -6,6 +6,8 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.List;
 
+import static com.google.common.collect.ImmutableList.toImmutableList;
+
 public class QuizQuestion {
     private final String questionText;
     private final List<QuizAnswer> answers;
@@ -21,6 +23,10 @@ public class QuizQuestion {
 
     public List<QuizAnswer> getAnswers() {
         return answers;
+    }
+
+    public List<String> getTextAnswers() {
+        return answers.stream().map(QuizAnswer::getText).collect(toImmutableList());
     }
 
     @Override
