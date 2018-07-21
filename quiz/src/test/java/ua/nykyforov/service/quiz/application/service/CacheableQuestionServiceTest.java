@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.nykyforov.service.quiz.core.dao.QuestionDao;
+import ua.nykyforov.service.quiz.core.model.QuizAnswer;
 import ua.nykyforov.service.quiz.core.model.QuizQuestion;
 
 import java.util.Collection;
@@ -22,16 +23,16 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class SimpleQuestionServiceTest {
+class CacheableQuestionServiceTest {
 
     @Mock
     private QuestionDao questionDao;
 
-    private SimpleQuestionService sut;
+    private CacheableQuestionService sut;
 
     @BeforeEach
     void setUp() {
-        sut = new SimpleQuestionService(questionDao);
+        sut = new CacheableQuestionService(questionDao);
     }
 
     @Nested
@@ -47,6 +48,22 @@ class SimpleQuestionServiceTest {
 
             verify(questionDao, times(1)).getAllQuestions();
             assertSame(questionsStub, actualQuestions);
+        }
+
+        @Test
+        void shouldSaveReceivedQuestionsToCacheAndCallQuestionDaoOnlyOnce() {
+            Collection<Object> questionsStub = ImmutableList.of(
+                    new QuizQuestion("q1",
+                            ImmutableList.of(QuizAnswer.correct("a1"), QuizAnswer.incorrect("a2")))
+            );
+            doReturn(questionsStub).when(questionDao).getAllQuestions();
+
+            for (int i = 0; i < 3; i++) {
+                Collection<QuizQuestion> actualQuestions = sut.getAllQuestions();
+                assertSame(questionsStub, actualQuestions);
+            }
+
+            verify(questionDao, times(1)).getAllQuestions();
         }
 
     }

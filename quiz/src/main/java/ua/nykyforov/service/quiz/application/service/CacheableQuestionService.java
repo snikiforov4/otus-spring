@@ -7,22 +7,30 @@ import ua.nykyforov.service.quiz.core.application.QuestionService;
 import ua.nykyforov.service.quiz.core.dao.QuestionDao;
 import ua.nykyforov.service.quiz.core.model.QuizQuestion;
 
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.Collection;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 
 @Service
-public class SimpleQuestionService implements QuestionService {
+@NotThreadSafe
+public class CacheableQuestionService implements QuestionService {
 
+    @Nullable
+    private Collection<QuizQuestion> quizQuestionsCache;
     private final QuestionDao questionDao;
 
     @Autowired
-    public SimpleQuestionService(QuestionDao questionDao) {
+    public CacheableQuestionService(QuestionDao questionDao) {
         this.questionDao = questionDao;
     }
 
     public Collection<QuizQuestion> getAllQuestions() {
-        return questionDao.getAllQuestions();
+        if (quizQuestionsCache == null) {
+            quizQuestionsCache = questionDao.getAllQuestions();
+        }
+        return quizQuestionsCache;
     }
 
     @Override
