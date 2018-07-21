@@ -20,11 +20,11 @@ class UserServiceTest {
     @Mock
     private UserDAO userDAO;
 
-    private UserServiceImpl userService;
+    private UserServiceImpl sut;
 
     @BeforeEach
     void setUp() {
-        userService = new UserServiceImpl(userDAO);
+        sut = new UserServiceImpl(userDAO);
     }
 
     @Nested
@@ -34,7 +34,7 @@ class UserServiceTest {
         @Test
         void shouldPassUserToUserDao() {
             User user = new User("John", "Smith");
-            userService.save(user);
+            sut.save(user);
 
             verify(userDAO, times(1)).save(refEq(user));
         }

@@ -18,8 +18,8 @@ public class UserCommands {
 
     @ShellMethod("Add new user.")
     public void addUser(String firstName, String lastName) {
-        User user = new User(firstName, lastName);
-        userService.save(user);
+        User user = userService.save(new User(firstName, lastName));
+        System.out.println("User was added with ID=" + user.getId());
     }
 
 }
