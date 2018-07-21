@@ -6,6 +6,8 @@ import org.springframework.shell.standard.ShellMethod;
 import ua.nykyforov.service.quiz.core.application.UserService;
 import ua.nykyforov.service.quiz.core.model.User;
 
+import java.util.Optional;
+
 @ShellComponent
 public class UserCommands {
 
@@ -20,6 +22,16 @@ public class UserCommands {
     public void addUser(String firstName, String lastName) {
         User user = userService.save(new User(firstName, lastName));
         System.out.println("User was added with ID=" + user.getId());
+    }
+
+    @ShellMethod("Find user by id.")
+    public void getUser(long id) {
+        Optional<User> user = userService.getById(id);
+        if (user.isPresent()) {
+            System.out.println(user.get());
+        } else {
+            System.out.println(String.format("User with id=%s not found", id));
+        }
     }
 
 }

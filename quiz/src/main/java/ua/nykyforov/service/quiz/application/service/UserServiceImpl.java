@@ -6,6 +6,8 @@ import ua.nykyforov.service.quiz.core.application.UserService;
 import ua.nykyforov.service.quiz.core.dao.UserDAO;
 import ua.nykyforov.service.quiz.core.model.User;
 
+import java.util.Optional;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -19,5 +21,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public User save(User user) {
         return userDAO.save(user);
+    }
+
+    @Override
+    public Optional<User> getById(long id) {
+        return Optional.ofNullable(userDAO.getById(id));
     }
 }

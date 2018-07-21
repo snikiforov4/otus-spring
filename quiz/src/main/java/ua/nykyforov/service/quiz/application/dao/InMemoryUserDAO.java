@@ -27,4 +27,9 @@ public class InMemoryUserDAO implements UserDAO {
         users.put(user.getId(), user);
         return user;
     }
+
+    @Override
+    public User getById(long id) {
+        return null; // todo
+    }
 }
