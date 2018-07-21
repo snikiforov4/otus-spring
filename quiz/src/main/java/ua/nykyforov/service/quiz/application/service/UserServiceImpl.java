@@ -27,4 +27,5 @@ public class UserServiceImpl implements UserService {
     public Optional<User> getById(long id) {
         return Optional.ofNullable(userDAO.getById(id));
     }
+
 }

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import ua.nykyforov.service.quiz.core.dao.UserDAO;
 import ua.nykyforov.service.quiz.core.model.User;
 
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import java.util.Map;
 
@@ -28,8 +29,9 @@ public class InMemoryUserDAO implements UserDAO {
         return user;
     }
 
+    @Nullable
     @Override
     public User getById(long id) {
-        return null; // todo
+        return users.get(id);
     }
 }

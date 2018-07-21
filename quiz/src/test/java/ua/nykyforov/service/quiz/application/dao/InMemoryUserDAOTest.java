@@ -18,7 +18,6 @@ class InMemoryUserDAOTest {
         sut = new InMemoryUserDAO();
     }
 
-
     @Nested
     @DisplayName("save")
     class Save {
@@ -31,6 +30,25 @@ class InMemoryUserDAOTest {
             assertThat(retUser).isNotNull();
             assertSame(user, retUser);
             assertThat(retUser.getId()).isNotNull();
+        }
+
+    }
+
+    @Nested
+    @DisplayName("getById")
+    class GetById {
+
+        @Test
+        void shouldReturnSavedUser() {
+            User user = sut.save(new User("John", "Smith"));
+            Long userId = user.getId();
+            assert userId != null;
+
+            User retUser = sut.getById(userId);
+
+            assertThat(retUser).isNotNull();
+            assertSame(user, retUser);
+            assertThat(retUser.getId()).isEqualTo(userId);
         }
 
     }
