@@ -9,13 +9,13 @@ import ua.nykyforov.service.quiz.core.model.User;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-class InMemoryUserDAOTest {
+class InMemoryUserDaoTest {
 
-    private InMemoryUserDAO sut;
+    private InMemoryUserDao sut;
 
     @BeforeEach
     void setUp() {
-        sut = new InMemoryUserDAO();
+        sut = new InMemoryUserDao();
     }
 
     @Nested

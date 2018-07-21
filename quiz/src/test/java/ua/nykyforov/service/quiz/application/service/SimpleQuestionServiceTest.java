@@ -11,7 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.nykyforov.service.quiz.core.dao.QuestionDAO;
+import ua.nykyforov.service.quiz.core.dao.QuestionDao;
 import ua.nykyforov.service.quiz.core.model.QuizQuestion;
 
 import java.util.Collection;
@@ -25,13 +25,13 @@ import static org.mockito.Mockito.*;
 class SimpleQuestionServiceTest {
 
     @Mock
-    private QuestionDAO questionDAO;
+    private QuestionDao questionDao;
 
     private SimpleQuestionService sut;
 
     @BeforeEach
     void setUp() {
-        sut = new SimpleQuestionService(questionDAO);
+        sut = new SimpleQuestionService(questionDao);
     }
 
     @Nested
@@ -41,11 +41,11 @@ class SimpleQuestionServiceTest {
         @Test
         void shouldReceiveQuestionsFromQuestionDao() {
             Collection<Object> questionsStub = Lists.newArrayList();
-            doReturn(questionsStub).when(questionDAO).getAllQuestions();
+            doReturn(questionsStub).when(questionDao).getAllQuestions();
 
             Collection<QuizQuestion> actualQuestions = sut.getAllQuestions();
 
-            verify(questionDAO, times(1)).getAllQuestions();
+            verify(questionDao, times(1)).getAllQuestions();
             assertSame(questionsStub, actualQuestions);
         }
 
@@ -59,11 +59,11 @@ class SimpleQuestionServiceTest {
         void shouldReceiveQuestionsFromQuestionDao() {
             final int limit = 5;
             Collection<Object> questionsStub = Lists.newArrayList();
-            doReturn(questionsStub).when(questionDAO).getAllQuestions();
+            doReturn(questionsStub).when(questionDao).getAllQuestions();
 
             Collection<QuizQuestion> actualQuestions = sut.getLimitNumberOfQuestions(limit);
 
-            verify(questionDAO, times(1)).getAllQuestions();
+            verify(questionDao, times(1)).getAllQuestions();
             assertSame(questionsStub, actualQuestions);
         }
 
@@ -76,7 +76,7 @@ class SimpleQuestionServiceTest {
         void shouldReturnLimitedNumberOfQuestionsByParameter(final int actualSize, final int expectedSize) {
             final int limit = 5;
             Collection<Object> questionsStub = createListWithNumberOfQuestions(actualSize);
-            doReturn(questionsStub).when(questionDAO).getAllQuestions();
+            doReturn(questionsStub).when(questionDao).getAllQuestions();
 
             Collection<QuizQuestion> actualQuestions = sut.getLimitNumberOfQuestions(limit);
 

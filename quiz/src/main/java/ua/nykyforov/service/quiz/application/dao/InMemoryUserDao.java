@@ -1,7 +1,7 @@
 package ua.nykyforov.service.quiz.application.dao;
 
 import org.springframework.stereotype.Service;
-import ua.nykyforov.service.quiz.core.dao.UserDAO;
+import ua.nykyforov.service.quiz.core.dao.UserDao;
 import ua.nykyforov.service.quiz.core.model.User;
 
 import javax.annotation.Nullable;
@@ -12,12 +12,12 @@ import static com.google.common.collect.Maps.newHashMap;
 
 @Service
 @NotThreadSafe
-public class InMemoryUserDAO implements UserDAO {
+public class InMemoryUserDao implements UserDao {
 
     private Map<Long, User> users;
     private long idGenerator;
 
-    public InMemoryUserDAO() {
+    public InMemoryUserDao() {
         users = newHashMap();
         idGenerator = 0;
     }

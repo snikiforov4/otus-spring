@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.nykyforov.service.quiz.core.dao.UserDAO;
+import ua.nykyforov.service.quiz.core.dao.UserDao;
 import ua.nykyforov.service.quiz.core.model.User;
 
 import java.util.Optional;
@@ -21,13 +21,13 @@ import static org.mockito.Mockito.*;
 class UserServiceImplTest {
 
     @Mock
-    private UserDAO userDAO;
+    private UserDao userDao;
 
     private UserServiceImpl sut;
 
     @BeforeEach
     void setUp() {
-        sut = new UserServiceImpl(userDAO);
+        sut = new UserServiceImpl(userDao);
     }
 
     @Nested
@@ -39,7 +39,7 @@ class UserServiceImplTest {
             User user = new User("John", "Smith");
             sut.save(user);
 
-            verify(userDAO, times(1)).save(refEq(user));
+            verify(userDao, times(1)).save(refEq(user));
         }
 
     }
@@ -52,12 +52,12 @@ class UserServiceImplTest {
         void shouldGetUserFromUserDao() {
             final long id = 42L;
             User user = new User("John", "Smith");
-            doReturn(user).when(userDAO).getById(eq(id));
+            doReturn(user).when(userDao).getById(eq(id));
 
             Optional<User> retUser = sut.getById(id);
 
             assertThat(retUser).isPresent();
-            verify(userDAO, times(1)).getById(eq(id));
+            verify(userDao, times(1)).getById(eq(id));
             assertThat(retUser).containsSame(user);
         }
 
@@ -67,7 +67,7 @@ class UserServiceImplTest {
             Optional<User> retUser = sut.getById(id);
 
             assertThat(retUser).isNotPresent();
-            verify(userDAO, times(1)).getById(eq(id));
+            verify(userDao, times(1)).getById(eq(id));
         }
 
     }
