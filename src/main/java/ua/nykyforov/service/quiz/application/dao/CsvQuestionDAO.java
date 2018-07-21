@@ -37,7 +37,7 @@ public class CsvQuestionDAO implements QuestionDAO {
     private final String pathToCsv;
 
     @Autowired
-    public CsvQuestionDAO(@Value("${quiz.pathToCsv}") String pathToCsv) {
+    public CsvQuestionDAO(@Value("${quiz.path-to-csv}") String pathToCsv) {
         this.pathToCsv = pathToCsv;
     }
 
