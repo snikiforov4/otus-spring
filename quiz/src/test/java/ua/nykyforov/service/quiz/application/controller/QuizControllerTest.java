@@ -45,31 +45,19 @@ class QuizControllerTest {
         @Test
         void shouldPassLocaleFromQuizConfigSettingsToUserInteractionService() {
             sut = new QuizController(questionService, userInteractionService, buildQuizConfig());
-            doReturn(new User("John", "Smith")).when(userInteractionService).askUserInfo(eq(LOCALE));
 
-            sut.passTest();
+            sut.passTest(createUserStub());
 
-            verify(userInteractionService, times(1)).askUserInfo(refEq(LOCALE));
             verify(userInteractionService, times(1))
                     .sendQuizResult(any(User.class), any(QuizResult.class), refEq(LOCALE));
         }
 
         @Test
-        void shouldGetUserFromUserInteractionService() {
+        void shouldPassUserIntoSendQuizResultMethod() {
             sut = new QuizController(questionService, userInteractionService, buildQuizConfig());
+            User user = createUserStub();
 
-            sut.passTest();
-
-            verify(userInteractionService, times(1)).askUserInfo(any(Locale.class));
-        }
-
-        @Test
-        void shouldSendUserReceivedFromAskUserInfoMethodToSendQuizResultMethod() {
-            sut = new QuizController(questionService, userInteractionService, buildQuizConfig());
-            User user = new User("John", "Smith");
-            doReturn(user).when(userInteractionService).askUserInfo(eq(LOCALE));
-
-            sut.passTest();
+            sut.passTest(user);
 
             verify(userInteractionService, times(1))
                     .sendQuizResult(refEq(user), any(QuizResult.class), any(Locale.class));
@@ -80,7 +68,7 @@ class QuizControllerTest {
             sut = new QuizController(questionService, userInteractionService, buildQuizConfig());
             doReturn(buildQuizQuestions()).when(questionService).getLimitNumberOfQuestions(eq(NUMBER_OF_QUESTIONS));
 
-            sut.passTest();
+            sut.passTest(createUserStub());
 
             verify(questionService, times(1))
                     .getLimitNumberOfQuestions(eq(NUMBER_OF_QUESTIONS));
@@ -91,7 +79,7 @@ class QuizControllerTest {
             sut = new QuizController(questionService, userInteractionService, buildQuizConfig());
             doReturn(buildQuizQuestions()).when(questionService).getLimitNumberOfQuestions(eq(NUMBER_OF_QUESTIONS));
 
-            sut.passTest();
+            sut.passTest(createUserStub());
 
             verify(userInteractionService, times(NUMBER_OF_QUESTIONS))
                     .askQuestion(anyString(), anyList(), refEq(LOCALE));
@@ -104,6 +92,10 @@ class QuizControllerTest {
             settings.setNumberOfQuestions(NUMBER_OF_QUESTIONS);
             cfg.setSettings(settings);
             return cfg;
+        }
+
+        private User createUserStub() {
+            return new User("John", "Smith");
         }
 
         private List<QuizQuestion> buildQuizQuestions() {

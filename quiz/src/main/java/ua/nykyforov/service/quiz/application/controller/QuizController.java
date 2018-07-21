@@ -33,10 +33,8 @@ public class QuizController {
         this.quizConfig = quizConfig;
     }
 
-    public void passTest() {
+    public void passTest(User user) {
         Locale locale = quizConfig.getSettings().getLocale();
-        User user = userInteractionService.askUserInfo(locale);
-        logger.debug("{}", user);
         QuizResult quizResult = quiz();
         userInteractionService.sendQuizResult(user, quizResult, locale);
     }

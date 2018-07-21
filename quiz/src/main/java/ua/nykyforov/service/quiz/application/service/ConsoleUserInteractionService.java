@@ -26,16 +26,6 @@ public class ConsoleUserInteractionService implements UserInteractionService {
     }
 
     @Override
-    public User askUserInfo(Locale locale) {
-        Scanner sc = new Scanner(System.in);
-        System.out.println(appMessageSource.getMessage("user.ask.name", null, locale));
-        String firstName = sc.next();
-        System.out.println(appMessageSource.getMessage("user.ask.surname", null, locale));
-        String lastName = sc.next();
-        return new User(firstName, lastName);
-    }
-
-    @Override
     public int askQuestion(String question, List<String> answers, Locale locale) {
         System.out.println(quizMessageSource.getMessage(question, null, locale));
         printPossibleAnswers(answers, locale);
