@@ -1,0 +1,5 @@
+quiz:
+  path-to-csv: 'data/quiz.csv'
+  settings:
+    number-of-questions: 5
+    locale: 'ru-RU'
