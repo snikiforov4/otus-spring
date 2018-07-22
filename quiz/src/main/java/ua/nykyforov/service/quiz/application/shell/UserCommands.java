@@ -6,7 +6,8 @@ import org.springframework.shell.standard.ShellMethod;
 import ua.nykyforov.service.quiz.core.application.UserService;
 import ua.nykyforov.service.quiz.core.model.User;
 
-import java.util.Optional;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Positive;
 
 @ShellComponent
 public class UserCommands {
@@ -19,19 +20,16 @@ public class UserCommands {
     }
 
     @ShellMethod("Add new user.")
-    public void addUser(String firstName, String lastName) {
+    public String addUser(@NotEmpty String firstName, @NotEmpty String lastName) {
         User user = userService.save(new User(firstName, lastName));
-        System.out.println("User was added with ID=" + user.getId());
+        return "User was added with ID=" + user.getId();
     }
 
     @ShellMethod("Find user by id.")
-    public void getUser(long id) {
-        Optional<User> user = userService.getById(id);
-        if (user.isPresent()) {
-            System.out.println(user.get());
-        } else {
-            System.out.println(String.format("User with id=%s not found", id));
-        }
+    public String getUser(@Positive long id) {
+        return userService.getById(id)
+                .map(User::toString)
+                .orElse(String.format("User with id=%s not found", id));
     }
 
 }
