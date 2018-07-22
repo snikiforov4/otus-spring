@@ -1,9 +1,9 @@
 package ua.nykyforov.service.quiz.core.application;
 
-import ua.nykyforov.service.quiz.core.model.User;
+import ua.nykyforov.service.quiz.core.model.QuizResult;
 
 public interface QuizController {
 
-    void passTest(User user);
+    QuizResult passTest();
 
 }

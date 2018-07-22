@@ -12,13 +12,10 @@ import ua.nykyforov.service.quiz.core.application.QuestionService;
 import ua.nykyforov.service.quiz.core.application.UserInteractionService;
 import ua.nykyforov.service.quiz.core.model.QuizAnswer;
 import ua.nykyforov.service.quiz.core.model.QuizQuestion;
-import ua.nykyforov.service.quiz.core.model.QuizResult;
-import ua.nykyforov.service.quiz.core.model.User;
 
 import java.util.List;
 import java.util.Locale;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -41,33 +38,13 @@ class QuizControllerImplTest {
     @Nested
     @DisplayName("passTest")
     class PassTest {
-        @Test
-        void shouldPassLocaleFromQuizConfigSettingsToUserInteractionService() {
-            sut = new QuizControllerImpl(questionService, userInteractionService, buildQuizConfig());
-
-            sut.passTest(createUserStub());
-
-            verify(userInteractionService, times(1))
-                    .sendQuizResult(any(User.class), any(QuizResult.class), refEq(LOCALE));
-        }
-
-        @Test
-        void shouldPassUserIntoSendQuizResultMethod() {
-            sut = new QuizControllerImpl(questionService, userInteractionService, buildQuizConfig());
-            User user = createUserStub();
-
-            sut.passTest(user);
-
-            verify(userInteractionService, times(1))
-                    .sendQuizResult(refEq(user), any(QuizResult.class), any(Locale.class));
-        }
 
         @Test
         void shouldGetQuestionsFromQuestionService() {
             sut = new QuizControllerImpl(questionService, userInteractionService, buildQuizConfig());
             doReturn(buildQuizQuestions()).when(questionService).getLimitNumberOfQuestions(eq(NUMBER_OF_QUESTIONS));
 
-            sut.passTest(createUserStub());
+            sut.passTest();
 
             verify(questionService, times(1))
                     .getLimitNumberOfQuestions(eq(NUMBER_OF_QUESTIONS));
@@ -78,7 +55,7 @@ class QuizControllerImplTest {
             sut = new QuizControllerImpl(questionService, userInteractionService, buildQuizConfig());
             doReturn(buildQuizQuestions()).when(questionService).getLimitNumberOfQuestions(eq(NUMBER_OF_QUESTIONS));
 
-            sut.passTest(createUserStub());
+            sut.passTest();
 
             verify(userInteractionService, times(NUMBER_OF_QUESTIONS))
                     .askQuestion(anyString(), anyList(), refEq(LOCALE));
@@ -91,10 +68,6 @@ class QuizControllerImplTest {
             settings.setNumberOfQuestions(NUMBER_OF_QUESTIONS);
             cfg.setSettings(settings);
             return cfg;
-        }
-
-        private User createUserStub() {
-            return new User("John", "Smith");
         }
 
         private List<QuizQuestion> buildQuizQuestions() {

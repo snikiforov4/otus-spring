@@ -11,10 +11,8 @@ import ua.nykyforov.service.quiz.core.application.UserInteractionService;
 import ua.nykyforov.service.quiz.core.model.QuizAnswer;
 import ua.nykyforov.service.quiz.core.model.QuizQuestion;
 import ua.nykyforov.service.quiz.core.model.QuizResult;
-import ua.nykyforov.service.quiz.core.model.User;
 
 import java.util.Collection;
-import java.util.Locale;
 
 @Service
 public class QuizControllerImpl implements QuizController {
@@ -33,13 +31,7 @@ public class QuizControllerImpl implements QuizController {
         this.quizConfig = quizConfig;
     }
 
-    public void passTest(User user) {
-        Locale locale = quizConfig.getSettings().getLocale();
-        QuizResult quizResult = quiz();
-        userInteractionService.sendQuizResult(user, quizResult, locale);
-    }
-
-    private QuizResult quiz() {
+    public QuizResult passTest() {
         int correctAnswers = 0;
         Collection<QuizQuestion> questionsForQuiz = getQuestionsForQuiz();
         for (QuizQuestion quizQuestion : questionsForQuiz) {

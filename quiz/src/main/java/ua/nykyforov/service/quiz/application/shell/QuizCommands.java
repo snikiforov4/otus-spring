@@ -1,5 +1,6 @@
 package ua.nykyforov.service.quiz.application.shell;
 
+import org.apache.commons.text.TextStringBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.shell.standard.ShellComponent;
@@ -7,9 +8,11 @@ import org.springframework.shell.standard.ShellMethod;
 import ua.nykyforov.service.quiz.application.config.QuizConfig;
 import ua.nykyforov.service.quiz.core.application.QuizController;
 import ua.nykyforov.service.quiz.core.application.UserService;
+import ua.nykyforov.service.quiz.core.model.QuizResult;
 import ua.nykyforov.service.quiz.core.model.User;
 
 import javax.validation.constraints.Positive;
+import java.util.Locale;
 
 @ShellComponent
 public class QuizCommands {
@@ -29,14 +32,28 @@ public class QuizCommands {
     }
 
     @ShellMethod("Pass quiz with specified user.")
-    public void passQuiz(@Positive long userId) {
+    public String passQuiz(@Positive long userId) {
         User user = getUser(userId);
-        quizController.passTest(user);
+        QuizResult quizResult = quizController.passTest();
+        return buildTestResult(user, quizResult);
     }
 
-    private User getUser(@Positive long id) {
+    private User getUser(long id) {
         return userService.getById(id)
                 .orElseThrow(() -> new IllegalArgumentException(appMessageSource.getMessage("user.not-found",
                         new Object[]{id}, quizConfig.getSettings().getLocale())));
+    }
+
+    private String buildTestResult(User user, QuizResult quizResult) {
+        Locale locale = quizConfig.getSettings().getLocale();
+        return new TextStringBuilder().appendNewLine()
+                .appendln(appMessageSource.getMessage("user.result.test.header", null, locale))
+                .appendln("=================================")
+                .appendln(appMessageSource.getMessage("user.result.test.username",
+                        new Object[]{user.getFullName()}, locale))
+                .appendln(appMessageSource.getMessage("user.result.test.result",
+                        new Object[]{quizResult.getCorrectAnswersRatio() * 100}, locale))
+                .appendln("=================================")
+                .build();
     }
 }
