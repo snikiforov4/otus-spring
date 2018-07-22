@@ -14,7 +14,6 @@ import ua.nykyforov.service.quiz.core.model.QuizResult;
 import ua.nykyforov.service.quiz.core.model.User;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
 
 @Service
@@ -42,19 +41,25 @@ public class QuizControllerImpl implements QuizController {
 
     private QuizResult quiz() {
         int correctAnswers = 0;
-        Collection<QuizQuestion> allQuestions = questionService
-                .getLimitNumberOfQuestions(quizConfig.getSettings().getNumberOfQuestions());
-        for (QuizQuestion quizQuestion : allQuestions) {
-            List<QuizAnswer> answers = quizQuestion.getAnswers();
-            int answer = userInteractionService.askQuestion(
-                    quizQuestion.getQuestionText(),
-                    quizQuestion.getTextAnswers(),
-                    quizConfig.getSettings().getLocale());
-            QuizAnswer chosenAnswer = answers.get(answer);
+        Collection<QuizQuestion> questionsForQuiz = getQuestionsForQuiz();
+        for (QuizQuestion quizQuestion : questionsForQuiz) {
+            int answer = askQuestion(quizQuestion);
+            QuizAnswer chosenAnswer = quizQuestion.getAnswers().get(answer);
             logger.debug("{}", chosenAnswer);
             if (chosenAnswer.isCorrect()) correctAnswers++;
         }
-        return new QuizResult(allQuestions.size(), correctAnswers);
+        return new QuizResult(questionsForQuiz.size(), correctAnswers);
+    }
+
+    private Collection<QuizQuestion> getQuestionsForQuiz() {
+        return questionService.getLimitNumberOfQuestions(quizConfig.getSettings().getNumberOfQuestions());
+    }
+
+    private int askQuestion(QuizQuestion quizQuestion) {
+        return userInteractionService.askQuestion(
+                quizQuestion.getQuestionText(),
+                quizQuestion.getTextAnswers(),
+                quizConfig.getSettings().getLocale());
     }
 
 }
