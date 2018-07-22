@@ -1,10 +1,10 @@
 package ua.nykyforov.service.quiz.application.shell;
 
-import org.apache.commons.text.TextStringBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.table.*;
 import ua.nykyforov.service.quiz.application.config.QuizConfig;
 import ua.nykyforov.service.quiz.core.application.QuizController;
 import ua.nykyforov.service.quiz.core.application.UserService;
@@ -32,7 +32,7 @@ public class QuizCommands {
     }
 
     @ShellMethod("Pass quiz with specified user.")
-    public String passQuiz(@Positive long userId) {
+    public Table passQuiz(@Positive long userId) {
         User user = getUser(userId);
         QuizResult quizResult = quizController.passTest();
         return buildTestResult(user, quizResult);
@@ -44,14 +44,17 @@ public class QuizCommands {
                         new Object[]{id}, quizConfig.getSettings().getLocale())));
     }
 
-    private String buildTestResult(User user, QuizResult quizResult) {
+    private Table buildTestResult(User user, QuizResult quizResult) {
         Locale locale = quizConfig.getSettings().getLocale();
-        return new TextStringBuilder().appendNewLine()
-                .appendln(appMessageSource.getMessage("user.result.test.header", null, locale))
-                .appendln(appMessageSource.getMessage("user.result.test.username",
-                        new Object[]{user.getFullName()}, locale))
-                .appendln(appMessageSource.getMessage("user.result.test.result",
-                        new Object[]{quizResult.getCorrectAnswersRatio() * 100}, locale))
+        Object[][] data = {
+                new Object[]{
+                        appMessageSource.getMessage("user.quiz-result.username", null, locale),
+                        appMessageSource.getMessage("user.quiz-result.result", null, locale)},
+                new Object[]{user.getFullName(), String.format("%.0f%%", quizResult.getCorrectAnswersRatio() * 100)}
+        };
+        return new TableBuilder(new ArrayTableModel(data))
+                .addHeaderAndVerticalsBorders(BorderStyle.fancy_light_double_dash)
+                .on((row, column, model) -> true).addSizer(new NoWrapSizeConstraints())
                 .build();
     }
 }
