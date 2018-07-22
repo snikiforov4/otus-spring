@@ -26,25 +26,24 @@ import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class QuizControllerTest {
+class QuizControllerImplTest {
 
     private static final Locale LOCALE = Locale.ENGLISH;
     private static final int NUMBER_OF_QUESTIONS = 3;
-
 
     @Mock
     private QuestionService questionService;
     @Mock
     private UserInteractionService userInteractionService;
 
-    private QuizController sut;
+    private QuizControllerImpl sut;
 
     @Nested
     @DisplayName("passTest")
     class PassTest {
         @Test
         void shouldPassLocaleFromQuizConfigSettingsToUserInteractionService() {
-            sut = new QuizController(questionService, userInteractionService, buildQuizConfig());
+            sut = new QuizControllerImpl(questionService, userInteractionService, buildQuizConfig());
 
             sut.passTest(createUserStub());
 
@@ -54,7 +53,7 @@ class QuizControllerTest {
 
         @Test
         void shouldPassUserIntoSendQuizResultMethod() {
-            sut = new QuizController(questionService, userInteractionService, buildQuizConfig());
+            sut = new QuizControllerImpl(questionService, userInteractionService, buildQuizConfig());
             User user = createUserStub();
 
             sut.passTest(user);
@@ -65,7 +64,7 @@ class QuizControllerTest {
 
         @Test
         void shouldGetQuestionsFromQuestionService() {
-            sut = new QuizController(questionService, userInteractionService, buildQuizConfig());
+            sut = new QuizControllerImpl(questionService, userInteractionService, buildQuizConfig());
             doReturn(buildQuizQuestions()).when(questionService).getLimitNumberOfQuestions(eq(NUMBER_OF_QUESTIONS));
 
             sut.passTest(createUserStub());
@@ -76,7 +75,7 @@ class QuizControllerTest {
 
         @Test
         void shouldCallAskQuestionMethodAsManyAsQuestionsSize() {
-            sut = new QuizController(questionService, userInteractionService, buildQuizConfig());
+            sut = new QuizControllerImpl(questionService, userInteractionService, buildQuizConfig());
             doReturn(buildQuizQuestions()).when(questionService).getLimitNumberOfQuestions(eq(NUMBER_OF_QUESTIONS));
 
             sut.passTest(createUserStub());

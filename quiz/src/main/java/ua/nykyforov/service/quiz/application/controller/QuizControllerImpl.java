@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.nykyforov.service.quiz.application.config.QuizConfig;
 import ua.nykyforov.service.quiz.core.application.QuestionService;
+import ua.nykyforov.service.quiz.core.application.QuizController;
 import ua.nykyforov.service.quiz.core.application.UserInteractionService;
 import ua.nykyforov.service.quiz.core.model.QuizAnswer;
 import ua.nykyforov.service.quiz.core.model.QuizQuestion;
@@ -17,17 +18,17 @@ import java.util.List;
 import java.util.Locale;
 
 @Service
-public class QuizController {
-    private static final Logger logger = LoggerFactory.getLogger(QuizController.class);
+public class QuizControllerImpl implements QuizController {
+    private static final Logger logger = LoggerFactory.getLogger(QuizControllerImpl.class);
 
     private final QuestionService questionService;
     private final UserInteractionService userInteractionService;
     private final QuizConfig quizConfig;
 
     @Autowired
-    public QuizController(QuestionService questionService,
-                          UserInteractionService userInteractionService,
-                          QuizConfig quizConfig) {
+    public QuizControllerImpl(QuestionService questionService,
+                              UserInteractionService userInteractionService,
+                              QuizConfig quizConfig) {
         this.questionService = questionService;
         this.userInteractionService = userInteractionService;
         this.quizConfig = quizConfig;
