@@ -11,7 +11,7 @@ public class AppConfig {
     @Bean
     public static MessageSource appMessageSource() {
         ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
-        ms.setBasename("/i18n/app");
+        ms.setBasename("/l10n/app");
         ms.setDefaultEncoding("UTF-8");
         return ms;
     }
@@ -19,7 +19,7 @@ public class AppConfig {
     @Bean
     public static MessageSource quizMessageSource() {
         ReloadableResourceBundleMessageSource ms = new ReloadableResourceBundleMessageSource();
-        ms.setBasename("/i18n/quiz");
+        ms.setBasename("/l10n/quiz");
         ms.setDefaultEncoding("UTF-8");
         return ms;
     }
