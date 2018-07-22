@@ -48,12 +48,10 @@ public class QuizCommands {
         Locale locale = quizConfig.getSettings().getLocale();
         return new TextStringBuilder().appendNewLine()
                 .appendln(appMessageSource.getMessage("user.result.test.header", null, locale))
-                .appendln("=================================")
                 .appendln(appMessageSource.getMessage("user.result.test.username",
                         new Object[]{user.getFullName()}, locale))
                 .appendln(appMessageSource.getMessage("user.result.test.result",
                         new Object[]{quizResult.getCorrectAnswersRatio() * 100}, locale))
-                .appendln("=================================")
                 .build();
     }
 }

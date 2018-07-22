@@ -1,17 +1,20 @@
 package ua.nykyforov.service.quiz.core.model;
 
+import javax.annotation.concurrent.Immutable;
+
+@Immutable
 public class QuizResult {
 
-    private final int allQuestionsSize;
+    private final int numberOfQuestions;
     private final int correctAnswers;
 
-    public QuizResult(int allQuestionsSize, int correctAnswers) {
-        this.allQuestionsSize = allQuestionsSize;
+    public QuizResult(int numberOfQuestions, int correctAnswers) {
+        this.numberOfQuestions = numberOfQuestions;
         this.correctAnswers = correctAnswers;
     }
 
-    public int getAllQuestionsSize() {
-        return allQuestionsSize;
+    public int getNumberOfQuestions() {
+        return numberOfQuestions;
     }
 
     public int getCorrectAnswers() {
@@ -19,6 +22,6 @@ public class QuizResult {
     }
 
     public float getCorrectAnswersRatio() {
-        return (float) correctAnswers / allQuestionsSize;
+        return (float) correctAnswers / numberOfQuestions;
     }
 }
