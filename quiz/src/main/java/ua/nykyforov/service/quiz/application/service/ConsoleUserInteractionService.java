@@ -4,8 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import ua.nykyforov.service.quiz.core.application.UserInteractionService;
-import ua.nykyforov.service.quiz.core.model.QuizResult;
-import ua.nykyforov.service.quiz.core.model.User;
 
 import java.util.InputMismatchException;
 import java.util.List;
@@ -23,16 +21,6 @@ public class ConsoleUserInteractionService implements UserInteractionService {
                                          MessageSource quizMessageSource) {
         this.appMessageSource = appMessageSource;
         this.quizMessageSource = quizMessageSource;
-    }
-
-    @Override
-    public User askUserInfo(Locale locale) {
-        Scanner sc = new Scanner(System.in);
-        System.out.println(appMessageSource.getMessage("user.ask.name", null, locale));
-        String firstName = sc.next();
-        System.out.println(appMessageSource.getMessage("user.ask.surname", null, locale));
-        String lastName = sc.next();
-        return new User(firstName, lastName);
     }
 
     @Override
@@ -73,18 +61,6 @@ public class ConsoleUserInteractionService implements UserInteractionService {
             }
         } while (isNotValid);
         return answer;
-    }
-
-    @Override
-    public void sendQuizResult(User user, QuizResult quizResult, Locale locale) {
-        System.out.println();
-        System.out.println(appMessageSource.getMessage("user.result.test.header", null, locale));
-        System.out.println("=================================");
-        System.out.println(appMessageSource.getMessage("user.result.test.username",
-                new Object[]{user.getFullName()}, locale));
-        System.out.println(appMessageSource.getMessage("user.result.test.result",
-                new Object[]{quizResult.getCorrectAnswersRatio() * 100}, locale));
-        System.out.println("=================================");
     }
 
 }

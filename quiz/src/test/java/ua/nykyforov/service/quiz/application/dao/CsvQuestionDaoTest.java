@@ -9,13 +9,13 @@ import java.util.Collection;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-class CsvQuestionDAOTest {
+class CsvQuestionDaoTest {
 
-    private CsvQuestionDAO sut;
+    private CsvQuestionDao sut;
 
     @Test
     void shouldReadAllQuestionsFromFile() {
-        sut = new CsvQuestionDAO(createConfigWithPathToCsv("data/quiz-1.csv"));
+        sut = new CsvQuestionDao(createConfigWithPathToCsv("data/quiz-1.csv"));
         Collection<QuizQuestion> allQuestions = sut.getAllQuestions();
 
         assertThat(allQuestions).isNotNull();
@@ -24,7 +24,7 @@ class CsvQuestionDAOTest {
 
     @Test
     void shouldReadCorrectQuestionData() {
-        sut = new CsvQuestionDAO(createConfigWithPathToCsv("data/quiz-2.csv"));
+        sut = new CsvQuestionDao(createConfigWithPathToCsv("data/quiz-2.csv"));
         Collection<QuizQuestion> allQuestions = sut.getAllQuestions();
 
         assertThat(allQuestions).isNotNull();

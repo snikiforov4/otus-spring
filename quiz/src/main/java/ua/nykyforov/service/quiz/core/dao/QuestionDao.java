@@ -4,6 +4,6 @@ import ua.nykyforov.service.quiz.core.model.QuizQuestion;
 
 import java.util.Collection;
 
-public interface QuestionDAO {
+public interface QuestionDao {
     Collection<QuizQuestion> getAllQuestions();
 }

@@ -4,25 +4,33 @@ package ua.nykyforov.service.quiz.application.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.nykyforov.service.quiz.core.application.QuestionService;
-import ua.nykyforov.service.quiz.core.dao.QuestionDAO;
+import ua.nykyforov.service.quiz.core.dao.QuestionDao;
 import ua.nykyforov.service.quiz.core.model.QuizQuestion;
 
+import javax.annotation.Nullable;
+import javax.annotation.concurrent.NotThreadSafe;
 import java.util.Collection;
 
 import static com.google.common.collect.ImmutableList.toImmutableList;
 
 @Service
-public class SimpleQuestionService implements QuestionService {
+@NotThreadSafe
+public class CacheableQuestionService implements QuestionService {
 
-    private final QuestionDAO questionDAO;
+    @Nullable
+    private Collection<QuizQuestion> quizQuestionsCache;
+    private final QuestionDao questionDao;
 
     @Autowired
-    public SimpleQuestionService(QuestionDAO questionDAO) {
-        this.questionDAO = questionDAO;
+    public CacheableQuestionService(QuestionDao questionDao) {
+        this.questionDao = questionDao;
     }
 
     public Collection<QuizQuestion> getAllQuestions() {
-        return questionDAO.getAllQuestions();
+        if (quizQuestionsCache == null) {
+            quizQuestionsCache = questionDao.getAllQuestions();
+        }
+        return quizQuestionsCache;
     }
 
     @Override

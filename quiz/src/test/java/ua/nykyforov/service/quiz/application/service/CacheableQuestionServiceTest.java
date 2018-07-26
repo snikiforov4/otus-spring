@@ -11,7 +11,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.nykyforov.service.quiz.core.dao.QuestionDAO;
+import ua.nykyforov.service.quiz.core.dao.QuestionDao;
+import ua.nykyforov.service.quiz.core.model.QuizAnswer;
 import ua.nykyforov.service.quiz.core.model.QuizQuestion;
 
 import java.util.Collection;
@@ -22,16 +23,16 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class SimpleQuestionServiceTest {
+class CacheableQuestionServiceTest {
 
     @Mock
-    private QuestionDAO questionDAO;
+    private QuestionDao questionDao;
 
-    private SimpleQuestionService sut;
+    private CacheableQuestionService sut;
 
     @BeforeEach
     void setUp() {
-        sut = new SimpleQuestionService(questionDAO);
+        sut = new CacheableQuestionService(questionDao);
     }
 
     @Nested
@@ -41,12 +42,28 @@ class SimpleQuestionServiceTest {
         @Test
         void shouldReceiveQuestionsFromQuestionDao() {
             Collection<Object> questionsStub = Lists.newArrayList();
-            doReturn(questionsStub).when(questionDAO).getAllQuestions();
+            doReturn(questionsStub).when(questionDao).getAllQuestions();
 
             Collection<QuizQuestion> actualQuestions = sut.getAllQuestions();
 
-            verify(questionDAO, times(1)).getAllQuestions();
+            verify(questionDao, times(1)).getAllQuestions();
             assertSame(questionsStub, actualQuestions);
+        }
+
+        @Test
+        void shouldSaveReceivedQuestionsToCacheAndCallQuestionDaoOnlyOnce() {
+            Collection<Object> questionsStub = ImmutableList.of(
+                    new QuizQuestion("q1",
+                            ImmutableList.of(QuizAnswer.correct("a1"), QuizAnswer.incorrect("a2")))
+            );
+            doReturn(questionsStub).when(questionDao).getAllQuestions();
+
+            for (int i = 0; i < 3; i++) {
+                Collection<QuizQuestion> actualQuestions = sut.getAllQuestions();
+                assertSame(questionsStub, actualQuestions);
+            }
+
+            verify(questionDao, times(1)).getAllQuestions();
         }
 
     }
@@ -59,11 +76,11 @@ class SimpleQuestionServiceTest {
         void shouldReceiveQuestionsFromQuestionDao() {
             final int limit = 5;
             Collection<Object> questionsStub = Lists.newArrayList();
-            doReturn(questionsStub).when(questionDAO).getAllQuestions();
+            doReturn(questionsStub).when(questionDao).getAllQuestions();
 
             Collection<QuizQuestion> actualQuestions = sut.getLimitNumberOfQuestions(limit);
 
-            verify(questionDAO, times(1)).getAllQuestions();
+            verify(questionDao, times(1)).getAllQuestions();
             assertSame(questionsStub, actualQuestions);
         }
 
@@ -76,7 +93,7 @@ class SimpleQuestionServiceTest {
         void shouldReturnLimitedNumberOfQuestionsByParameter(final int actualSize, final int expectedSize) {
             final int limit = 5;
             Collection<Object> questionsStub = createListWithNumberOfQuestions(actualSize);
-            doReturn(questionsStub).when(questionDAO).getAllQuestions();
+            doReturn(questionsStub).when(questionDao).getAllQuestions();
 
             Collection<QuizQuestion> actualQuestions = sut.getLimitNumberOfQuestions(limit);
 

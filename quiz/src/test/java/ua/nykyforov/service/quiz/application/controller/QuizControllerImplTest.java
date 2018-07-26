@@ -5,6 +5,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.nykyforov.service.quiz.application.config.QuizConfig;
@@ -13,12 +15,11 @@ import ua.nykyforov.service.quiz.core.application.UserInteractionService;
 import ua.nykyforov.service.quiz.core.model.QuizAnswer;
 import ua.nykyforov.service.quiz.core.model.QuizQuestion;
 import ua.nykyforov.service.quiz.core.model.QuizResult;
-import ua.nykyforov.service.quiz.core.model.User;
 
 import java.util.List;
 import java.util.Locale;
 
-import static org.mockito.ArgumentMatchers.any;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
@@ -26,58 +27,25 @@ import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class QuizControllerTest {
+class QuizControllerImplTest {
 
     private static final Locale LOCALE = Locale.ENGLISH;
     private static final int NUMBER_OF_QUESTIONS = 3;
-
 
     @Mock
     private QuestionService questionService;
     @Mock
     private UserInteractionService userInteractionService;
 
-    private QuizController sut;
+    private QuizControllerImpl sut;
 
     @Nested
     @DisplayName("passTest")
     class PassTest {
-        @Test
-        void shouldPassLocaleFromQuizConfigSettingsToUserInteractionService() {
-            sut = new QuizController(questionService, userInteractionService, buildQuizConfig());
-            doReturn(new User("John", "Smith")).when(userInteractionService).askUserInfo(eq(LOCALE));
-
-            sut.passTest();
-
-            verify(userInteractionService, times(1)).askUserInfo(refEq(LOCALE));
-            verify(userInteractionService, times(1))
-                    .sendQuizResult(any(User.class), any(QuizResult.class), refEq(LOCALE));
-        }
-
-        @Test
-        void shouldGetUserFromUserInteractionService() {
-            sut = new QuizController(questionService, userInteractionService, buildQuizConfig());
-
-            sut.passTest();
-
-            verify(userInteractionService, times(1)).askUserInfo(any(Locale.class));
-        }
-
-        @Test
-        void shouldSendUserReceivedFromAskUserInfoMethodToSendQuizResultMethod() {
-            sut = new QuizController(questionService, userInteractionService, buildQuizConfig());
-            User user = new User("John", "Smith");
-            doReturn(user).when(userInteractionService).askUserInfo(eq(LOCALE));
-
-            sut.passTest();
-
-            verify(userInteractionService, times(1))
-                    .sendQuizResult(refEq(user), any(QuizResult.class), any(Locale.class));
-        }
 
         @Test
         void shouldGetQuestionsFromQuestionService() {
-            sut = new QuizController(questionService, userInteractionService, buildQuizConfig());
+            sut = new QuizControllerImpl(questionService, userInteractionService, buildQuizConfig());
             doReturn(buildQuizQuestions()).when(questionService).getLimitNumberOfQuestions(eq(NUMBER_OF_QUESTIONS));
 
             sut.passTest();
@@ -88,13 +56,32 @@ class QuizControllerTest {
 
         @Test
         void shouldCallAskQuestionMethodAsManyAsQuestionsSize() {
-            sut = new QuizController(questionService, userInteractionService, buildQuizConfig());
+            sut = new QuizControllerImpl(questionService, userInteractionService, buildQuizConfig());
             doReturn(buildQuizQuestions()).when(questionService).getLimitNumberOfQuestions(eq(NUMBER_OF_QUESTIONS));
 
             sut.passTest();
 
             verify(userInteractionService, times(NUMBER_OF_QUESTIONS))
                     .askQuestion(anyString(), anyList(), refEq(LOCALE));
+        }
+
+        @ParameterizedTest
+        @CsvSource({
+                "0, 1, 1, 1",
+                "3, 0, 0, 0",
+                "1, 1, 1, 0"
+        })
+        void shouldReturnCorrectQuizResult(int expectedCorrectAnswers, int answer1, int answer2, int answer3) {
+            sut = new QuizControllerImpl(questionService, userInteractionService, buildQuizConfig());
+            doReturn(buildQuizQuestions()).when(questionService).getLimitNumberOfQuestions(eq(NUMBER_OF_QUESTIONS));
+            doReturn(answer1, answer2, answer3)
+                    .when(userInteractionService).askQuestion(anyString(), anyList(), eq(LOCALE));
+
+            QuizResult quizResult = sut.passTest();
+
+            assertThat(quizResult).isNotNull();
+            assertThat(quizResult.getNumberOfQuestions()).isEqualTo(NUMBER_OF_QUESTIONS);
+            assertThat(quizResult.getCorrectAnswers()).isEqualTo(expectedCorrectAnswers);
         }
 
         private QuizConfig buildQuizConfig() {

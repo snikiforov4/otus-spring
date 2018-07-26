@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ua.nykyforov.service.quiz.application.config.QuizConfig;
-import ua.nykyforov.service.quiz.core.dao.QuestionDAO;
+import ua.nykyforov.service.quiz.core.dao.QuestionDao;
 import ua.nykyforov.service.quiz.core.model.QuizAnswer;
 import ua.nykyforov.service.quiz.core.model.QuizQuestion;
 
@@ -28,8 +28,8 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Lists.newArrayList;
 
 @Service
-public class CsvQuestionDAO implements QuestionDAO {
-    private static final Logger logger = LoggerFactory.getLogger(CsvQuestionDAO.class);
+public class CsvQuestionDao implements QuestionDao {
+    private static final Logger logger = LoggerFactory.getLogger(CsvQuestionDao.class);
     private static final String QUESTION_FIELD = "question";
     private static final String CORRECT_ANSWERS_FIELD = "correct_answers";
     private static final String ANSWER_FIELD = "answer_%d";
@@ -37,7 +37,7 @@ public class CsvQuestionDAO implements QuestionDAO {
     private final QuizConfig quizConfig;
 
     @Autowired
-    public CsvQuestionDAO(QuizConfig quizConfig) {
+    public CsvQuestionDao(QuizConfig quizConfig) {
         this.quizConfig = quizConfig;
     }
 
