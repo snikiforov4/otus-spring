@@ -1,5 +1,7 @@
 package ua.nykyforov.service.library.core.domain;
 
+import com.google.common.base.MoreObjects;
+
 public class Genre {
 
     private Integer id;
@@ -26,5 +28,14 @@ public class Genre {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .omitNullValues()
+                .add("id", id)
+                .add("name", name)
+                .toString();
     }
 }

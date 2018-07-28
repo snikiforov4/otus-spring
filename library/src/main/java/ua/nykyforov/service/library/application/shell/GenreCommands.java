@@ -7,6 +7,7 @@ import ua.nykyforov.service.library.core.application.GenreService;
 import ua.nykyforov.service.library.core.domain.Genre;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
 
 @ShellComponent
 public class GenreCommands {
@@ -22,6 +23,11 @@ public class GenreCommands {
     public String addGenre(@NotBlank String name) {
         genreService.save(new Genre(name));
         return "Genre was successfully saved";
+    }
+
+    @ShellMethod("Add new genre.")
+    public Genre getGenreById(@Positive int id) {
+        return genreService.getById(id);
     }
 
 }

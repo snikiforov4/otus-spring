@@ -1,6 +1,8 @@
 package ua.nykyforov.service.library.application.shell;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -8,6 +10,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ua.nykyforov.service.library.core.application.GenreService;
 
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -24,14 +27,35 @@ class GenreCommandsTest {
         sut = new GenreCommands(genreService);
     }
 
-    @Test
-    void shouldPassSpecifiedGenreToService() {
-        String genreName = "Horror";
+    @Nested
+    @DisplayName("addGenre")
+    class AddGenre {
 
-        sut.addGenre(genreName);
+        @Test
+        void shouldPassSpecifiedGenreToService() {
+            String genreName = "Horror";
 
-        verify(genreService, times(1))
-                .save(argThat(argument -> genreName.equals(argument.getName())));
+            sut.addGenre(genreName);
+
+            verify(genreService, times(1))
+                    .save(argThat(argument -> genreName.equals(argument.getName())));
+        }
+
+    }
+
+    @Nested
+    @DisplayName("getGenreById")
+    class GetGenreById {
+
+        @Test
+        void shouldGetGenreFromService() {
+            int id = 42;
+
+            sut.getGenreById(id);
+
+            verify(genreService, times(1)).getById(eq(id));
+        }
+
     }
 
 }
