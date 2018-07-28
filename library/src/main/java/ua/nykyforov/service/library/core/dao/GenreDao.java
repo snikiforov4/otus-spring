@@ -8,4 +8,5 @@ public interface GenreDao {
 
     Genre getById(int id);
 
+    int count();
 }
