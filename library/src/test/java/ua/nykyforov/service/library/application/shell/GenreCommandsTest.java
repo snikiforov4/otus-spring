@@ -25,10 +25,10 @@ class GenreCommandsTest {
     }
 
     @Test
-    void shouldPassUserToUserDao() {
+    void shouldPassSpecifiedGenreToService() {
         String genreName = "Horror";
 
-        sut.addNewGenre(genreName);
+        sut.addGenre(genreName);
 
         verify(genreService, times(1))
                 .save(argThat(argument -> genreName.equals(argument.getName())));

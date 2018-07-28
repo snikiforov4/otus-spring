@@ -19,7 +19,7 @@ public class GenreCommands {
     }
 
     @ShellMethod("Add new genre.")
-    public String addNewGenre(@NotBlank String name) {
+    public String addGenre(@NotBlank String name) {
         genreService.save(new Genre(name));
         return "Genre was successfully saved";
     }
