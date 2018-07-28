@@ -10,7 +10,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ua.nykyforov.service.library.core.application.GenreService;
 
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -39,21 +38,6 @@ class GenreCommandsTest {
 
             verify(genreService, times(1))
                     .save(argThat(argument -> genreName.equals(argument.getName())));
-        }
-
-    }
-
-    @Nested
-    @DisplayName("getGenreById")
-    class GetGenreById {
-
-        @Test
-        void shouldGetGenreFromService() {
-            int id = 42;
-
-            sut.getGenreById(id);
-
-            verify(genreService, times(1)).getById(eq(id));
         }
 
     }
