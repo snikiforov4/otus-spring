@@ -9,6 +9,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>quiz</module>
+        <module>library</module>
     </modules>
 
     <name>OTUS Spring</name>
