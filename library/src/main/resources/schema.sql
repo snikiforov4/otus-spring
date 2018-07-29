@@ -13,3 +13,10 @@ CREATE TABLE author
    last_name varchar(64) NOT NULL,
    PRIMARY KEY(id)
 );
+
+CREATE TABLE book
+(
+   id integer auto_increment NOT NULL,
+   title varchar(256) NOT NULL,
+   PRIMARY KEY(id)
+);
