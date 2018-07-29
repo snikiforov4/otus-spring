@@ -7,9 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.nykyforov.service.library.core.application.GenreService;
-import ua.nykyforov.service.library.core.dao.GenreDao;
-import ua.nykyforov.service.library.core.domain.Genre;
+import ua.nykyforov.service.library.core.application.AuthorDao;
+import ua.nykyforov.service.library.core.dao.AuthorService;
+import ua.nykyforov.service.library.core.domain.Author;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -17,16 +17,16 @@ import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class GenreServiceImplTest {
+class AuthorServiceImplTest {
 
     @Mock
-    private GenreDao genreDao;
+    private AuthorDao authorDao;
 
-    private GenreService sut;
+    private AuthorService sut;
 
     @BeforeEach
     void setUp() {
-        sut = new GenreServiceImpl(genreDao);
+        sut = new AuthorServiceImpl(authorDao);
     }
 
     @Nested
@@ -35,20 +35,20 @@ class GenreServiceImplTest {
 
         @Test
         void shouldCallDao() {
-            Genre genre = new Genre("Adventure");
-            doReturn(1).when(genreDao).insert(refEq(genre));
+            Author author = createAuthorStub();
+            doReturn(1).when(authorDao).insert(refEq(author));
 
-            sut.save(genre);
+            sut.save(author);
 
-            verify(genreDao, times(1)).insert(refEq(genre));
+            verify(authorDao, times(1)).insert(refEq(author));
         }
 
         @Test
         void shouldThrowExceptionIfDidNotReturnResultEqualsOne() {
-            Genre genre = new Genre("Adventure");
-            doReturn(0).when(genreDao).insert(refEq(genre));
+            Author author = createAuthorStub();
+            doReturn(0).when(authorDao).insert(refEq(author));
 
-            assertThatThrownBy(() -> sut.save(genre))
+            assertThatThrownBy(() -> sut.save(author))
                     .isInstanceOf(RuntimeException.class)
                     .hasMessage("affected number of rows: 0");
         }
@@ -62,15 +62,20 @@ class GenreServiceImplTest {
         @Test
         void shouldCallDao() {
             final int id = 42;
-            Genre genre = new Genre("Adventure");
-            doReturn(genre).when(genreDao).getById(eq(id));
+            Author author = createAuthorStub();
+            doReturn(author).when(authorDao).getById(eq(id));
 
-            Genre retGenre = sut.getById(id);
+            Author authorRet = sut.getById(id);
 
-            verify(genreDao, times(1)).getById(eq(id));
-            assertThat(genre).isSameAs(retGenre);
+            verify(authorDao, times(1)).getById(eq(id));
+            assertThat(author).isSameAs(authorRet);
         }
 
+
+    }
+
+    private Author createAuthorStub() {
+        return new Author("Stephen", "King");
     }
 
 }

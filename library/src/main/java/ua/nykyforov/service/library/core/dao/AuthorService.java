@@ -6,4 +6,6 @@ public interface AuthorService {
 
     void save(Author author);
 
+    Author getById(int id);
+
 }

@@ -6,4 +6,6 @@ public interface AuthorDao {
 
     int insert(Author author);
 
+    Author getById(int id);
+
 }
