@@ -2,9 +2,9 @@ package ua.nykyforov.service.library.core.application;
 
 import ua.nykyforov.service.library.core.domain.Author;
 
-public interface AuthorDao {
+public interface AuthorService {
 
-    int insert(Author author);
+    void save(Author author);
 
     Author getById(int id);
 

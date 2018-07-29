@@ -2,8 +2,8 @@ package ua.nykyforov.service.library.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ua.nykyforov.service.library.core.application.AuthorDao;
-import ua.nykyforov.service.library.core.dao.AuthorService;
+import ua.nykyforov.service.library.core.application.AuthorService;
+import ua.nykyforov.service.library.core.dao.AuthorDao;
 import ua.nykyforov.service.library.core.domain.Author;
 
 import static com.google.common.base.Preconditions.checkArgument;

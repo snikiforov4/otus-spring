@@ -7,4 +7,5 @@ public interface GenreService {
     void save(Genre genre);
 
     Genre getById(int id);
+
 }

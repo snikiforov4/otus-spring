@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
-import ua.nykyforov.service.library.core.application.AuthorDao;
+import ua.nykyforov.service.library.core.dao.AuthorDao;
 import ua.nykyforov.service.library.core.domain.Author;
 
 import java.sql.ResultSet;
