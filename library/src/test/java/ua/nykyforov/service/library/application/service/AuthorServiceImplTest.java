@@ -71,7 +71,6 @@ class AuthorServiceImplTest {
             assertThat(author).isSameAs(authorRet);
         }
 
-
     }
 
     private Author createAuthorStub() {
