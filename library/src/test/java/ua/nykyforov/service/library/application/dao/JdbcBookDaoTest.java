@@ -6,6 +6,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import ua.nykyforov.service.library.core.domain.Book;
+import ua.nykyforov.service.library.core.domain.Genre;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -27,15 +28,19 @@ class JdbcBookDaoTest {
     }
 
     @Test
-    @Sql({"/test-add-books.sql"})
+    @Sql({"/test-add-genres.sql", "/test-add-books.sql"})
     void shouldGetEntityById() {
         final int expectedBookId = 42;
         String expectedBookTitle = "Java Puzzlers";
         Book actualBook = sut.getById(expectedBookId);
         assertThat(actualBook).isNotNull();
+        assert actualBook.getGenre().isPresent() : "genre is empty";
+        Genre genre = actualBook.getGenre().get();
         assertAll(
                 () -> assertThat(actualBook.getId()).isEqualTo(expectedBookId),
-                () -> assertThat(actualBook.getTitle()).isEqualTo(expectedBookTitle)
+                () -> assertThat(actualBook.getTitle()).isEqualTo(expectedBookTitle),
+                () -> assertThat(genre.getId()).isEqualTo(44),
+                () -> assertThat(genre.getName()).isEqualTo("Programming")
         );
     }
 

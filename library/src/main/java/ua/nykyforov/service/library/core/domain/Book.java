@@ -2,10 +2,13 @@ package ua.nykyforov.service.library.core.domain;
 
 import com.google.common.base.MoreObjects;
 
+import java.util.Optional;
+
 public class Book {
 
     private Integer id;
     private String title;
+    private Genre genre;
 
     public Book() {
     }
@@ -30,11 +33,21 @@ public class Book {
         this.title = title;
     }
 
+    public Optional<Genre> getGenre() {
+        return Optional.ofNullable(genre);
+    }
+
+    public void setGenre(Genre genre) {
+        this.genre = genre;
+    }
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
+                .omitNullValues()
                 .add("id", id)
                 .add("title", title)
+                .add("genre", genre)
                 .toString();
     }
 }

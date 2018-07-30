@@ -7,10 +7,13 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 import ua.nykyforov.service.library.core.dao.BookDao;
 import ua.nykyforov.service.library.core.domain.Book;
+import ua.nykyforov.service.library.core.domain.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Map;
+
+import static com.google.common.collect.Maps.newHashMapWithExpectedSize;
 
 @Repository
 public class JdbcBookDao implements BookDao {
@@ -24,14 +27,17 @@ public class JdbcBookDao implements BookDao {
 
     @Override
     public int insert(Book book) {
-        String sql = "INSERT INTO book (title) VALUES(:title)";
-        Map<String, String> params = ImmutableMap.of("title", book.getTitle());
+        String sql = "INSERT INTO book (title, genre_id) VALUES(:title, :genre_id)";
+        Map<String, Object> params = newHashMapWithExpectedSize(2);
+        params.put("title", book.getTitle());
+        params.put("genre_id", book.getGenre().map(Genre::getId).orElse(null));
         return jdbc.update(sql, params);
     }
 
     @Override
     public Book getById(int id) {
-        String sql = "SELECT id, title FROM book WHERE id = :id";
+        String sql = "SELECT b.id, b.title, g.id as genre_id, g.name as genre_name " +
+                "FROM book b INNER JOIN genre g ON g.id = b.genre_id WHERE b.id = :id";
         return jdbc.queryForObject(sql, ImmutableMap.of("id", id), new BookMapper());
     }
 
@@ -41,6 +47,10 @@ public class JdbcBookDao implements BookDao {
             Book book = new Book();
             book.setId(row.getInt("id"));
             book.setTitle(row.getString("title"));
+            Genre genre = new Genre();
+            genre.setId(row.getInt("genre_id"));
+            genre.setName(row.getString("genre_name"));
+            book.setGenre(genre);
             return book;
         }
     }

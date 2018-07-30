@@ -1,1 +1,1 @@
-INSERT INTO book(id, title) VALUES (42, 'Java Puzzlers');
+INSERT INTO book(id, title, genre_id) VALUES (42, 'Java Puzzlers', 44);

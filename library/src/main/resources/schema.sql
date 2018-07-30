@@ -18,5 +18,7 @@ CREATE TABLE book
 (
    id integer auto_increment NOT NULL,
    title varchar(256) NOT NULL,
-   PRIMARY KEY(id)
+   genre_id integer NULL,
+   PRIMARY KEY(id),
+   FOREIGN KEY(genre_id) REFERENCES genre(id) ON UPDATE CASCADE
 );
