@@ -28,8 +28,22 @@ class JdbcBookDaoTest {
     }
 
     @Test
-    @Sql({"/test-add-genres.sql", "/test-add-books.sql"})
+    @Sql({"/test-insert-books-1.sql"})
     void shouldGetEntityById() {
+        final int expectedBookId = 42;
+        String expectedBookTitle = "Java Puzzlers";
+        Book actualBook = sut.getById(expectedBookId);
+        assertThat(actualBook).isNotNull();
+        assertAll(
+                () -> assertThat(actualBook.getId()).isEqualTo(expectedBookId),
+                () -> assertThat(actualBook.getTitle()).isEqualTo(expectedBookTitle),
+                () -> assertThat(actualBook.getGenre()).isNotPresent()
+        );
+    }
+
+    @Test
+    @Sql({"/test-insert-genres.sql", "/test-insert-books-2.sql"})
+    void shouldGetEntityByIdWithLinkToGenre() {
         final int expectedBookId = 42;
         String expectedBookTitle = "Java Puzzlers";
         Book actualBook = sut.getById(expectedBookId);

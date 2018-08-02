@@ -27,7 +27,7 @@ class JdbcGenreDaoTest {
     }
 
     @Test
-    @Sql({"/test-add-genres.sql"})
+    @Sql({"/test-insert-genres.sql"})
     void shouldGetEntityById() {
         final int expectedGenreId = 42;
         String expectedGenreName = "Mystic";

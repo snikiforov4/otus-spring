@@ -37,7 +37,7 @@ class AuthorCommandsTest {
             String firstName = "Stephen";
             String lastName = "King";
 
-            sut.addGenre(firstName, lastName);
+            sut.addAuthor(firstName, lastName);
 
             verify(authorService, times(1))
                     .save(argThat(argument -> Objects.equals(firstName, argument.getFirstName())

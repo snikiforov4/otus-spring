@@ -36,8 +36,8 @@ public class JdbcBookDao implements BookDao {
 
     @Override
     public Book getById(int id) {
-        String sql = "SELECT b.id, b.title, g.id as genre_id, g.name as genre_name " +
-                "FROM book b INNER JOIN genre g ON g.id = b.genre_id WHERE b.id = :id";
+        String sql = "SELECT b.id, b.title, b.genre_id, g.name as genre_name " +
+                "FROM book b LEFT OUTER JOIN genre g ON b.genre_id = g.id WHERE b.id = :id";
         return jdbc.queryForObject(sql, ImmutableMap.of("id", id), new BookMapper());
     }
 
@@ -47,10 +47,13 @@ public class JdbcBookDao implements BookDao {
             Book book = new Book();
             book.setId(row.getInt("id"));
             book.setTitle(row.getString("title"));
-            Genre genre = new Genre();
-            genre.setId(row.getInt("genre_id"));
-            genre.setName(row.getString("genre_name"));
-            book.setGenre(genre);
+            int genreId = row.getInt("genre_id");
+            if (genreId > 0) {
+                Genre genre = new Genre();
+                genre.setId(genreId);
+                genre.setName(row.getString("genre_name"));
+                book.setGenre(genre);
+            }
             return book;
         }
     }

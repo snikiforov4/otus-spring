@@ -19,7 +19,7 @@ public class AuthorCommands {
     }
 
     @ShellMethod("Add new author.")
-    public String addGenre(@NotBlank String firstName, @NotBlank String lastName) {
+    public String addAuthor(@NotBlank String firstName, @NotBlank String lastName) {
         authorService.save(new Author(firstName, lastName));
         return "Author was successfully saved";
     }
