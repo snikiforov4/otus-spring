@@ -41,6 +41,12 @@ public class JdbcBookDao implements BookDao {
         return jdbc.queryForObject(sql, ImmutableMap.of("id", id), new BookMapper());
     }
 
+    @Override
+    public int deleteById(int id) {
+        String sql = "DELETE FROM book WHERE id = :id";
+        return jdbc.update(sql, ImmutableMap.of("id", id));
+    }
+
     private static class BookMapper implements RowMapper<Book> {
         @Override
         public Book mapRow(ResultSet row, int rowNum) throws SQLException {

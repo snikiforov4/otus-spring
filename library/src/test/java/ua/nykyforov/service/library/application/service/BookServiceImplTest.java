@@ -73,6 +73,32 @@ class BookServiceImplTest {
 
     }
 
+    @Nested
+    @DisplayName("deleteById")
+    class DeleteById {
+
+        @Test
+        void shouldCallDao() {
+            final int id = 42;
+            doReturn(1).when(bookDao).deleteById(eq(id));
+
+            sut.deleteById(id);
+
+            verify(bookDao, times(1)).deleteById(eq(id));
+        }
+
+        @Test
+        void shouldThrowExceptionIfDidNotReturnResultEqualsOne() {
+            final int id = 42;
+            doReturn(0).when(bookDao).deleteById(eq(id));
+
+            assertThatThrownBy(() -> sut.deleteById(id))
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessage("affected number of rows: 0");
+        }
+
+    }
+
     private Book createBookStub() {
         return new Book("Shining");
     }

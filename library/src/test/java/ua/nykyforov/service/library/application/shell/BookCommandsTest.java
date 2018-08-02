@@ -12,6 +12,7 @@ import ua.nykyforov.service.library.core.application.BookService;
 import java.util.Objects;
 
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -40,6 +41,21 @@ class BookCommandsTest {
 
             verify(bookService, times(1))
                     .save(argThat(argument -> Objects.equals(argument.getTitle(), title)));
+        }
+
+    }
+
+    @Nested
+    @DisplayName("deleteBook")
+    class DeleteBook {
+
+        @Test
+        void shouldWrapParameterToEntityAndPassToService() {
+            final int bookId = 42;
+
+            sut.deleteBook(bookId);
+
+            verify(bookService, times(1)).deleteById(eq(bookId));
         }
 
     }

@@ -24,4 +24,9 @@ public class BookCommands {
         return "Book was successfully saved";
     }
 
+    @ShellMethod("Delete book by id.")
+    public String deleteBook(int id) {
+        bookService.deleteById(id);
+        return "Book was successfully deleted";
+    }
 }

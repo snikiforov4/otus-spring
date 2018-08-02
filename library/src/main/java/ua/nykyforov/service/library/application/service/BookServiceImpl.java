@@ -28,4 +28,10 @@ public class BookServiceImpl implements BookService {
     public Book getById(int id) {
         return bookDao.getById(id);
     }
+
+    @Override
+    public void deleteById(int id) {
+        int deleted = bookDao.deleteById(id);
+        checkArgument(deleted == 1, "affected number of rows: %s", deleted);
+    }
 }

@@ -8,4 +8,5 @@ public interface BookDao {
 
     Book getById(int id);
 
+    int deleteById(int id);
 }

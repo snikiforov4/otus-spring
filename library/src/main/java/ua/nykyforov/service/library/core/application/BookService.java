@@ -8,4 +8,5 @@ public interface BookService {
 
     Book getById(int id);
 
+    void deleteById(int id);
 }

@@ -58,4 +58,12 @@ class JdbcBookDaoTest {
         );
     }
 
+    @Test
+    @Sql({"/test-insert-books-1.sql"})
+    void shouldDeleteEntityById() {
+        int updated = sut.deleteById(42);
+
+        assertEquals(1, updated, "wrong number of deleted rows");
+    }
+
 }
