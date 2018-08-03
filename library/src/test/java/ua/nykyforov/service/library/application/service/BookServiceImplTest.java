@@ -1,5 +1,6 @@
 package ua.nykyforov.service.library.application.service;
 
+import com.google.common.collect.Lists;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -10,6 +11,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ua.nykyforov.service.library.core.application.BookService;
 import ua.nykyforov.service.library.core.dao.BookDao;
 import ua.nykyforov.service.library.core.domain.Book;
+
+import java.util.Collection;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -95,6 +99,24 @@ class BookServiceImplTest {
             assertThatThrownBy(() -> sut.deleteById(id))
                     .isInstanceOf(RuntimeException.class)
                     .hasMessage("affected number of rows: 0");
+        }
+
+    }
+
+    @Nested
+    @DisplayName("findByTitle")
+    class FindByTitle {
+
+        @Test
+        void shouldCallDao() {
+            final String title = "42";
+            List<Book> expectedBooks = Lists.newArrayList();
+            doReturn(expectedBooks).when(bookDao).findByTitle(eq(title));
+
+            Collection<Book> actualBooks = sut.findByTitle(title);
+
+            assertThat(actualBooks).isSameAs(expectedBooks);
+            verify(bookDao, times(1)).findByTitle(eq(title));
         }
 
     }

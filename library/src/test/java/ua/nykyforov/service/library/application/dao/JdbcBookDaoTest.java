@@ -8,6 +8,8 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import ua.nykyforov.service.library.core.domain.Book;
 import ua.nykyforov.service.library.core.domain.Genre;
 
+import java.util.Collection;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -64,6 +66,27 @@ class JdbcBookDaoTest {
         int updated = sut.deleteById(42);
 
         assertEquals(1, updated, "wrong number of deleted rows");
+    }
+
+    @Test
+    @Sql({"/test-insert-books-1.sql"})
+    void shouldFindEntityByTitle() {
+        Collection<Book> books = sut.findByTitle("%Java%");
+
+        assertThat(books)
+                .hasSize(2)
+                .usingElementComparatorOnFields("id", "title")
+                .containsExactlyInAnyOrder(
+                        createBookWithIdAndTitle(42, "Java Puzzlers"),
+                        createBookWithIdAndTitle(48, "Effective Java (3rd Edition)")
+                );
+    }
+
+    private Book createBookWithIdAndTitle(int id, String title) {
+        Book book = new Book();
+        book.setId(id);
+        book.setTitle(title);
+        return book;
     }
 
 }

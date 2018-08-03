@@ -60,4 +60,19 @@ class BookCommandsTest {
 
     }
 
+    @Nested
+    @DisplayName("findBookByTitle")
+    class FindBookByTitle {
+
+        @Test
+        void shouldWrapParameterToEntityAndPassToService() {
+            final String title = "42";
+
+            sut.findBookByTitle(title);
+
+            verify(bookService, times(1)).findByTitle(eq(title));
+        }
+
+    }
+
 }

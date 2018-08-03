@@ -11,6 +11,7 @@ import ua.nykyforov.service.library.core.domain.Genre;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Map;
 
 import static com.google.common.collect.Maps.newHashMapWithExpectedSize;
@@ -45,6 +46,11 @@ public class JdbcBookDao implements BookDao {
     public int deleteById(int id) {
         String sql = "DELETE FROM book WHERE id = :id";
         return jdbc.update(sql, ImmutableMap.of("id", id));
+    }
+
+    public Collection<Book> findByTitle(String query) {
+        String sql = "SELECT * FROM book WHERE title LIKE :query";
+        return jdbc.query(sql, ImmutableMap.of("query", query), new BookMapper());
     }
 
     private static class BookMapper implements RowMapper<Book> {
