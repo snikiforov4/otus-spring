@@ -1,14 +1,20 @@
 package ua.nykyforov.service.library.core.domain;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
+import java.util.Collection;
 import java.util.Optional;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class Book {
 
     private Integer id;
     private String title;
     private Genre genre;
+    private Collection<Author> authors;
 
     public Book() {
     }
@@ -41,6 +47,18 @@ public class Book {
         this.genre = genre;
     }
 
+    public void addAuthor(Author author) {
+        checkNotNull(author, "author");
+        if (authors == null) {
+            authors = Lists.newArrayList();
+        }
+        authors.add(author);
+    }
+
+    public Collection<Author> getAuthors() {
+        return authors == null ? ImmutableList.of() : ImmutableList.copyOf(authors);
+    }
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
@@ -48,6 +66,7 @@ public class Book {
                 .add("id", id)
                 .add("title", title)
                 .add("genre", genre)
+                .add("authors", authors)
                 .toString();
     }
 }

@@ -1,11 +1,15 @@
 package ua.nykyforov.service.library.application.dao;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
+import org.apache.commons.collections4.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.dao.IncorrectResultSizeDataAccessException;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
 import ua.nykyforov.service.library.core.dao.BookDao;
+import ua.nykyforov.service.library.core.domain.Author;
 import ua.nykyforov.service.library.core.domain.Book;
 import ua.nykyforov.service.library.core.domain.Genre;
 
@@ -14,6 +18,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMapWithExpectedSize;
 
 @Repository
@@ -37,9 +42,18 @@ public class JdbcBookDao implements BookDao {
 
     @Override
     public Book getById(int id) {
-        String sql = "SELECT b.id, b.title, b.genre_id, g.name as genre_name " +
-                "FROM book b LEFT OUTER JOIN genre g ON b.genre_id = g.id WHERE b.id = :id";
-        return jdbc.queryForObject(sql, ImmutableMap.of("id", id), new BookMapper());
+        String sql = "SELECT b.id, b.title, b.genre_id, g.name as genre_name, a.id as author_id, a.first_name as author_first_name, a.last_name as author_last_name " +
+                "FROM book b " +
+                "LEFT OUTER JOIN author_book ab ON b.id = ab.book_id " +
+                "LEFT OUTER JOIN author a ON a.id = ab.author_id " +
+                "LEFT OUTER JOIN genre g ON b.genre_id = g.id " +
+                "WHERE b.id = :id";
+        Map<Integer, Book> res = MapUtils.emptyIfNull(jdbc.query(sql, ImmutableMap.of("id", id), new BookExtractor()));
+        if (res.size() > 1) {
+            throw new IncorrectResultSizeDataAccessException(
+                    "found multiple rows in database", 1, res.size());
+        }
+        return res.get(id);
     }
 
     @Override
@@ -49,24 +63,53 @@ public class JdbcBookDao implements BookDao {
     }
 
     public Collection<Book> findByTitle(String query) {
-        String sql = "SELECT * FROM book WHERE title LIKE :query";
-        return jdbc.query(sql, ImmutableMap.of("query", query), new BookMapper());
+        String sql = "SELECT b.id, b.title, b.genre_id, g.name as genre_name, a.id as author_id, a.first_name as author_first_name, a.last_name as author_last_name " +
+                "FROM book b " +
+                "LEFT OUTER JOIN author_book ab ON b.id = ab.book_id " +
+                "LEFT OUTER JOIN author a ON a.id = ab.author_id " +
+                "LEFT OUTER JOIN genre g ON b.genre_id = g.id " +
+                "WHERE title LIKE :query";
+        return MapUtils.emptyIfNull(jdbc.query(sql, ImmutableMap.of("query", query), new BookExtractor()))
+                .values();
     }
 
-    private static class BookMapper implements RowMapper<Book> {
+    private static final class BookExtractor implements ResultSetExtractor<Map<Integer, Book>> {
         @Override
-        public Book mapRow(ResultSet row, int rowNum) throws SQLException {
-            Book book = new Book();
-            book.setId(row.getInt("id"));
-            book.setTitle(row.getString("title"));
-            int genreId = row.getInt("genre_id");
-            if (genreId > 0) {
-                Genre genre = new Genre();
-                genre.setId(genreId);
-                genre.setName(row.getString("genre_name"));
-                book.setGenre(genre);
+        public Map<Integer, Book> extractData(ResultSet rs) throws SQLException {
+            Map<Integer, Book> result = Maps.newHashMap();
+            while (rs.next()) {
+                final int bookId = rs.getInt("id");
+                final Book book = result.getOrDefault(bookId, new Book());
+                if (result.containsKey(bookId)) {
+                    addAuthorToBook(book, rs);
+                } else {
+                    book.setId(bookId);
+                    book.setTitle(rs.getString("title"));
+                    int genreId = rs.getInt("genre_id");
+                    if (genreId > 0) {
+                        Genre genre = new Genre();
+                        genre.setId(genreId);
+                        genre.setName(rs.getString("genre_name"));
+                        book.setGenre(genre);
+                    }
+                    addAuthorToBook(book, rs);
+                }
+                result.put(bookId, book);
             }
-            return book;
+            return result;
+        }
+
+        private void addAuthorToBook(Book book, ResultSet rs) throws SQLException {
+            checkNotNull(book, "book");
+            int authorId = rs.getInt("author_id");
+            if (authorId > 0) {
+                Author author = new Author();
+                author.setId(authorId);
+                author.setFirstName(rs.getString("author_first_name"));
+                author.setLastName(rs.getString("author_last_name"));
+                book.addAuthor(author);
+            }
         }
     }
+
 }

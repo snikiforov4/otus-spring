@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import ua.nykyforov.service.library.core.domain.Author;
 import ua.nykyforov.service.library.core.domain.Book;
 import ua.nykyforov.service.library.core.domain.Genre;
 
@@ -48,7 +49,9 @@ class JdbcBookDaoTest {
     void shouldGetEntityByIdWithLinkToGenre() {
         final int expectedBookId = 42;
         String expectedBookTitle = "Java Puzzlers";
+
         Book actualBook = sut.getById(expectedBookId);
+
         assertThat(actualBook).isNotNull();
         assert actualBook.getGenre().isPresent() : "genre is empty";
         Genre genre = actualBook.getGenre().get();
@@ -57,6 +60,26 @@ class JdbcBookDaoTest {
                 () -> assertThat(actualBook.getTitle()).isEqualTo(expectedBookTitle),
                 () -> assertThat(genre.getId()).isEqualTo(44),
                 () -> assertThat(genre.getName()).isEqualTo("Programming")
+        );
+    }
+
+    @Test
+    @Sql({"/test-insert-books-and-authors.sql"})
+    void shouldGetEntityByIdWithLinkToAuthors() {
+        final int expectedBookId = 23;
+
+        Book actualBook = sut.getById(expectedBookId);
+
+        assertThat(actualBook).isNotNull();
+        assertAll(
+                () -> assertThat(actualBook.getId()).isEqualTo(expectedBookId),
+                () -> assertThat(actualBook.getAuthors())
+                        .hasSize(2)
+                        .usingElementComparatorOnFields("id", "firstName", "lastName")
+                        .containsExactlyInAnyOrder(
+                                createAuthor(42, "Joshua", "Bloch"),
+                                createAuthor(43, "Neal", "Gafter")
+                        )
         );
     }
 
@@ -77,12 +100,18 @@ class JdbcBookDaoTest {
                 .hasSize(2)
                 .usingElementComparatorOnFields("id", "title")
                 .containsExactlyInAnyOrder(
-                        createBookWithIdAndTitle(42, "Java Puzzlers"),
-                        createBookWithIdAndTitle(48, "Effective Java (3rd Edition)")
+                        createBook(42, "Java Puzzlers"),
+                        createBook(48, "Effective Java (3rd Edition)")
                 );
     }
 
-    private Book createBookWithIdAndTitle(int id, String title) {
+    private Author createAuthor(int id, String firstName, String lastName) {
+        Author author = new Author(firstName, lastName);
+        author.setId(id);
+        return author;
+    }
+
+    private Book createBook(int id, String title) {
         Book book = new Book();
         book.setId(id);
         book.setTitle(title);

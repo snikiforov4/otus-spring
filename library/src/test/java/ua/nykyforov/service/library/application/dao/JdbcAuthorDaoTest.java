@@ -27,7 +27,7 @@ class JdbcAuthorDaoTest {
     }
 
     @Test
-    @Sql({"/test-add-authors.sql"})
+    @Sql({"/test-insert-authors.sql"})
     void shouldGetEntityById() {
         final int expectedAuthorId = 42;
         String expectedAuthorFirstName = "Joshua";

@@ -22,3 +22,12 @@ CREATE TABLE book
    PRIMARY KEY(id),
    FOREIGN KEY(genre_id) REFERENCES genre(id) ON UPDATE CASCADE
 );
+
+CREATE TABLE author_book
+(
+   author_id integer NOT NULL,
+   book_id integer NOT NULL,
+   PRIMARY KEY(author_id, book_id),
+   FOREIGN KEY(author_id) REFERENCES author(id) ON DELETE CASCADE,
+   FOREIGN KEY(book_id) REFERENCES book(id) ON DELETE CASCADE
+);
