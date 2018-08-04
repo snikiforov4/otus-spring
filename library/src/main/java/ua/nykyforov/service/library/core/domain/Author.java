@@ -40,6 +40,10 @@ public class Author {
         this.lastName = lastName;
     }
 
+    public String getFullName() {
+        return String.format("%s %s", firstName, lastName);
+    }
+
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)

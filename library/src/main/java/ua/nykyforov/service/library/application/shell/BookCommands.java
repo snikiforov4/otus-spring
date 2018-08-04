@@ -5,12 +5,16 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.table.*;
 import ua.nykyforov.service.library.core.application.BookService;
+import ua.nykyforov.service.library.core.domain.Author;
 import ua.nykyforov.service.library.core.domain.Book;
 import ua.nykyforov.service.library.core.domain.Genre;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import java.util.Collection;
+import java.util.Objects;
+
+import static java.util.stream.Collectors.joining;
 
 @ShellComponent
 public class BookCommands {
@@ -43,13 +47,20 @@ public class BookCommands {
     private Table buildBooksTable(Collection<Book> books) {
         Object[][] data = new Object[books.size() + 1][];
         int idx = 0;
-        data[idx++] = new String[]{"ID", "Title", "Genre"};
+        data[idx++] = new String[]{"ID", "Title", "Genre", "Authors"};
         for (Book book : books) {
-            data[idx++] = new Object[] {book.getId(), book.getTitle(), book.getGenre().map(Genre::getName).orElse("")};
+            String authorsList = book.getAuthors().stream().filter(Objects::nonNull)
+                    .map(Author::getFullName).collect(joining(", "));
+            data[idx++] = new Object[] {
+                    book.getId(),
+                    book.getTitle(),
+                    book.getGenre().map(Genre::getName).orElse(""),
+                    authorsList
+            };
         }
         return new TableBuilder(new ArrayTableModel(data))
                 .addHeaderAndVerticalsBorders(BorderStyle.oldschool)
-                .on((row, column, model) -> column == 1).addSizer(new AbsoluteWidthSizeConstraints(20))
+                .on((row, column, model) -> column == 1 || column == 3).addSizer(new AbsoluteWidthSizeConstraints(25))
                 .build();
     }
 }
