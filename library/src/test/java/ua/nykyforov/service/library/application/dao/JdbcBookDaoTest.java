@@ -3,8 +3,10 @@ package ua.nykyforov.service.library.application.dao;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import ua.nykyforov.service.library.core.domain.Author;
 import ua.nykyforov.service.library.core.domain.Book;
 import ua.nykyforov.service.library.core.domain.Genre;
@@ -23,11 +25,16 @@ class JdbcBookDaoTest {
     @Autowired
     private JdbcBookDao sut;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @Test
     void shouldInsertEntity() {
-        int updated = sut.insert(new Book("Java Puzzlers"));
+        int expectedNumberOfRows = getCountOfRowsInTable() + 1;
+        sut.insert(new Book("Java Puzzlers"));
 
-        assertEquals(1, updated, "wrong number of updated rows");
+        assertEquals(expectedNumberOfRows, getCountOfRowsInTable(),
+                "wrong number of inserted rows");
     }
 
     @Test
@@ -86,9 +93,14 @@ class JdbcBookDaoTest {
     @Test
     @Sql({"/test-insert-books-1.sql"})
     void shouldDeleteEntityById() {
-        int updated = sut.deleteById(42);
+        int rowsInTable = getCountOfRowsInTable();
+        int expectedRowsInTable = rowsInTable - 1;
 
-        assertEquals(1, updated, "wrong number of deleted rows");
+        sut.deleteById(42);
+
+        int actualRowsInTable = getCountOfRowsInTable();
+        assertEquals(expectedRowsInTable, actualRowsInTable,
+                "wrong number of deleted rows");
     }
 
     @Test
@@ -116,6 +128,10 @@ class JdbcBookDaoTest {
         book.setId(id);
         book.setTitle(title);
         return book;
+    }
+
+    private int getCountOfRowsInTable() {
+        return JdbcTestUtils.countRowsInTable(jdbcTemplate, "book");
     }
 
 }

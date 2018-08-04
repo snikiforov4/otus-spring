@@ -3,6 +3,8 @@ package ua.nykyforov.service.library.application.dao;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections4.MapUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
@@ -23,6 +25,7 @@ import static com.google.common.collect.Maps.newHashMapWithExpectedSize;
 
 @Repository
 public class JdbcBookDao implements BookDao {
+    private static final Logger logger = LoggerFactory.getLogger(JdbcBookDao.class);
 
     private final NamedParameterJdbcOperations jdbc;
 
@@ -32,12 +35,13 @@ public class JdbcBookDao implements BookDao {
     }
 
     @Override
-    public int insert(Book book) {
+    public void insert(Book book) {
         String sql = "INSERT INTO book (title, genre_id) VALUES(:title, :genre_id)";
         Map<String, Object> params = newHashMapWithExpectedSize(2);
         params.put("title", book.getTitle());
         params.put("genre_id", book.getGenre().map(Genre::getId).orElse(null));
-        return jdbc.update(sql, params);
+        int updated = jdbc.update(sql, params);
+        logger.info("insert: book={} affected={}", book, updated);
     }
 
     @Override
@@ -57,9 +61,10 @@ public class JdbcBookDao implements BookDao {
     }
 
     @Override
-    public int deleteById(int id) {
+    public void deleteById(int id) {
         String sql = "DELETE FROM book WHERE id = :id";
-        return jdbc.update(sql, ImmutableMap.of("id", id));
+        int deleted = jdbc.update(sql, ImmutableMap.of("id", id));
+        logger.info("deleteById: id={} affected={}", id, deleted);
     }
 
     public Collection<Book> findByTitle(String query) {

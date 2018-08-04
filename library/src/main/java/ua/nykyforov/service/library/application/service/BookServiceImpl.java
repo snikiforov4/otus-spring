@@ -8,8 +8,6 @@ import ua.nykyforov.service.library.core.domain.Book;
 
 import java.util.Collection;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 @Service
 public class BookServiceImpl implements BookService {
 
@@ -22,8 +20,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void save(Book book) {
-        int inserted = bookDao.insert(book);
-        checkArgument(inserted == 1, "affected number of rows: %s", inserted);
+        bookDao.insert(book);
     }
 
     @Override
@@ -33,8 +30,7 @@ public class BookServiceImpl implements BookService {
 
     @Override
     public void deleteById(int id) {
-        int deleted = bookDao.deleteById(id);
-        checkArgument(deleted == 1, "affected number of rows: %s", deleted);
+        bookDao.deleteById(id);
     }
 
     @Override

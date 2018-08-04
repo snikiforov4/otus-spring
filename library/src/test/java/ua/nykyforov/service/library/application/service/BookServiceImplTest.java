@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.*;
 
@@ -40,21 +39,11 @@ class BookServiceImplTest {
         @Test
         void shouldCallDao() {
             Book book = createBookStub();
-            doReturn(1).when(bookDao).insert(refEq(book));
+            doNothing().when(bookDao).insert(refEq(book));
 
             sut.save(book);
 
             verify(bookDao, times(1)).insert(refEq(book));
-        }
-
-        @Test
-        void shouldThrowExceptionIfDidNotReturnResultEqualsOne() {
-            Book book = createBookStub();
-            doReturn(0).when(bookDao).insert(refEq(book));
-
-            assertThatThrownBy(() -> sut.save(book))
-                    .isInstanceOf(RuntimeException.class)
-                    .hasMessage("affected number of rows: 0");
         }
 
     }
@@ -84,21 +73,11 @@ class BookServiceImplTest {
         @Test
         void shouldCallDao() {
             final int id = 42;
-            doReturn(1).when(bookDao).deleteById(eq(id));
+            doNothing().when(bookDao).deleteById(eq(id));
 
             sut.deleteById(id);
 
             verify(bookDao, times(1)).deleteById(eq(id));
-        }
-
-        @Test
-        void shouldThrowExceptionIfDidNotReturnResultEqualsOne() {
-            final int id = 42;
-            doReturn(0).when(bookDao).deleteById(eq(id));
-
-            assertThatThrownBy(() -> sut.deleteById(id))
-                    .isInstanceOf(RuntimeException.class)
-                    .hasMessage("affected number of rows: 0");
         }
 
     }
