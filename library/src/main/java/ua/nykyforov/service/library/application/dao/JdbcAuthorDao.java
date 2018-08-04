@@ -1,6 +1,8 @@
 package ua.nykyforov.service.library.application.dao;
 
 import com.google.common.collect.ImmutableMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -14,6 +16,7 @@ import java.util.Map;
 
 @Repository
 public class JdbcAuthorDao implements AuthorDao {
+    private static final Logger logger = LoggerFactory.getLogger(JdbcAuthorDao.class);
 
     private final NamedParameterJdbcOperations jdbc;
 
@@ -23,12 +26,13 @@ public class JdbcAuthorDao implements AuthorDao {
     }
 
     @Override
-    public int insert(Author author) {
+    public void insert(Author author) {
         String sql = "INSERT INTO author (first_name, last_name) VALUES(:firstName, :lastName)";
         Map<String, String> params = ImmutableMap.of(
                 "firstName", author.getFirstName(),
                 "lastName", author.getLastName());
-        return jdbc.update(sql, params);
+        int updated = jdbc.update(sql, params);
+        logger.info("insert: author={} affected={}", author, updated);
     }
 
     @Override

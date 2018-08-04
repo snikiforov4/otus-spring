@@ -4,7 +4,7 @@ import ua.nykyforov.service.library.core.domain.Author;
 
 public interface AuthorDao {
 
-    int insert(Author author);
+    void insert(Author author);
 
     Author getById(int id);
 

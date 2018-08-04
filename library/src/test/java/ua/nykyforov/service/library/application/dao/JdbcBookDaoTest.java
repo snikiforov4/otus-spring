@@ -22,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringJUnitConfig(classes = {DataSourceConfig.class})
 class JdbcBookDaoTest {
 
+    private static final String TABLE_NAME = "book";
+
     @Autowired
     private JdbcBookDao sut;
 
@@ -131,7 +133,7 @@ class JdbcBookDaoTest {
     }
 
     private int getCountOfRowsInTable() {
-        return JdbcTestUtils.countRowsInTable(jdbcTemplate, "book");
+        return JdbcTestUtils.countRowsInTable(jdbcTemplate, TABLE_NAME);
     }
 
 }

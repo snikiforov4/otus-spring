@@ -12,7 +12,6 @@ import ua.nykyforov.service.library.core.dao.AuthorDao;
 import ua.nykyforov.service.library.core.domain.Author;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.*;
 
@@ -36,21 +35,11 @@ class AuthorServiceImplTest {
         @Test
         void shouldCallDao() {
             Author author = createAuthorStub();
-            doReturn(1).when(authorDao).insert(refEq(author));
+            doNothing().when(authorDao).insert(refEq(author));
 
             sut.save(author);
 
             verify(authorDao, times(1)).insert(refEq(author));
-        }
-
-        @Test
-        void shouldThrowExceptionIfDidNotReturnResultEqualsOne() {
-            Author author = createAuthorStub();
-            doReturn(0).when(authorDao).insert(refEq(author));
-
-            assertThatThrownBy(() -> sut.save(author))
-                    .isInstanceOf(RuntimeException.class)
-                    .hasMessage("affected number of rows: 0");
         }
 
     }
