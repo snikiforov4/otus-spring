@@ -3,8 +3,10 @@ package ua.nykyforov.service.library.application.dao;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.jdbc.JdbcTestUtils;
 import ua.nykyforov.service.library.core.domain.Genre;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,14 +18,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringJUnitConfig(classes = {DataSourceConfig.class})
 class JdbcGenreDaoTest {
 
+    private static final String TABLE_NAME = "genre";
+
     @Autowired
     private JdbcGenreDao sut;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @Test
     void shouldInsertEntity() {
-        int updated = sut.insert(new Genre("Adventure"));
+        int expectedNumberOfRows = getCountOfRowsInTable() + 1;
 
-        assertEquals(1, updated, "wrong number of updated rows");
+        sut.insert(new Genre("Adventures"));
+
+        assertEquals(expectedNumberOfRows, getCountOfRowsInTable(),
+                "wrong number of inserted rows");
     }
 
     @Test
@@ -40,17 +50,18 @@ class JdbcGenreDaoTest {
     }
 
     @Test
+    @Sql({"/test-insert-genres.sql"})
     void shouldGetCorrectCountOfInsertedEntities() {
-        int updated;
-        updated = sut.insert(new Genre("Thriller"));
-        assert updated == 1;
-        updated = sut.insert(new Genre("Horror"));
-        assert updated == 1;
-        updated = sut.insert(new Genre("Adventures"));
-        assert updated == 1;
+        sut.insert(new Genre("Computer Science"));
+        int expectedNumberOfRows = getCountOfRowsInTable();
 
         int actualCount = sut.count();
-        assertThat(actualCount).isEqualTo(3);
+
+        assertThat(actualCount).isEqualTo(expectedNumberOfRows);
+    }
+
+    private int getCountOfRowsInTable() {
+        return JdbcTestUtils.countRowsInTable(jdbcTemplate, TABLE_NAME);
     }
 
 }

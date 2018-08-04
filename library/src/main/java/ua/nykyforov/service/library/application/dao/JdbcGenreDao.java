@@ -1,6 +1,8 @@
 package ua.nykyforov.service.library.application.dao;
 
 import com.google.common.collect.ImmutableMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -13,6 +15,7 @@ import java.sql.SQLException;
 
 @Repository
 public class JdbcGenreDao implements GenreDao {
+    private static final Logger logger = LoggerFactory.getLogger(JdbcGenreDao.class);
 
     private final NamedParameterJdbcOperations jdbc;
 
@@ -22,9 +25,10 @@ public class JdbcGenreDao implements GenreDao {
     }
 
     @Override
-    public int insert(Genre genre) {
+    public void insert(Genre genre) {
         String sql = "INSERT INTO genre (name) VALUES(:name)";
-        return jdbc.update(sql, ImmutableMap.of("name", genre.getName()));
+        int updated = jdbc.update(sql, ImmutableMap.of("name", genre.getName()));
+        logger.info("insert: book={} affected={}", genre, updated);
     }
 
     @Override
@@ -34,7 +38,7 @@ public class JdbcGenreDao implements GenreDao {
     }
 
     public int count() {
-        String sql = "SELECT count(*) FROM genre";
+        String sql = "SELECT count(0) FROM genre";
         return jdbc.queryForObject(sql, ImmutableMap.of(), Integer.class);
     }
 

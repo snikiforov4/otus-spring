@@ -6,8 +6,6 @@ import ua.nykyforov.service.library.core.application.GenreService;
 import ua.nykyforov.service.library.core.dao.GenreDao;
 import ua.nykyforov.service.library.core.domain.Genre;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 @Service
 public class GenreServiceImpl implements GenreService {
 
@@ -20,8 +18,7 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     public void save(Genre genre) {
-        int inserted = genreDao.insert(genre);
-        checkArgument(inserted == 1, "affected number of rows: %s", inserted);
+        genreDao.insert(genre);
     }
 
     @Override

@@ -12,7 +12,6 @@ import ua.nykyforov.service.library.core.dao.GenreDao;
 import ua.nykyforov.service.library.core.domain.Genre;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.*;
 
@@ -36,21 +35,11 @@ class GenreServiceImplTest {
         @Test
         void shouldCallDao() {
             Genre genre = new Genre("Adventure");
-            doReturn(1).when(genreDao).insert(refEq(genre));
+            doNothing().when(genreDao).insert(refEq(genre));
 
             sut.save(genre);
 
             verify(genreDao, times(1)).insert(refEq(genre));
-        }
-
-        @Test
-        void shouldThrowExceptionIfDidNotReturnResultEqualsOne() {
-            Genre genre = new Genre("Adventure");
-            doReturn(0).when(genreDao).insert(refEq(genre));
-
-            assertThatThrownBy(() -> sut.save(genre))
-                    .isInstanceOf(RuntimeException.class)
-                    .hasMessage("affected number of rows: 0");
         }
 
     }
