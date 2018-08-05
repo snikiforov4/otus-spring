@@ -2,7 +2,7 @@ package ua.nykyforov.service.library.application.dao;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -14,14 +14,14 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-@JdbcTest
+@DataJpaTest
 @SpringJUnitConfig(classes = {DataSourceConfig.class})
-class JdbcAuthorDaoTest {
+class JpaAuthorDaoTest {
 
     private static final String TABLE_NAME = "author";
 
     @Autowired
-    private JdbcAuthorDao sut;
+    private JpaAuthorDao sut;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;

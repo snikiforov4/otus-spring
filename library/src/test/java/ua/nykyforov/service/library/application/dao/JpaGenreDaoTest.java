@@ -2,7 +2,6 @@ package ua.nykyforov.service.library.application.dao;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
@@ -17,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 @SpringJUnitConfig(classes = {DataSourceConfig.class})
-@AutoConfigurationPackage
 class JpaGenreDaoTest {
 
     private static final String TABLE_NAME = "genre";

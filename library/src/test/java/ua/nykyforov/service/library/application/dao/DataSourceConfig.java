@@ -1,5 +1,6 @@
 package ua.nykyforov.service.library.application.dao;
 
+import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -13,6 +14,7 @@ import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.
 @Configuration
 @EntityScan(basePackages = {"ua.nykyforov.service.library.core.domain"})
 @ComponentScan(basePackages = {"ua.nykyforov.service.library.application.dao"})
+@AutoConfigurationPackage
 public class DataSourceConfig {
 
     @Bean
