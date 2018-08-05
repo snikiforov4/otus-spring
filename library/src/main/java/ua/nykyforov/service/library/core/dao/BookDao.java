@@ -12,5 +12,5 @@ public interface BookDao {
 
     void deleteById(int id);
 
-    Collection<Book> findByTitle(String query);
+    Collection<Book> findByTitleLike(String title);
 }

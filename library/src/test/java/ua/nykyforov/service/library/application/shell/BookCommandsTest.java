@@ -70,7 +70,7 @@ class BookCommandsTest {
 
             sut.findBookByTitle(title);
 
-            verify(bookService, times(1)).findByTitle(eq(title));
+            verify(bookService, times(1)).findByTitleLike(eq(title));
         }
 
     }

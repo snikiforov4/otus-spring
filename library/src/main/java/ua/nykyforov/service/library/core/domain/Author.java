@@ -10,7 +10,7 @@ public class Author {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
     @Column(name = "first_name")
     private String firstName;
     @Column(name = "last_name")
@@ -24,11 +24,11 @@ public class Author {
         this.lastName = lastName;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 

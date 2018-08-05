@@ -34,7 +34,7 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public Collection<Book> findByTitle(String title) {
-        return bookDao.findByTitle(title);
+    public Collection<Book> findByTitleLike(String title) {
+        return bookDao.findByTitleLike(title);
     }
 }

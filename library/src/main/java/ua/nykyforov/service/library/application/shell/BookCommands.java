@@ -40,7 +40,7 @@ public class BookCommands {
 
     @ShellMethod("Find books by title.")
     public Table findBookByTitle(@NotBlank String title) {
-        Collection<Book> foundBooks = bookService.findByTitle(title);
+        Collection<Book> foundBooks = bookService.findByTitleLike(title);
         return buildBooksTable(foundBooks);
     }
 

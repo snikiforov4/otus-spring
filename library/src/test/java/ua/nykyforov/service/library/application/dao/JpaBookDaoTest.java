@@ -2,7 +2,7 @@ package ua.nykyforov.service.library.application.dao;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -18,14 +18,14 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-@JdbcTest
+@DataJpaTest
 @SpringJUnitConfig(classes = {DataSourceConfig.class})
-class JdbcBookDaoTest {
+class JpaBookDaoTest {
 
     private static final String TABLE_NAME = "book";
 
     @Autowired
-    private JdbcBookDao sut;
+    private JpaBookDao sut;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -108,7 +108,7 @@ class JdbcBookDaoTest {
     @Test
     @Sql({"/test-insert-books-1.sql"})
     void shouldFindEntityByTitle() {
-        Collection<Book> books = sut.findByTitle("%Java%");
+        Collection<Book> books = sut.findByTitleLike("Java");
 
         assertThat(books)
                 .hasSize(2)

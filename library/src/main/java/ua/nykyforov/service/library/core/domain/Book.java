@@ -4,16 +4,29 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import javax.persistence.*;
 import java.util.Collection;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@Entity
+@Table(name = "book")
 public class Book {
 
-    private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    @Column(name = "title")
     private String title;
+    @ManyToOne
+    @JoinColumn(name="genre_id")
     private Genre genre;
+    @ManyToMany
+    @JoinTable(name="author_book",
+            joinColumns = @JoinColumn(name="book_id", referencedColumnName="ID"),
+            inverseJoinColumns = @JoinColumn(name="author_id", referencedColumnName="ID")
+    )
     private Collection<Author> authors;
 
     public Book() {
@@ -23,11 +36,11 @@ public class Book {
         this.title = title;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 

@@ -12,5 +12,5 @@ public interface BookService {
 
     void deleteById(int id);
 
-    Collection<Book> findByTitle(String title);
+    Collection<Book> findByTitleLike(String title);
 }

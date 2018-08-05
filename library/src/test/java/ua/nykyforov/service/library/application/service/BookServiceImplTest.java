@@ -83,19 +83,19 @@ class BookServiceImplTest {
     }
 
     @Nested
-    @DisplayName("findByTitle")
-    class FindByTitle {
+    @DisplayName("findByTitleLike")
+    class FindByTitleLike {
 
         @Test
         void shouldCallDao() {
             final String title = "42";
             List<Book> expectedBooks = Lists.newArrayList();
-            doReturn(expectedBooks).when(bookDao).findByTitle(eq(title));
+            doReturn(expectedBooks).when(bookDao).findByTitleLike(eq(title));
 
-            Collection<Book> actualBooks = sut.findByTitle(title);
+            Collection<Book> actualBooks = sut.findByTitleLike(title);
 
             assertThat(actualBooks).isSameAs(expectedBooks);
-            verify(bookDao, times(1)).findByTitle(eq(title));
+            verify(bookDao, times(1)).findByTitleLike(eq(title));
         }
 
     }
