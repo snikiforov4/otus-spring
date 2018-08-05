@@ -2,8 +2,14 @@ package ua.nykyforov.service.library.core.domain;
 
 import com.google.common.base.MoreObjects;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "genre")
 public class Genre {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
 
