@@ -11,6 +11,7 @@ import ua.nykyforov.service.library.core.domain.Author;
 import ua.nykyforov.service.library.core.domain.Book;
 import ua.nykyforov.service.library.core.domain.Genre;
 
+import javax.transaction.Transactional;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import java.util.Collection;
@@ -31,8 +32,9 @@ public class BookCommands {
         this.genreService = genreService;
     }
 
+    @Transactional
     @ShellMethod("Add new book.")
-    Book addBook(@NotBlank String title,
+    public Book addBook(@NotBlank String title,
                  @ShellOption(defaultValue = "0") int genreId) {
         Book book = new Book(title);
         if (genreId > 0) {
@@ -48,8 +50,9 @@ public class BookCommands {
         return String.format("Book with id=%s was successfully deleted", id);
     }
 
+    @Transactional
     @ShellMethod("Find books by title.")
-    Table findBookByTitle(@NotBlank String title) {
+    public Table findBookByTitle(@NotBlank String title) {
         Collection<Book> foundBooks = bookService.findByTitleLike(title);
         return buildBooksTable(foundBooks);
     }

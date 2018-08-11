@@ -6,6 +6,7 @@ import ua.nykyforov.service.library.core.application.BookService;
 import ua.nykyforov.service.library.core.dao.BookDao;
 import ua.nykyforov.service.library.core.domain.Book;
 
+import javax.transaction.Transactional;
 import java.util.Collection;
 
 @Service
@@ -19,21 +20,25 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional
     public void save(Book book) {
         bookDao.insert(book);
     }
 
     @Override
+    @Transactional
     public Book getById(int id) {
         return bookDao.getById(id);
     }
 
     @Override
+    @Transactional
     public void deleteById(int id) {
         bookDao.deleteById(id);
     }
 
     @Override
+    @Transactional
     public Collection<Book> findByTitleLike(String title) {
         return bookDao.findByTitleLike(title);
     }

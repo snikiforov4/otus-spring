@@ -6,10 +6,8 @@ import ua.nykyforov.service.library.core.domain.Genre;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 
 @Repository
-@Transactional
 public class JpaGenreDao implements GenreDao {
 
     @PersistenceContext

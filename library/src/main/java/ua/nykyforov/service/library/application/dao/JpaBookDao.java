@@ -8,11 +8,9 @@ import ua.nykyforov.service.library.core.domain.Book;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import java.util.Collection;
 
 @Repository
-@Transactional
 public class JpaBookDao implements BookDao {
     private static final Logger logger = LoggerFactory.getLogger(JpaBookDao.class);
 

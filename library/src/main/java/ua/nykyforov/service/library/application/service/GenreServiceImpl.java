@@ -6,6 +6,7 @@ import ua.nykyforov.service.library.core.application.GenreService;
 import ua.nykyforov.service.library.core.dao.GenreDao;
 import ua.nykyforov.service.library.core.domain.Genre;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service
@@ -19,11 +20,13 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
+    @Transactional
     public void save(Genre genre) {
         genreDao.insert(genre);
     }
 
     @Override
+    @Transactional
     public Optional<Genre> getById(int id) {
         return Optional.ofNullable(genreDao.getById(id));
     }

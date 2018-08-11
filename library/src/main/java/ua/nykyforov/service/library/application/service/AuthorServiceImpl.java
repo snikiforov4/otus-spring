@@ -6,6 +6,8 @@ import ua.nykyforov.service.library.core.application.AuthorService;
 import ua.nykyforov.service.library.core.dao.AuthorDao;
 import ua.nykyforov.service.library.core.domain.Author;
 
+import javax.transaction.Transactional;
+
 @Service
 public class AuthorServiceImpl implements AuthorService {
 
@@ -17,11 +19,13 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
+    @Transactional
     public void save(Author author) {
         authorDao.insert(author);
     }
 
     @Override
+    @Transactional
     public Author getById(int id) {
         return authorDao.getById(id);
     }
