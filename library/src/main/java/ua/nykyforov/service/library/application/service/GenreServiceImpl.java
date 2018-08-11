@@ -6,6 +6,8 @@ import ua.nykyforov.service.library.core.application.GenreService;
 import ua.nykyforov.service.library.core.dao.GenreDao;
 import ua.nykyforov.service.library.core.domain.Genre;
 
+import java.util.Optional;
+
 @Service
 public class GenreServiceImpl implements GenreService {
 
@@ -22,7 +24,7 @@ public class GenreServiceImpl implements GenreService {
     }
 
     @Override
-    public Genre getById(int id) {
-        return genreDao.getById(id);
+    public Optional<Genre> getById(int id) {
+        return Optional.ofNullable(genreDao.getById(id));
     }
 }

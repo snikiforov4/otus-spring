@@ -9,13 +9,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.nykyforov.service.library.core.application.BookService;
 import ua.nykyforov.service.library.core.application.GenreService;
+import ua.nykyforov.service.library.core.domain.Genre;
 
 import java.util.Objects;
+import java.util.Optional;
 
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class BookCommandsTest {
@@ -44,6 +46,33 @@ class BookCommandsTest {
 
             verify(bookService, times(1))
                     .save(argThat(argument -> Objects.equals(argument.getTitle(), title)));
+        }
+
+        @Test
+        void shouldNotCallGenreServiceIfGenreIdParamIsNotPositive() {
+            String title = "It";
+            final int genreId = 0;
+
+            sut.addBook(title, genreId);
+
+            verify(genreService, never()).getById(anyInt());
+            verify(bookService, times(1))
+                    .save(argThat(book -> !book.getGenre().isPresent()));
+        }
+
+        @Test
+        void shouldGetFromGenreServiceIfGenreIdParamIsPositive() {
+            String title = "It";
+            final int genreId = 42;
+            Genre genre = new Genre("Mystic");
+            genre.setId(genreId);
+            doReturn(Optional.of(genre)).when(genreService).getById(eq(genreId));
+
+            sut.addBook(title, genreId);
+
+            verify(genreService, times(1)).getById(eq(42));
+            verify(bookService, times(1))
+                    .save(argThat(book -> book.getGenre().orElseThrow(() -> new RuntimeException("Genre is not present in book")) == genre));
         }
 
     }

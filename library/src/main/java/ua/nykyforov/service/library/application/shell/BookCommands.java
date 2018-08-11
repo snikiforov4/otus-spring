@@ -35,6 +35,9 @@ public class BookCommands {
     Book addBook(@NotBlank String title,
                  @ShellOption(defaultValue = "0") int genreId) {
         Book book = new Book(title);
+        if (genreId > 0) {
+            genreService.getById(genreId).ifPresent(book::setGenre);
+        }
         bookService.save(book);
         return book;
     }

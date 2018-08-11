@@ -38,15 +38,26 @@ class JpaGenreDaoTest {
 
     @Test
     @Sql({"/test-insert-genres.sql"})
-    void shouldGetEntityById() {
+    void shouldGetEntityIfPresent() {
         final int expectedGenreId = 42;
         String expectedGenreName = "Mystic";
+
         Genre retGenre = sut.getById(expectedGenreId);
+
         assertThat(retGenre).isNotNull();
         assertAll(
                 () -> assertThat(retGenre.getName()).isEqualTo(expectedGenreName),
                 () -> assertThat(retGenre.getId()).isEqualTo(expectedGenreId)
         );
+    }
+
+    @Test
+    void shouldReturnNullIfEntityIsNotPresent() {
+        final int expectedGenreId = 42;
+
+        Genre retGenre = sut.getById(expectedGenreId);
+
+        assertThat(retGenre).isNull();
     }
 
     @Test

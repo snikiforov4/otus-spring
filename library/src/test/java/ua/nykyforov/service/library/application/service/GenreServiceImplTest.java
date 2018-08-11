@@ -11,6 +11,8 @@ import ua.nykyforov.service.library.core.application.GenreService;
 import ua.nykyforov.service.library.core.dao.GenreDao;
 import ua.nykyforov.service.library.core.domain.Genre;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.refEq;
 import static org.mockito.Mockito.*;
@@ -49,15 +51,28 @@ class GenreServiceImplTest {
     class GetById {
 
         @Test
-        void shouldCallDao() {
+        void shouldReturnOptionalWithPresentValueIfDaoReturnNonNullValue() {
             final int id = 42;
             Genre genre = new Genre("Adventure");
             doReturn(genre).when(genreDao).getById(eq(id));
 
-            Genre retGenre = sut.getById(id);
+            Optional<Genre> retGenre = sut.getById(id);
 
             verify(genreDao, times(1)).getById(eq(id));
-            assertThat(genre).isSameAs(retGenre);
+            assertThat(retGenre)
+                    .isPresent()
+                    .containsSame(genre);
+        }
+
+        @Test
+        void shouldReturnOptionalWithNotPresentValueIfDaoReturnNullValue() {
+            final int id = 42;
+            doReturn(null).when(genreDao).getById(eq(id));
+
+            Optional<Genre> retGenre = sut.getById(id);
+
+            verify(genreDao, times(1)).getById(eq(id));
+            assertThat(retGenre).isNotPresent();
         }
 
     }
