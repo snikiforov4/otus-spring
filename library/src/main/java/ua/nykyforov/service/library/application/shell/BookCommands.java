@@ -3,8 +3,10 @@ package ua.nykyforov.service.library.application.shell;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
 import org.springframework.shell.table.*;
 import ua.nykyforov.service.library.core.application.BookService;
+import ua.nykyforov.service.library.core.application.GenreService;
 import ua.nykyforov.service.library.core.domain.Author;
 import ua.nykyforov.service.library.core.domain.Book;
 import ua.nykyforov.service.library.core.domain.Genre;
@@ -17,29 +19,34 @@ import java.util.Objects;
 import static java.util.stream.Collectors.joining;
 
 @ShellComponent
+@SuppressWarnings("UnusedReturnValue")
 public class BookCommands {
 
     private final BookService bookService;
+    private final GenreService genreService;
 
     @Autowired
-    public BookCommands(BookService bookService) {
+    public BookCommands(BookService bookService, GenreService genreService) {
         this.bookService = bookService;
+        this.genreService = genreService;
     }
 
     @ShellMethod("Add new book.")
-    public String addBook(@NotBlank String title) {
-        bookService.save(new Book(title));
-        return "Book was successfully saved";
+    Book addBook(@NotBlank String title,
+                 @ShellOption(defaultValue = "0") int genreId) {
+        Book book = new Book(title);
+        bookService.save(book);
+        return book;
     }
 
     @ShellMethod("Delete book by id.")
-    public String deleteBook(@Positive int id) {
+    String deleteBook(@Positive int id) {
         bookService.deleteById(id);
-        return "Book was successfully deleted";
+        return String.format("Book with id=%s was successfully deleted", id);
     }
 
     @ShellMethod("Find books by title.")
-    public Table findBookByTitle(@NotBlank String title) {
+    Table findBookByTitle(@NotBlank String title) {
         Collection<Book> foundBooks = bookService.findByTitleLike(title);
         return buildBooksTable(foundBooks);
     }

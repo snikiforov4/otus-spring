@@ -8,6 +8,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ua.nykyforov.service.library.core.application.BookService;
+import ua.nykyforov.service.library.core.application.GenreService;
 
 import java.util.Objects;
 
@@ -21,12 +22,14 @@ class BookCommandsTest {
 
     @Mock
     private BookService bookService;
+    @Mock
+    private GenreService genreService;
 
     private BookCommands sut;
 
     @BeforeEach
     void setUp() {
-        sut = new BookCommands(bookService);
+        sut = new BookCommands(bookService, genreService);
     }
 
     @Nested
@@ -37,7 +40,7 @@ class BookCommandsTest {
         void shouldWrapParameterToEntityAndPassToService() {
             String title = "It";
 
-            sut.addBook(title);
+            sut.addBook(title, 0);
 
             verify(bookService, times(1))
                     .save(argThat(argument -> Objects.equals(argument.getTitle(), title)));
