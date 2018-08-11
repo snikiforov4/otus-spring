@@ -7,6 +7,7 @@ import ua.nykyforov.service.library.core.dao.AuthorDao;
 import ua.nykyforov.service.library.core.domain.Author;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Service
 public class AuthorServiceImpl implements AuthorService {
@@ -26,8 +27,8 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional
-    public Author getById(int id) {
-        return authorDao.getById(id);
+    public Optional<Author> getById(int id) {
+        return Optional.ofNullable(authorDao.getById(id));
     }
 
 }

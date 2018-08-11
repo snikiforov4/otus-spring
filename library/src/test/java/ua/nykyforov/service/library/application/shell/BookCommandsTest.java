@@ -1,5 +1,6 @@
 package ua.nykyforov.service.library.application.shell;
 
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -7,8 +8,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import ua.nykyforov.service.library.core.application.AuthorService;
 import ua.nykyforov.service.library.core.application.BookService;
 import ua.nykyforov.service.library.core.application.GenreService;
+import ua.nykyforov.service.library.core.domain.Author;
+import ua.nykyforov.service.library.core.domain.Book;
 import ua.nykyforov.service.library.core.domain.Genre;
 
 import java.util.Objects;
@@ -26,12 +30,14 @@ class BookCommandsTest {
     private BookService bookService;
     @Mock
     private GenreService genreService;
+    @Mock
+    private AuthorService authorService;
 
     private BookCommands sut;
 
     @BeforeEach
     void setUp() {
-        sut = new BookCommands(bookService, genreService);
+        sut = new BookCommands(bookService, genreService, authorService);
     }
 
     @Nested
@@ -105,6 +111,60 @@ class BookCommandsTest {
             verify(bookService, times(1)).findByTitleLike(eq(title));
         }
 
+    }
+
+    @Nested
+    @DisplayName("addAuthorToBook")
+    class AddAuthorToBook {
+
+        @Test
+        void shouldThrowExceptionIfAuthorNotFound() {
+            final int authorId = 1;
+            final int bookId = 2;
+            doReturn(Optional.empty()).when(authorService).getById(eq(authorId));
+
+            Assertions.assertThatThrownBy(() -> sut.addAuthorToBook(authorId, bookId))
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessage(String.format("Author with id=%s not found", authorId));
+        }
+
+        @Test
+        void shouldThrowExceptionIfBookNotFound() {
+            final int authorId = 1;
+            final int bookId = 2;
+            doReturn(Optional.of(createAuthorStub(authorId))).when(authorService).getById(eq(authorId));
+            doReturn(Optional.empty()).when(bookService).getById(eq(bookId));
+
+            Assertions.assertThatThrownBy(() -> sut.addAuthorToBook(authorId, bookId))
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessage(String.format("Book with id=%s not found", bookId));
+        }
+
+        @Test
+        void shouldSaveBookThroughService() {
+            final int authorId = 1;
+            final int bookId = 2;
+            doReturn(Optional.of(createAuthorStub(authorId))).when(authorService).getById(eq(authorId));
+            doReturn(Optional.of(createBookStub(bookId))).when(bookService).getById(eq(bookId));
+
+            sut.addAuthorToBook(authorId, bookId);
+
+            verify(bookService, times(1))
+                    .save(argThat(book -> book.getAuthors().stream().map(Author::getId).count() == 1));
+        }
+
+    }
+
+    private static Book createBookStub(int bookId) {
+        Book book = new Book("Outsider");
+        book.setId(bookId);
+        return book;
+    }
+
+    private static Author createAuthorStub(int authorId) {
+        Author author = new Author("Stephen", "King");
+        author.setId(authorId);
+        return author;
     }
 
 }

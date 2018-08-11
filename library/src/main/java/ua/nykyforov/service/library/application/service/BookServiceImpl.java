@@ -8,6 +8,7 @@ import ua.nykyforov.service.library.core.domain.Book;
 
 import javax.transaction.Transactional;
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 public class BookServiceImpl implements BookService {
@@ -27,8 +28,8 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public Book getById(int id) {
-        return bookDao.getById(id);
+    public Optional<Book> getById(int id) {
+        return Optional.ofNullable(bookDao.getById(id));
     }
 
     @Override

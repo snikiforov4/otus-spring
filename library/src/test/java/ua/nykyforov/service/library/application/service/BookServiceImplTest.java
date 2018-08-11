@@ -14,6 +14,7 @@ import ua.nykyforov.service.library.core.domain.Book;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.refEq;
@@ -52,16 +53,30 @@ class BookServiceImplTest {
     @DisplayName("getById")
     class GetById {
 
+
         @Test
-        void shouldCallDao() {
+        void shouldReturnOptionalWithPresentValueIfDaoReturnNonNullValue() {
             final int id = 42;
             Book book = createBookStub();
             doReturn(book).when(bookDao).getById(eq(id));
 
-            Book retBook = sut.getById(id);
+            Optional<Book> retBook = sut.getById(id);
 
             verify(bookDao, times(1)).getById(eq(id));
-            assertThat(book).isSameAs(retBook);
+            assertThat(retBook)
+                    .isPresent()
+                    .containsSame(book);
+        }
+
+        @Test
+        void shouldReturnOptionalWithNotPresentValueIfDaoReturnNullValue() {
+            final int id = 42;
+            doReturn(null).when(bookDao).getById(eq(id));
+
+            Optional<Book> retBook = sut.getById(id);
+
+            verify(bookDao, times(1)).getById(eq(id));
+            assertThat(retBook).isNotPresent();
         }
 
     }
