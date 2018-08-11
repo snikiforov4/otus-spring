@@ -10,6 +10,7 @@
     <modules>
         <module>quiz</module>
         <module>library</module>
+        <module>library-core</module>
     </modules>
 
     <name>OTUS Spring</name>
@@ -29,6 +30,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jackson.version>2.9.4</jackson.version>
+        <guava.version>25.1-jre</guava.version>
     </properties>
 
     <build>
