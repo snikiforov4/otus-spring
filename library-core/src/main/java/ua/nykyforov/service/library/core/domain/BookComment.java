@@ -12,10 +12,13 @@ public class BookComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name = "create_date")
+
+    @Column(name = "create_date", columnDefinition= "TIMESTAMP WITH TIME ZONE")
     private Instant createDate;
+
     @Column(name = "text")
     private String text;
+
     @Column(name = "book_id")
     private int bookId;
 

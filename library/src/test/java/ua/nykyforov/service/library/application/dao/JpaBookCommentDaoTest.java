@@ -29,10 +29,11 @@ class JpaBookCommentDaoTest {
     private JdbcTemplate jdbcTemplate;
 
     @Test
+    @Sql({"/test-insert-books-1.sql"})
     void shouldInsertEntity() {
         int expectedNumberOfRows = getCountOfRowsInTable() + 1;
 
-        sut.insert(new BookComment("Awesome book", 1));
+        sut.insert(new BookComment("Awesome book", 42));
 
         assertEquals(expectedNumberOfRows, getCountOfRowsInTable(),
                 "wrong number of inserted rows");

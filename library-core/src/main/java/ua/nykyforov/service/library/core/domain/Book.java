@@ -17,11 +17,14 @@ public class Book {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
     @Column(name = "title")
     private String title;
+
     @ManyToOne
     @JoinColumn(name="genre_id")
     private Genre genre;
+
     @ManyToMany
     @JoinTable(name="author_book",
             joinColumns = @JoinColumn(name="book_id", referencedColumnName="ID"),
