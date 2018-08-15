@@ -1,4 +1,4 @@
-package ua.nykyforov.service.library.application.dao;
+package ua.nykyforov.service.library.application.dao.jpa;
 
 import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
 import org.springframework.boot.autoconfigure.domain.EntityScan;

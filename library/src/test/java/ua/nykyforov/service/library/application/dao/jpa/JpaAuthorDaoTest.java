@@ -1,4 +1,4 @@
-package ua.nykyforov.service.library.application.dao;
+package ua.nykyforov.service.library.application.dao.jpa;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
