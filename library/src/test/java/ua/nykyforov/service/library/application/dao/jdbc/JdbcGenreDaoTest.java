@@ -55,7 +55,7 @@ class JdbcGenreDaoTest {
         sut.insert(new Genre("Computer Science"));
         int expectedNumberOfRows = getCountOfRowsInTable();
 
-        int actualCount = sut.count();
+        long actualCount = sut.count();
 
         assertThat(actualCount).isEqualTo(expectedNumberOfRows);
     }

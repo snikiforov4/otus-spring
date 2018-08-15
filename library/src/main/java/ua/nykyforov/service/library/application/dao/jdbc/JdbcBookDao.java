@@ -3,6 +3,7 @@ package ua.nykyforov.service.library.application.dao.jdbc;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,11 @@ public class JdbcBookDao implements BookDao {
         String sql = "DELETE FROM book WHERE id = :id";
         int deleted = jdbc.update(sql, ImmutableMap.of("id", id));
         logger.info("deleteById: id={} affected={}", id, deleted);
+    }
+
+    @Override
+    public Collection<Book> findByTitleLike(String title) {
+        throw new NotImplementedException("Only implemented through JPA");
     }
 
     public Collection<Book> findByTitle(String query) {

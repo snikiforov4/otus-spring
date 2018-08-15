@@ -37,7 +37,7 @@ public class JdbcGenreDao implements GenreDao {
         return jdbc.queryForObject(sql, ImmutableMap.of("id", id), new GenreMapper());
     }
 
-    public int count() {
+    public long count() {
         String sql = "SELECT count(0) FROM genre";
         return jdbc.queryForObject(sql, ImmutableMap.of(), Integer.class);
     }
