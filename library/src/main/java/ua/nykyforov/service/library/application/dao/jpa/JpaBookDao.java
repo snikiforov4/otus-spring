@@ -3,6 +3,7 @@ package ua.nykyforov.service.library.application.dao.jpa;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
+import ua.nykyforov.service.library.application.annotation.Jpa;
 import ua.nykyforov.service.library.core.dao.BookDao;
 import ua.nykyforov.service.library.core.domain.Book;
 
@@ -10,6 +11,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Collection;
 
+@Jpa
 @Repository
 public class JpaBookDao implements BookDao {
     private static final Logger logger = LoggerFactory.getLogger(JpaBookDao.class);

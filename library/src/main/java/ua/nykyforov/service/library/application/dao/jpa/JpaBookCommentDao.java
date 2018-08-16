@@ -1,6 +1,7 @@
 package ua.nykyforov.service.library.application.dao.jpa;
 
 import org.springframework.stereotype.Repository;
+import ua.nykyforov.service.library.application.annotation.Jpa;
 import ua.nykyforov.service.library.core.dao.BookCommentDao;
 import ua.nykyforov.service.library.core.domain.BookComment;
 
@@ -9,6 +10,7 @@ import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
 import java.util.List;
 
+@Jpa
 @Repository
 public class JpaBookCommentDao implements BookCommentDao {
 

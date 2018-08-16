@@ -2,6 +2,7 @@ package ua.nykyforov.service.library.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ua.nykyforov.service.library.application.annotation.Jpa;
 import ua.nykyforov.service.library.core.application.BookCommentService;
 import ua.nykyforov.service.library.core.dao.BookCommentDao;
 import ua.nykyforov.service.library.core.domain.BookComment;
@@ -15,7 +16,7 @@ public class BookCommentServiceImpl implements BookCommentService {
     private final BookCommentDao bookCommentDao;
 
     @Autowired
-    public BookCommentServiceImpl(BookCommentDao bookCommentDao) {
+    public BookCommentServiceImpl(@Jpa BookCommentDao bookCommentDao) {
         this.bookCommentDao = bookCommentDao;
     }
 

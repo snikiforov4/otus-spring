@@ -2,6 +2,7 @@ package ua.nykyforov.service.library.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ua.nykyforov.service.library.application.annotation.Jpa;
 import ua.nykyforov.service.library.core.application.GenreService;
 import ua.nykyforov.service.library.core.dao.GenreDao;
 import ua.nykyforov.service.library.core.domain.Genre;
@@ -15,7 +16,7 @@ public class GenreServiceImpl implements GenreService {
     private final GenreDao genreDao;
 
     @Autowired
-    public GenreServiceImpl(GenreDao genreDao) {
+    public GenreServiceImpl(@Jpa GenreDao genreDao) {
         this.genreDao = genreDao;
     }
 

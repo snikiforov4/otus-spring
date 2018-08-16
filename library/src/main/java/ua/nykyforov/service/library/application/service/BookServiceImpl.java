@@ -2,6 +2,7 @@ package ua.nykyforov.service.library.application.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ua.nykyforov.service.library.application.annotation.Jpa;
 import ua.nykyforov.service.library.core.application.BookService;
 import ua.nykyforov.service.library.core.dao.BookDao;
 import ua.nykyforov.service.library.core.domain.Book;
@@ -16,7 +17,7 @@ public class BookServiceImpl implements BookService {
     private final BookDao bookDao;
 
     @Autowired
-    public BookServiceImpl(BookDao bookDao) {
+    public BookServiceImpl(@Jpa BookDao bookDao) {
         this.bookDao = bookDao;
     }
 

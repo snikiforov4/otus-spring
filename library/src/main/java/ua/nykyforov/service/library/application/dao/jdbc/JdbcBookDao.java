@@ -11,6 +11,7 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
+import ua.nykyforov.service.library.application.annotation.Jdbc;
 import ua.nykyforov.service.library.core.dao.BookDao;
 import ua.nykyforov.service.library.core.domain.Author;
 import ua.nykyforov.service.library.core.domain.Book;
@@ -24,6 +25,7 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMapWithExpectedSize;
 
+@Jdbc
 @Repository
 public class JdbcBookDao implements BookDao {
     private static final Logger logger = LoggerFactory.getLogger(JdbcBookDao.class);
