@@ -5,9 +5,9 @@ import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import org.springframework.shell.table.*;
-import ua.nykyforov.service.library.core.application.AuthorService;
-import ua.nykyforov.service.library.core.application.BookService;
-import ua.nykyforov.service.library.core.application.GenreService;
+import ua.nykyforov.service.library.application.repository.AuthorRepository;
+import ua.nykyforov.service.library.application.repository.BookRepository;
+import ua.nykyforov.service.library.application.repository.GenreRepository;
 import ua.nykyforov.service.library.core.domain.Author;
 import ua.nykyforov.service.library.core.domain.Book;
 import ua.nykyforov.service.library.core.domain.Genre;
@@ -24,15 +24,15 @@ import static java.util.stream.Collectors.joining;
 @SuppressWarnings("UnusedReturnValue")
 public class BookCommands {
 
-    private final BookService bookService;
-    private final GenreService genreService;
-    private final AuthorService authorService;
+    private final BookRepository bookRepository;
+    private final GenreRepository genreRepository;
+    private final AuthorRepository authorRepository;
 
     @Autowired
-    public BookCommands(BookService bookService, GenreService genreService, AuthorService authorService) {
-        this.bookService = bookService;
-        this.genreService = genreService;
-        this.authorService = authorService;
+    public BookCommands(BookRepository bookRepository, GenreRepository genreRepository, AuthorRepository authorRepository) {
+        this.bookRepository = bookRepository;
+        this.genreRepository = genreRepository;
+        this.authorRepository = authorRepository;
     }
 
     @Transactional
@@ -41,34 +41,34 @@ public class BookCommands {
                         @ShellOption(defaultValue = "0") int genreId) {
         Book book = new Book(title);
         if (genreId > 0) {
-            genreService.getById(genreId).ifPresent(book::setGenre);
+            genreRepository.findById(genreId).ifPresent(book::setGenre);
         }
-        bookService.save(book);
+        bookRepository.save(book);
         return book;
     }
 
     @ShellMethod("Delete book by id.")
     String deleteBook(@Positive int id) {
-        bookService.deleteById(id);
+        bookRepository.deleteById(id);
         return String.format("Book with id=%s was successfully deleted", id);
     }
 
     @Transactional
     @ShellMethod("Find books by title.")
     public Table findBookByTitle(@NotBlank String title) {
-        Collection<Book> foundBooks = bookService.findByTitleLike(title);
+        Collection<Book> foundBooks = bookRepository.findAllByTitleLike(title);
         return buildBooksTable(foundBooks);
     }
 
     @Transactional
     @ShellMethod("Add author to book.")
     public Book addAuthorToBook(@Positive int authorId, @Positive int bookId) {
-        Author author = authorService.getById(authorId)
+        Author author = authorRepository.findById(authorId)
                 .orElseThrow(() -> new RuntimeException(String.format("Author with id=%s not found", authorId)));
-        Book book = bookService.getById(bookId)
+        Book book = bookRepository.findById(bookId)
                 .orElseThrow(() -> new RuntimeException(String.format("Book with id=%s not found", bookId)));
         book.addAuthor(author);
-        bookService.save(book);
+        bookRepository.save(book);
         return book;
     }
 
