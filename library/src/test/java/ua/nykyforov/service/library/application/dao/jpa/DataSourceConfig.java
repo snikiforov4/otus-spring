@@ -6,14 +6,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
+import ua.nykyforov.service.library.core.domain.Book;
 
 import javax.sql.DataSource;
 
 import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.H2;
 
 @Configuration
-@EntityScan(basePackages = {"ua.nykyforov.service.library.core.domain"})
-@ComponentScan(basePackages = {"ua.nykyforov.service.library.application.dao"})
+@EntityScan(basePackageClasses = Book.class)
+@ComponentScan(basePackageClasses = JpaBookDao.class)
 @AutoConfigurationPackage
 public class DataSourceConfig {
 
