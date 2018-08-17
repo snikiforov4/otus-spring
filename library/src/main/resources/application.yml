@@ -15,3 +15,8 @@ spring:
         temp:
 #         https://vkuzel.com/spring-boot-jpa-hibernate-atomikos-postgresql-exception
           use_jdbc_metadata_defaults: false
+  liquibase:
+    enabled: true
+    change-log: "classpath:/liquibase/db.changelog-master.yml"
+    user: liquibase
+    default-schema: data

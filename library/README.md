@@ -29,6 +29,9 @@ docker exec -it library-postgres psql -U postgres
 CREATE USER dbuser SUPERUSER;
 ALTER DATABASE library OWNER TO dbuser;
 GRANT ALL PRIVILEGES ON DATABASE library TO dbuser;
+
+CREATE USER liquibase SUPERUSER;
+GRANT ALL PRIVILEGES ON DATABASE library TO liquibase;
 ```
 
 ##### Run as `dbuser` inside `library` db
