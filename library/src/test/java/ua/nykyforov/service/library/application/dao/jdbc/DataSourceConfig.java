@@ -1,26 +1,11 @@
 package ua.nykyforov.service.library.application.dao.jdbc;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-
-import javax.sql.DataSource;
-
-import static org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType.H2;
+import org.springframework.test.context.TestPropertySource;
 
 @Configuration
 @ComponentScan(basePackageClasses = JdbcBookDao.class)
+@TestPropertySource("classpath:application-test.yml")
 public class DataSourceConfig {
-
-    @Bean
-    public DataSource dataSource() {
-        return new EmbeddedDatabaseBuilder()
-                .generateUniqueName(true)
-                .setType(H2)
-                .setScriptEncoding("UTF-8")
-                .ignoreFailedDrops(true)
-                .build();
-    }
-
 }

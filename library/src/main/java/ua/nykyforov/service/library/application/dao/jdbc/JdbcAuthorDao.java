@@ -29,7 +29,7 @@ public class JdbcAuthorDao implements AuthorDao {
 
     @Override
     public void insert(Author author) {
-        String sql = "INSERT INTO author (first_name, last_name) VALUES(:firstName, :lastName)";
+        String sql = "INSERT INTO usr.author (first_name, last_name) VALUES(:firstName, :lastName)";
         Map<String, String> params = ImmutableMap.of(
                 "firstName", author.getFirstName(),
                 "lastName", author.getLastName());
@@ -39,7 +39,7 @@ public class JdbcAuthorDao implements AuthorDao {
 
     @Override
     public Author getById(int id) {
-        String sql = "SELECT id, first_name, last_name FROM author WHERE id = :id";
+        String sql = "SELECT id, first_name, last_name FROM usr.author WHERE id = :id";
         return jdbc.queryForObject(sql, ImmutableMap.of("id", id), new AuthorMapper());
     }
 

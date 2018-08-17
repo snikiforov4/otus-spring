@@ -5,7 +5,7 @@ import com.google.common.base.MoreObjects;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "author")
+@Table(name = "author", schema = "usr")
 public class Author {
 
     @Id

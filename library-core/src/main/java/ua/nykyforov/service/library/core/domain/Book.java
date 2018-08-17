@@ -11,7 +11,7 @@ import java.util.Optional;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Entity
-@Table(name = "book")
+@Table(name = "book", schema = "usr")
 public class Book {
 
     @Id

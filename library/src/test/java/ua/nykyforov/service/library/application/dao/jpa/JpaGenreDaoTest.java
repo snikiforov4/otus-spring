@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringJUnitConfig(classes = {DataSourceConfig.class})
 class JpaGenreDaoTest {
 
-    private static final String TABLE_NAME = "genre";
+    private static final String TABLE_NAME = "usr.genre";
 
     @Autowired
     private JpaGenreDao sut;

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringJUnitConfig(classes = {DataSourceConfig.class})
 class JpaBookCommentDaoTest {
 
-    private static final String TABLE_NAME = "book_comment";
+    private static final String TABLE_NAME = "usr.book_comment";
 
     @Autowired
     private JpaBookCommentDao sut;

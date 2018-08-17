@@ -22,7 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringJUnitConfig(classes = {DataSourceConfig.class})
 class JdbcBookDaoTest {
 
-    private static final String TABLE_NAME = "book";
+    private static final String TABLE_NAME = "usr.book";
 
     @Autowired
     private JdbcBookDao sut;
