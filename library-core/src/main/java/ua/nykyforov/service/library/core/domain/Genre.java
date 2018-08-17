@@ -2,9 +2,17 @@ package ua.nykyforov.service.library.core.domain;
 
 import com.google.common.base.MoreObjects;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "genre")
 public class Genre {
 
-    private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @Column(name = "name")
     private String name;
 
     public Genre() {
@@ -14,11 +22,11 @@ public class Genre {
         this.name = name;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 

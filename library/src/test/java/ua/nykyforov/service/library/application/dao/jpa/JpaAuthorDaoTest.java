@@ -1,27 +1,27 @@
-package ua.nykyforov.service.library.application.dao.jdbc;
+package ua.nykyforov.service.library.application.dao.jpa;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.jdbc.JdbcTestUtils;
-import ua.nykyforov.service.library.core.domain.Genre;
+import ua.nykyforov.service.library.core.domain.Author;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-@JdbcTest
+@DataJpaTest
 @SpringJUnitConfig(classes = {DataSourceConfig.class})
-class JdbcGenreDaoTest {
+class JpaAuthorDaoTest {
 
-    private static final String TABLE_NAME = "genre";
+    private static final String TABLE_NAME = "author";
 
     @Autowired
-    private JdbcGenreDao sut;
+    private JpaAuthorDao sut;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -30,34 +30,25 @@ class JdbcGenreDaoTest {
     void shouldInsertEntity() {
         int expectedNumberOfRows = getCountOfRowsInTable() + 1;
 
-        sut.insert(new Genre("Adventures"));
+        sut.insert(new Author("Joshua", "Bloch"));
 
         assertEquals(expectedNumberOfRows, getCountOfRowsInTable(),
                 "wrong number of inserted rows");
     }
 
     @Test
-    @Sql({"/test-insert-genres.sql"})
+    @Sql({"/test-insert-authors.sql"})
     void shouldGetEntityById() {
-        final int expectedGenreId = 42;
-        String expectedGenreName = "Mystic";
-        Genre retGenre = sut.getById(expectedGenreId);
-        assertThat(retGenre).isNotNull();
+        final int expectedAuthorId = 42;
+        String expectedAuthorFirstName = "Joshua";
+        String expectedAuthorLastName = "Bloch";
+        Author actualAuthor = sut.getById(expectedAuthorId);
+        assertThat(actualAuthor).isNotNull();
         assertAll(
-                () -> assertThat(retGenre.getName()).isEqualTo(expectedGenreName),
-                () -> assertThat(retGenre.getId()).isEqualTo(expectedGenreId)
+                () -> assertThat(actualAuthor.getId()).isEqualTo(expectedAuthorId),
+                () -> assertThat(actualAuthor.getFirstName()).isEqualTo(expectedAuthorFirstName),
+                () -> assertThat(actualAuthor.getLastName()).isEqualTo(expectedAuthorLastName)
         );
-    }
-
-    @Test
-    @Sql({"/test-insert-genres.sql"})
-    void shouldGetCorrectCountOfInsertedEntities() {
-        sut.insert(new Genre("Computer Science"));
-        int expectedNumberOfRows = getCountOfRowsInTable();
-
-        long actualCount = sut.count();
-
-        assertThat(actualCount).isEqualTo(expectedNumberOfRows);
     }
 
     private int getCountOfRowsInTable() {

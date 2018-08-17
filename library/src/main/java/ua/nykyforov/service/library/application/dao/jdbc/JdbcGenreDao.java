@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
+import ua.nykyforov.service.library.application.annotation.Jdbc;
 import ua.nykyforov.service.library.core.dao.GenreDao;
 import ua.nykyforov.service.library.core.domain.Genre;
 
@@ -14,6 +15,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Repository
+@Jdbc
 public class JdbcGenreDao implements GenreDao {
     private static final Logger logger = LoggerFactory.getLogger(JdbcGenreDao.class);
 
@@ -37,7 +39,7 @@ public class JdbcGenreDao implements GenreDao {
         return jdbc.queryForObject(sql, ImmutableMap.of("id", id), new GenreMapper());
     }
 
-    public int count() {
+    public long count() {
         String sql = "SELECT count(0) FROM genre";
         return jdbc.queryForObject(sql, ImmutableMap.of(), Integer.class);
     }

@@ -2,10 +2,20 @@ package ua.nykyforov.service.library.core.domain;
 
 import com.google.common.base.MoreObjects;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "author")
 public class Author {
 
-    private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @Column(name = "first_name")
     private String firstName;
+
+    @Column(name = "last_name")
     private String lastName;
 
     public Author() {
@@ -16,11 +26,11 @@ public class Author {
         this.lastName = lastName;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -38,6 +48,10 @@ public class Author {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getFullName() {
+        return String.format("%s %s", firstName, lastName);
     }
 
     @Override

@@ -28,6 +28,16 @@ CREATE TABLE author_book
    author_id integer NOT NULL,
    book_id integer NOT NULL,
    PRIMARY KEY(author_id, book_id),
-   FOREIGN KEY(author_id) REFERENCES author(id) ON DELETE CASCADE,
+   FOREIGN KEY(author_id) REFERENCES author(id) ON UPDATE CASCADE,
+   FOREIGN KEY(book_id) REFERENCES book(id) ON UPDATE CASCADE
+);
+
+CREATE TABLE book_comment
+(
+   id integer auto_increment NOT NULL,
+   create_date TIMESTAMP WITH TIME ZONE NOT NULL,
+   text varchar(255) NOT NULL,
+   book_id integer NOT NULL,
+   PRIMARY KEY(id),
    FOREIGN KEY(book_id) REFERENCES book(id) ON DELETE CASCADE
 );

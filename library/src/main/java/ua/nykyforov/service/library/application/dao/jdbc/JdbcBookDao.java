@@ -3,6 +3,7 @@ package ua.nykyforov.service.library.application.dao.jdbc;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.NotImplementedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
 import org.springframework.stereotype.Repository;
+import ua.nykyforov.service.library.application.annotation.Jdbc;
 import ua.nykyforov.service.library.core.dao.BookDao;
 import ua.nykyforov.service.library.core.domain.Author;
 import ua.nykyforov.service.library.core.domain.Book;
@@ -23,6 +25,7 @@ import java.util.Map;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.collect.Maps.newHashMapWithExpectedSize;
 
+@Jdbc
 @Repository
 public class JdbcBookDao implements BookDao {
     private static final Logger logger = LoggerFactory.getLogger(JdbcBookDao.class);
@@ -65,6 +68,11 @@ public class JdbcBookDao implements BookDao {
         String sql = "DELETE FROM book WHERE id = :id";
         int deleted = jdbc.update(sql, ImmutableMap.of("id", id));
         logger.info("deleteById: id={} affected={}", id, deleted);
+    }
+
+    @Override
+    public Collection<Book> findByTitleLike(String title) {
+        throw new NotImplementedException("Only implemented through JPA");
     }
 
     public Collection<Book> findByTitle(String query) {

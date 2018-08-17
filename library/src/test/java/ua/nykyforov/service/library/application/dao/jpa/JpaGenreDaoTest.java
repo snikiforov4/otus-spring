@@ -1,8 +1,8 @@
-package ua.nykyforov.service.library.application.dao.jdbc;
+package ua.nykyforov.service.library.application.dao.jpa;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -14,14 +14,14 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
-@JdbcTest
+@DataJpaTest
 @SpringJUnitConfig(classes = {DataSourceConfig.class})
-class JdbcGenreDaoTest {
+class JpaGenreDaoTest {
 
     private static final String TABLE_NAME = "genre";
 
     @Autowired
-    private JdbcGenreDao sut;
+    private JpaGenreDao sut;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -38,15 +38,26 @@ class JdbcGenreDaoTest {
 
     @Test
     @Sql({"/test-insert-genres.sql"})
-    void shouldGetEntityById() {
+    void shouldGetEntityIfPresent() {
         final int expectedGenreId = 42;
         String expectedGenreName = "Mystic";
+
         Genre retGenre = sut.getById(expectedGenreId);
+
         assertThat(retGenre).isNotNull();
         assertAll(
                 () -> assertThat(retGenre.getName()).isEqualTo(expectedGenreName),
                 () -> assertThat(retGenre.getId()).isEqualTo(expectedGenreId)
         );
+    }
+
+    @Test
+    void shouldReturnNullIfEntityIsNotPresent() {
+        final int expectedGenreId = 42;
+
+        Genre retGenre = sut.getById(expectedGenreId);
+
+        assertThat(retGenre).isNull();
     }
 
     @Test

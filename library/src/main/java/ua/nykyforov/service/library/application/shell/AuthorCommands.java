@@ -9,6 +9,7 @@ import ua.nykyforov.service.library.core.domain.Author;
 import javax.validation.constraints.NotBlank;
 
 @ShellComponent
+@SuppressWarnings("UnusedReturnValue")
 public class AuthorCommands {
 
     private final AuthorService authorService;
@@ -19,9 +20,10 @@ public class AuthorCommands {
     }
 
     @ShellMethod("Add new author.")
-    public String addAuthor(@NotBlank String firstName, @NotBlank String lastName) {
-        authorService.save(new Author(firstName, lastName));
-        return "Author was successfully saved";
+    Author addAuthor(@NotBlank String firstName, @NotBlank String lastName) {
+        Author author = new Author(firstName, lastName);
+        authorService.save(author);
+        return author;
     }
 
 }

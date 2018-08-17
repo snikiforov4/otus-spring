@@ -9,6 +9,7 @@ import ua.nykyforov.service.library.core.domain.Genre;
 import javax.validation.constraints.NotBlank;
 
 @ShellComponent
+@SuppressWarnings("UnusedReturnValue")
 public class GenreCommands {
 
     private final GenreService genreService;
@@ -19,9 +20,10 @@ public class GenreCommands {
     }
 
     @ShellMethod("Add new genre.")
-    public String addGenre(@NotBlank String name) {
-        genreService.save(new Genre(name));
-        return "Genre was successfully saved";
+    Genre addGenre(@NotBlank String name) {
+        Genre genre = new Genre(name);
+        genreService.save(genre);
+        return genre;
     }
 
 }
