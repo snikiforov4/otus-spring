@@ -49,7 +49,8 @@ class JpaBookDaoTest {
         assertAll(
                 () -> assertThat(actualBook.getId()).isEqualTo(expectedBookId),
                 () -> assertThat(actualBook.getTitle()).isEqualTo(expectedBookTitle),
-                () -> assertThat(actualBook.getGenre()).isNotPresent()
+                () -> assertThat(actualBook.getGenre()).isNotPresent(),
+                () -> assertThat(actualBook.getAuthors()).isEmpty()
         );
     }
 
@@ -68,7 +69,9 @@ class JpaBookDaoTest {
                 () -> assertThat(actualBook.getId()).isEqualTo(expectedBookId),
                 () -> assertThat(actualBook.getTitle()).isEqualTo(expectedBookTitle),
                 () -> assertThat(genre.getId()).isEqualTo(44),
-                () -> assertThat(genre.getName()).isEqualTo("Programming")
+                () -> assertThat(genre.getName()).isEqualTo("Programming"),
+                () -> assertThat(actualBook.getAuthors()).isEmpty()
+
         );
     }
 
