@@ -1,6 +1,7 @@
 spring:
   data:
     mongodb:
+      authentication-database: admin
       database: library
       host: localhost
       port: 27017
