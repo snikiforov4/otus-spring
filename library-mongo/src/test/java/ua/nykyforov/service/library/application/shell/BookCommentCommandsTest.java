@@ -1,0 +1,68 @@
+package ua.nykyforov.service.library.application.shell;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import ua.nykyforov.service.library.application.repository.BookCommentRepository;
+
+import java.util.Objects;
+
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+@ExtendWith(MockitoExtension.class)
+class BookCommentCommandsTest {
+
+    @Mock
+    private BookCommentRepository bookCommentRepository;
+
+    private BookCommentCommands sut;
+
+    @BeforeEach
+    void setUp() {
+        sut = new BookCommentCommands(bookCommentRepository);
+    }
+
+    @Nested
+    @DisplayName("addCommentToBook")
+    class AddCommentToBook {
+
+        @Test
+        void shouldPassBookCommentToService() {
+            String comment = "Superb!11!";
+            String bookId = "42";
+
+            sut.addCommentToBook(comment, bookId);
+
+            verify(bookCommentRepository, times(1))
+                    .save(argThat(argument -> argument != null
+                            && Objects.equals(argument.getBookId(), bookId)
+                            && Objects.equals(argument.getText(), comment)
+                            && argument.getCreateDate() != null
+                    ));
+        }
+
+    }
+
+    @Nested
+    @DisplayName("getAllBookCommentsByBookId")
+    class GetAllBookCommentsByBookId {
+
+        @Test
+        void shouldCallServiceMethod() {
+            String bookId = "42";
+
+            sut.getAllBookCommentsByBookId(bookId);
+
+            verify(bookCommentRepository, times(1)).findAllByBookId(eq(bookId));
+        }
+
+    }
+
+}
