@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import ua.nykyforov.service.library.application.domain.Author;
 import ua.nykyforov.service.library.application.domain.Book;
 import ua.nykyforov.service.library.application.domain.Genre;
 
@@ -28,6 +29,7 @@ class BookRepositoryTest {
     void setUp() {
         mongoTemplate.dropCollection(Book.class);
         mongoTemplate.dropCollection(Genre.class);
+        mongoTemplate.dropCollection(Author.class);
     }
 
     @Test
@@ -35,6 +37,8 @@ class BookRepositoryTest {
         Genre genre = createAndSaveGenre("Horror");
         Book notPersistedBook = new Book("It");
         notPersistedBook.setGenre(genre);
+        Author author = createAndSaveAuthor("Stephen", "King");
+        notPersistedBook.addAuthor(author);
         Book savedBook = sut.save(notPersistedBook);
 
         assertThat(savedBook).isNotNull();
@@ -74,6 +78,13 @@ class BookRepositoryTest {
         Genre genre = new Genre(genreName);
         mongoTemplate.save(genre);
         return genre;
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private Author createAndSaveAuthor(String firstName, String lastName) {
+        Author author = new Author(firstName, lastName);
+        mongoTemplate.save(author);
+        return author;
     }
 
     private Book createBook(String title) {
