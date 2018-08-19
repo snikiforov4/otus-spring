@@ -8,7 +8,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import ua.nykyforov.service.library.application.domain.BookComment;
 
-import java.time.Instant;
 import java.util.Collection;
 import java.util.Optional;
 
@@ -32,19 +31,21 @@ class BookCommentRepositoryTest {
     @Test
     void shouldSaveEntity() {
         final String bookId = "abc";
-        BookComment savedBookComment = sut.save(new BookComment("Awesome", bookId));
+        final String commentText = "Awesome";
+        BookComment savedBookComment = sut.save(new BookComment(commentText, bookId));
 
         assertThat(savedBookComment).isNotNull();
-        assertThat(savedBookComment.getBookId()).isNotNull();
+        final String id = savedBookComment.getId();
+        assertThat(id).isNotNull();
 
-        Optional<BookComment> bookComment = sut.findById(savedBookComment.getId());
+        Optional<BookComment> bookComment = sut.findById(id);
 
         assertThat(bookComment)
                 .isPresent()
                 .hasValueSatisfying(bc -> {
-                    assertThat(bc.getBookId()).isEqualTo(bookId);
+                    assertThat(bc.getId()).isEqualTo(id);
                     assertThat(bc.getCreateDate()).isNotNull();
-                    assertThat(bc.getText()).isEqualTo("Awesome");
+                    assertThat(bc.getText()).isEqualTo(commentText);
                     assertThat(bc.getBookId()).isEqualTo(bookId);
                 });
     }
@@ -69,10 +70,4 @@ class BookCommentRepositoryTest {
                 );
     }
 
-    @SuppressWarnings("SameParameterValue")
-    private BookComment createBookComment(String text, String bookId) {
-        BookComment bookComment = new BookComment(text, bookId);
-        bookComment.setCreateDate(Instant.now());
-        return bookComment;
-    }
 }

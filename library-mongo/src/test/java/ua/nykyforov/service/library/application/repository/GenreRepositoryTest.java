@@ -18,6 +18,7 @@ class GenreRepositoryTest {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
     @Autowired
     private GenreRepository sut;
 
