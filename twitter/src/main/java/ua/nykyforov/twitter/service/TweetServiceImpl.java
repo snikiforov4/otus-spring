@@ -6,6 +6,7 @@ import ua.nykyforov.twitter.domain.Tweet;
 import ua.nykyforov.twitter.repository.TweetRepository;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Service
 public class TweetServiceImpl implements TweetService {
@@ -17,9 +18,23 @@ public class TweetServiceImpl implements TweetService {
         this.tweetRepository = tweetRepository;
     }
 
+    @Override
     public Collection<Tweet> findAll() {
         return tweetRepository.findAll();
     }
 
+    @Override
+    public Tweet save(Tweet tweet) {
+        return tweetRepository.save(tweet);
+    }
 
+    @Override
+    public Optional<Tweet> findById(String id) {
+        return tweetRepository.findById(id);
+    }
+
+    @Override
+    public void deleteById(String id) {
+        tweetRepository.deleteById(id);
+    }
 }

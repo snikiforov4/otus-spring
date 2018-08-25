@@ -3,8 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
+    <style type="text/css">
+        body {
+            padding: 50px;
+        }
+
+        label {
+            display: inline-block;
+            width: 100px;
+        }
+
+        input:read-only {
+            background: lightgray;
+        }
+    </style>
 </head>
 <body>
+
+<div class="row">
+    <a th:href="@{/add}" href="add.html">
+        <button>Tweet</button>
+    </a>
+</div>
+
 <h1>Feed:</h1>
 <table>
     <thead>
@@ -16,13 +37,14 @@
     </tr>
     </thead>
     <tbody>
+    <!--/*@thymesVar id="tweet" type="ua.nykyforov.twitter.domain.Tweet"*/-->
     <tr th:each="tweet : ${tweets}" th:object="${tweet}">
         <td th:text="*{id}">1</td>
-        <td th:text="*{date}">Today</td>
+        <td th:text="*{createDate}">Today</td>
         <td th:text="*{text}">Thymeleaf the best Java template engine</td>
         <td>
-            <a th:href="@{/edit(id=${tweet.id})}" href="edit.html">Edit</a>
-            <a th:href="@{/delete(id=${tweet.id})}" href="index.html">Delete</a>
+            <a th:href="@{/edit(id=*{id})}" href="edit.html">Edit</a>
+            <a th:href="@{/delete(id=*{id})}" href="index.html">Delete</a>
         </td>
     </tr>
     </tbody>
