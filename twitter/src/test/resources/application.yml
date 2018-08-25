@@ -1,0 +1,9 @@
+spring:
+  data:
+    mongodb:
+      authentication-database: admin
+      database: test
+      host: localhost
+      port: 0
+      username: sa
+      password:
