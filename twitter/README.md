@@ -11,12 +11,12 @@ docker pull mongo:4.0.1
 Before run container. Set up variable (path **must** be absolute!): <br /> 
 `export MONGO_VOLUME=/Users/$(whoami)/mongo/twitter-data` <br />
 
-
 ```
 docker run --name twitter \
 	-v $MONGO_VOLUME:/data/db \
 	-e MONGO_INITDB_ROOT_USERNAME=dbuser \
 	-e MONGO_INITDB_ROOT_PASSWORD=dbsecret \
+	-p 127.0.0.1:27018:27017 \
 	-d mongo:4.0.1
 ```
 
