@@ -2,9 +2,7 @@ package ua.nykyforov.twitter.controller;
 
 import org.hamcrest.core.IsSame;
 import org.junit.jupiter.api.*;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
@@ -28,7 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SuppressWarnings("WeakerAccess")
 @SpringJUnitWebConfig(classes = Main.class)
-@ExtendWith(MockitoExtension.class)
 class TweetControllerTest {
 
     @Autowired
@@ -106,6 +103,22 @@ class TweetControllerTest {
             verify(tweetService, times(1)).save(argThat(e ->
                     e != null && Objects.equals(tweetText, e.getText())
             ));
+        }
+
+    }
+
+    @Nested
+    @DisplayName("delete")
+    class Delete {
+
+        @Test
+        void shouldReturnPage() throws Exception {
+            final String tweetId = "tweetId";
+
+            mockMvc.perform(get("/delete/{id}", tweetId))
+                    .andExpect(view().name("redirect:/"))
+                    .andExpect(status().is3xxRedirection());
+            verify(tweetService, times(1)).deleteById(eq(tweetId));
         }
 
     }
