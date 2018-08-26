@@ -1,5 +1,6 @@
 package ua.nykyforov.twitter.controller;
 
+import org.assertj.core.util.Lists;
 import org.hamcrest.core.IsSame;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
@@ -14,9 +16,11 @@ import ua.nykyforov.twitter.Main;
 import ua.nykyforov.twitter.domain.Tweet;
 import ua.nykyforov.twitter.service.TweetService;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -47,7 +51,7 @@ class TweetControllerTest {
     }
 
     @Nested
-    @DisplayName("add")
+    @DisplayName("/add")
     class Add {
 
         @Test
@@ -71,7 +75,7 @@ class TweetControllerTest {
     }
 
     @Nested
-    @DisplayName("edit")
+    @DisplayName("/edit")
     class Edit {
 
         @Test
@@ -86,6 +90,12 @@ class TweetControllerTest {
                     .andExpect(model().attribute("tweet", IsSame.sameInstance(tweet)));
             verify(tweetService, times(1)).findById(eq(tweetId));
         }
+
+    }
+
+    @Nested
+    @DisplayName("/edit/{id}")
+    class EditById {
 
         @Test
         void shouldSaveEntity() throws Exception {
@@ -108,7 +118,7 @@ class TweetControllerTest {
     }
 
     @Nested
-    @DisplayName("delete")
+    @DisplayName("/delete/{id}")
     class Delete {
 
         @Test
@@ -119,6 +129,29 @@ class TweetControllerTest {
                     .andExpect(view().name("redirect:/"))
                     .andExpect(status().is3xxRedirection());
             verify(tweetService, times(1)).deleteById(eq(tweetId));
+        }
+
+    }
+
+    @Nested
+    @DisplayName("/")
+    class Root {
+
+        @Test
+        void shouldReturnPage() throws Exception {
+            String firstTweetText = "What is happening?";
+            String secondTweetText = "Spring Web Mvc is awesome!";
+            List<Tweet> tweets = Lists.newArrayList(new Tweet(firstTweetText), new Tweet(secondTweetText));
+            doReturn(tweets).when(tweetService).findAll();
+
+            MvcResult result = mockMvc.perform(get("/"))
+                    .andExpect(view().name("index"))
+                    .andExpect(status().isOk())
+                    .andExpect(model().attribute("tweets", IsSame.sameInstance(tweets)))
+                    .andReturn();
+            String content = result.getResponse().getContentAsString();
+            assertThat(content).contains(firstTweetText, secondTweetText);
+            verify(tweetService, times(1)).findAll();
         }
 
     }
