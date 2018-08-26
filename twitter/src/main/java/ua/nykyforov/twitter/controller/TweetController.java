@@ -55,7 +55,7 @@ public class TweetController {
     public String updateTweet(@RequestParam("id") String id, @RequestParam("text") String tweetText, Model model) {
         Tweet tweet = tweetService.findById(id).orElseThrow(NotFoundException::new);
         tweet.setText(tweetText);
-        tweetService.save(tweet); // todo mongo
+        tweetService.save(tweet);
         return "redirect:/";
     }
 
