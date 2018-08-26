@@ -38,13 +38,14 @@
     </thead>
     <tbody>
     <!--/*@thymesVar id="tweet" type="ua.nykyforov.twitter.domain.Tweet"*/-->
+    <!--/*@thymesVar id="tweets" type="java.lang.Iterable"*/-->
     <tr th:each="tweet : ${tweets}" th:object="${tweet}">
         <td th:text="*{id}">1</td>
         <td th:text="*{createDate}">Today</td>
         <td th:text="*{text}">Thymeleaf the best Java template engine</td>
         <td>
-            <a th:href="@{/edit(id=*{id})}" href="edit.html">Edit</a>
-            <a th:href="@{/delete(id=*{id})}" href="index.html">Delete</a>
+            <a th:href="@{/edit/{id}(id=*{id})}" href="edit.html">Edit</a>
+            <a th:href="@{/delete/{id}(id=*{id})}" href="index.html">Delete</a>
         </td>
     </tr>
     </tbody>

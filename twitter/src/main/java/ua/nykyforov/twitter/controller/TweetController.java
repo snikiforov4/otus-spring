@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ua.nykyforov.twitter.domain.Tweet;
@@ -43,8 +44,8 @@ public class TweetController {
         return "redirect:/";
     }
 
-    @GetMapping("/edit")
-    public String editPage(@RequestParam("id") String id, Model model) {
+    @GetMapping("/edit/{id}")
+    public String editPage(@PathVariable("id") String id, Model model) {
         Tweet tweet = tweetService.findById(id).orElseThrow(NotFoundException::new);
         model.addAttribute("tweet", tweet);
         return "edit";
@@ -58,8 +59,8 @@ public class TweetController {
         return "redirect:/";
     }
 
-    @GetMapping("/delete")
-    public String deleteTweet(@RequestParam("id") String id) {
+    @GetMapping("/delete/{id}")
+    public String deleteTweet(@PathVariable("id") String id) {
         tweetService.deleteById(id);
         return "redirect:/";
     }
