@@ -52,7 +52,7 @@ public class TweetController {
     }
 
     @PostMapping("/edit")
-    public String updateTweet(@RequestParam("id") String id, @RequestParam("text") String tweetText, Model model) {
+    public String updateTweet(@RequestParam("id") String id, @RequestParam("text") String tweetText) {
         Tweet tweet = tweetService.findById(id).orElseThrow(NotFoundException::new);
         tweet.setText(tweetText);
         tweetService.save(tweet);
