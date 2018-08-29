@@ -39,7 +39,7 @@ public class JdbcBookDao implements BookDao {
 
     @Override
     public void insert(Book book) {
-        String sql = "INSERT INTO book (title, genre_id) VALUES(:title, :genre_id)";
+        String sql = "INSERT INTO usr.book (title, genre_id) VALUES(:title, :genre_id)";
         Map<String, Object> params = newHashMapWithExpectedSize(2);
         params.put("title", book.getTitle());
         params.put("genre_id", book.getGenre().map(Genre::getId).orElse(null));
@@ -50,10 +50,10 @@ public class JdbcBookDao implements BookDao {
     @Override
     public Book getById(int id) {
         String sql = "SELECT b.id, b.title, b.genre_id, g.name as genre_name, a.id as author_id, a.first_name as author_first_name, a.last_name as author_last_name " +
-                "FROM book b " +
-                "LEFT OUTER JOIN author_book ab ON b.id = ab.book_id " +
-                "LEFT OUTER JOIN author a ON a.id = ab.author_id " +
-                "LEFT OUTER JOIN genre g ON b.genre_id = g.id " +
+                "FROM usr.book b " +
+                "LEFT OUTER JOIN usr.author_book ab ON b.id = ab.book_id " +
+                "LEFT OUTER JOIN usr.author a ON a.id = ab.author_id " +
+                "LEFT OUTER JOIN usr.genre g ON b.genre_id = g.id " +
                 "WHERE b.id = :id";
         Map<Integer, Book> res = MapUtils.emptyIfNull(jdbc.query(sql, ImmutableMap.of("id", id), new BookExtractor()));
         if (res.size() > 1) {
@@ -65,7 +65,7 @@ public class JdbcBookDao implements BookDao {
 
     @Override
     public void deleteById(int id) {
-        String sql = "DELETE FROM book WHERE id = :id";
+        String sql = "DELETE FROM usr.book WHERE id = :id";
         int deleted = jdbc.update(sql, ImmutableMap.of("id", id));
         logger.info("deleteById: id={} affected={}", id, deleted);
     }
@@ -77,10 +77,10 @@ public class JdbcBookDao implements BookDao {
 
     public Collection<Book> findByTitle(String query) {
         String sql = "SELECT b.id, b.title, b.genre_id, g.name as genre_name, a.id as author_id, a.first_name as author_first_name, a.last_name as author_last_name " +
-                "FROM book b " +
-                "LEFT OUTER JOIN author_book ab ON b.id = ab.book_id " +
-                "LEFT OUTER JOIN author a ON a.id = ab.author_id " +
-                "LEFT OUTER JOIN genre g ON b.genre_id = g.id " +
+                "FROM usr.book b " +
+                "LEFT OUTER JOIN usr.author_book ab ON b.id = ab.book_id " +
+                "LEFT OUTER JOIN usr.author a ON a.id = ab.author_id " +
+                "LEFT OUTER JOIN usr.genre g ON b.genre_id = g.id " +
                 "WHERE title LIKE :query";
         return MapUtils.emptyIfNull(jdbc.query(sql, ImmutableMap.of("query", query), new BookExtractor()))
                 .values();

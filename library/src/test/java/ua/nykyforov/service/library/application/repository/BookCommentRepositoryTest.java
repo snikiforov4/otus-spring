@@ -1,50 +1,30 @@
-package ua.nykyforov.service.library.application.dao.jpa;
+package ua.nykyforov.service.library.application.repository;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.test.jdbc.JdbcTestUtils;
 import ua.nykyforov.service.library.core.domain.BookComment;
 
 import java.time.Instant;
-import java.util.List;
+import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 
 @DataJpaTest
 @SpringJUnitConfig(classes = {DataSourceConfig.class})
-class JpaBookCommentDaoTest {
-
-    private static final String TABLE_NAME = "usr.book_comment";
+class BookCommentRepositoryTest {
 
     @Autowired
-    private JpaBookCommentDao sut;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    @Test
-    @Sql({"/test-insert-books-1.sql"})
-    void shouldInsertEntity() {
-        int expectedNumberOfRows = getCountOfRowsInTable() + 1;
-
-        sut.insert(new BookComment("Awesome book", 42));
-
-        assertEquals(expectedNumberOfRows, getCountOfRowsInTable(),
-                "wrong number of inserted rows");
-    }
+    private BookCommentRepository sut;
 
     @Test
     @Sql({"/test-get-all-entities-by-book-id.sql"})
-    void shouldGetAllBookCommentsByBookId() {
+    void shouldFindAllByBookId() {
         final int bookId = 44;
 
-        List<BookComment> bookComments = sut.getAllByBookId(bookId);
+        Collection<BookComment> bookComments = sut.findAllByBookId(bookId);
 
         assertThat(bookComments)
                 .isNotNull()
@@ -62,9 +42,4 @@ class JpaBookCommentDaoTest {
         bookComment.setCreateDate(createDate);
         return bookComment;
     }
-
-    private int getCountOfRowsInTable() {
-        return JdbcTestUtils.countRowsInTable(jdbcTemplate, TABLE_NAME);
-    }
-
 }

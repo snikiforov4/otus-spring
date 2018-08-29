@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.nykyforov.service.library.core.application.BookCommentService;
+import ua.nykyforov.service.library.application.repository.BookCommentRepository;
 
 import java.util.Objects;
 
@@ -20,13 +20,13 @@ import static org.mockito.Mockito.verify;
 class BookCommentCommandsTest {
 
     @Mock
-    private BookCommentService bookCommentService;
+    private BookCommentRepository bookCommentRepository;
 
     private BookCommentCommands sut;
 
     @BeforeEach
     void setUp() {
-        sut = new BookCommentCommands(bookCommentService);
+        sut = new BookCommentCommands(bookCommentRepository);
     }
 
     @Nested
@@ -40,7 +40,7 @@ class BookCommentCommandsTest {
 
             sut.addCommentToBook(comment, bookId);
 
-            verify(bookCommentService, times(1))
+            verify(bookCommentRepository, times(1))
                     .save(argThat(argument -> argument != null
                             && argument.getBookId() == bookId
                             && Objects.equals(argument.getText(), comment)
@@ -60,7 +60,7 @@ class BookCommentCommandsTest {
 
             sut.getAllBookCommentsByBookId(bookId);
 
-            verify(bookCommentService, times(1)).getAllByBookId(eq(bookId));
+            verify(bookCommentRepository, times(1)).findAllByBookId(eq(bookId));
         }
 
     }

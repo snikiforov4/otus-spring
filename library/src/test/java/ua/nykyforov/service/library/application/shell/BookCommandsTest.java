@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.nykyforov.service.library.core.application.AuthorService;
-import ua.nykyforov.service.library.core.application.BookService;
-import ua.nykyforov.service.library.core.application.GenreService;
+import ua.nykyforov.service.library.application.repository.AuthorRepository;
+import ua.nykyforov.service.library.application.repository.BookRepository;
+import ua.nykyforov.service.library.application.repository.GenreRepository;
 import ua.nykyforov.service.library.core.domain.Author;
 import ua.nykyforov.service.library.core.domain.Book;
 import ua.nykyforov.service.library.core.domain.Genre;
@@ -27,17 +27,17 @@ import static org.mockito.Mockito.*;
 class BookCommandsTest {
 
     @Mock
-    private BookService bookService;
+    private BookRepository bookRepository;
     @Mock
-    private GenreService genreService;
+    private GenreRepository genreRepository;
     @Mock
-    private AuthorService authorService;
+    private AuthorRepository authorRepository;
 
     private BookCommands sut;
 
     @BeforeEach
     void setUp() {
-        sut = new BookCommands(bookService, genreService, authorService);
+        sut = new BookCommands(bookRepository, genreRepository, authorRepository);
     }
 
     @Nested
@@ -45,39 +45,39 @@ class BookCommandsTest {
     class AddBook {
 
         @Test
-        void shouldWrapParameterToEntityAndPassToService() {
+        void shouldCallRepositoryMethodWithParam() {
             String title = "It";
 
             sut.addBook(title, 0);
 
-            verify(bookService, times(1))
+            verify(bookRepository, times(1))
                     .save(argThat(argument -> Objects.equals(argument.getTitle(), title)));
         }
 
         @Test
-        void shouldNotCallGenreServiceIfGenreIdParamIsNotPositive() {
+        void shouldNotCallGenreRepositoryIfGenreIdParamIsNotPositive() {
             String title = "It";
             final int genreId = 0;
 
             sut.addBook(title, genreId);
 
-            verify(genreService, never()).getById(anyInt());
-            verify(bookService, times(1))
+            verify(genreRepository, never()).findById(anyInt());
+            verify(bookRepository, times(1))
                     .save(argThat(book -> !book.getGenre().isPresent()));
         }
 
         @Test
-        void shouldGetFromGenreServiceIfGenreIdParamIsPositive() {
+        void shouldGetGenreFromRepositoryIfGenreIdParamIsPositive() {
             String title = "It";
             final int genreId = 42;
             Genre genre = new Genre("Mystic");
             genre.setId(genreId);
-            doReturn(Optional.of(genre)).when(genreService).getById(eq(genreId));
+            doReturn(Optional.of(genre)).when(genreRepository).findById(eq(genreId));
 
             sut.addBook(title, genreId);
 
-            verify(genreService, times(1)).getById(eq(42));
-            verify(bookService, times(1))
+            verify(genreRepository, times(1)).findById(eq(42));
+            verify(bookRepository, times(1))
                     .save(argThat(book -> book.getGenre().orElseThrow(() -> new RuntimeException("Genre is not present in book")) == genre));
         }
 
@@ -88,12 +88,12 @@ class BookCommandsTest {
     class DeleteBook {
 
         @Test
-        void shouldWrapParameterToEntityAndPassToService() {
+        void shouldCallRepositoryMethod() {
             final int bookId = 42;
 
             sut.deleteBook(bookId);
 
-            verify(bookService, times(1)).deleteById(eq(bookId));
+            verify(bookRepository, times(1)).deleteById(eq(bookId));
         }
 
     }
@@ -103,12 +103,12 @@ class BookCommandsTest {
     class FindBookByTitle {
 
         @Test
-        void shouldWrapParameterToEntityAndPassToService() {
+        void shouldCallRepositoryMethod() {
             final String title = "42";
 
             sut.findBookByTitle(title);
 
-            verify(bookService, times(1)).findByTitleLike(eq(title));
+            verify(bookRepository, times(1)).findAllByTitleLike(eq(title));
         }
 
     }
@@ -121,7 +121,7 @@ class BookCommandsTest {
         void shouldThrowExceptionIfAuthorNotFound() {
             final int authorId = 1;
             final int bookId = 2;
-            doReturn(Optional.empty()).when(authorService).getById(eq(authorId));
+            doReturn(Optional.empty()).when(authorRepository).findById(eq(authorId));
 
             Assertions.assertThatThrownBy(() -> sut.addAuthorToBook(authorId, bookId))
                     .isInstanceOf(RuntimeException.class)
@@ -132,8 +132,8 @@ class BookCommandsTest {
         void shouldThrowExceptionIfBookNotFound() {
             final int authorId = 1;
             final int bookId = 2;
-            doReturn(Optional.of(createAuthorStub(authorId))).when(authorService).getById(eq(authorId));
-            doReturn(Optional.empty()).when(bookService).getById(eq(bookId));
+            doReturn(Optional.of(createAuthorStub(authorId))).when(authorRepository).findById(eq(authorId));
+            doReturn(Optional.empty()).when(bookRepository).findById(eq(bookId));
 
             Assertions.assertThatThrownBy(() -> sut.addAuthorToBook(authorId, bookId))
                     .isInstanceOf(RuntimeException.class)
@@ -141,15 +141,15 @@ class BookCommandsTest {
         }
 
         @Test
-        void shouldSaveBookThroughService() {
+        void shouldCallRepositoryMethod() {
             final int authorId = 1;
             final int bookId = 2;
-            doReturn(Optional.of(createAuthorStub(authorId))).when(authorService).getById(eq(authorId));
-            doReturn(Optional.of(createBookStub(bookId))).when(bookService).getById(eq(bookId));
+            doReturn(Optional.of(createAuthorStub(authorId))).when(authorRepository).findById(eq(authorId));
+            doReturn(Optional.of(createBookStub(bookId))).when(bookRepository).findById(eq(bookId));
 
             sut.addAuthorToBook(authorId, bookId);
 
-            verify(bookService, times(1))
+            verify(bookRepository, times(1))
                     .save(argThat(book -> book.getAuthors().stream().map(Author::getId).count() == 1));
         }
 

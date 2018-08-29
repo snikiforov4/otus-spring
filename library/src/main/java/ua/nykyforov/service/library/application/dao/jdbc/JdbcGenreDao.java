@@ -28,19 +28,19 @@ public class JdbcGenreDao implements GenreDao {
 
     @Override
     public void insert(Genre genre) {
-        String sql = "INSERT INTO genre (name) VALUES(:name)";
+        String sql = "INSERT INTO usr.genre (name) VALUES(:name)";
         int updated = jdbc.update(sql, ImmutableMap.of("name", genre.getName()));
         logger.info("insert: book={} affected={}", genre, updated);
     }
 
     @Override
     public Genre getById(int id) {
-        String sql = "SELECT id, `name` FROM genre WHERE id = :id";
+        String sql = "SELECT id, `name` FROM usr.genre WHERE id = :id";
         return jdbc.queryForObject(sql, ImmutableMap.of("id", id), new GenreMapper());
     }
 
     public long count() {
-        String sql = "SELECT count(0) FROM genre";
+        String sql = "SELECT count(0) FROM usr.genre";
         return jdbc.queryForObject(sql, ImmutableMap.of(), Integer.class);
     }
 

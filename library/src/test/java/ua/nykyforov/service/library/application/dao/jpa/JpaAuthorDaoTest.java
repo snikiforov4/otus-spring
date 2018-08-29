@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringJUnitConfig(classes = {DataSourceConfig.class})
 class JpaAuthorDaoTest {
 
-    private static final String TABLE_NAME = "author";
+    private static final String TABLE_NAME = "usr.author";
 
     @Autowired
     private JpaAuthorDao sut;

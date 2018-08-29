@@ -1,29 +1,31 @@
-CREATE TABLE genre
+CREATE SCHEMA IF NOT EXISTS usr;
+SET SCHEMA usr;
+
+CREATE SEQUENCE genre_id_seq;
+CREATE TABLE usr.genre
 (
-   id integer auto_increment NOT NULL,
-   name varchar(64) NOT NULL,
-   UNIQUE(name),
-   PRIMARY KEY(id)
+   id integer default genre_id_seq.nextval PRIMARY KEY,
+   name varchar(64) NOT NULL UNIQUE
 );
 
-CREATE TABLE author
+CREATE SEQUENCE author_id_seq;
+CREATE TABLE usr.author
 (
-   id integer auto_increment NOT NULL,
+   id integer default author_id_seq.nextval PRIMARY KEY,
    first_name varchar(64) NOT NULL,
    last_name varchar(64) NOT NULL,
-   PRIMARY KEY(id)
 );
 
-CREATE TABLE book
+CREATE SEQUENCE book_id_seq;
+CREATE TABLE usr.book
 (
-   id integer auto_increment NOT NULL,
+   id integer default book_id_seq.nextval PRIMARY KEY,
    title varchar(256) NOT NULL,
    genre_id integer NULL,
-   PRIMARY KEY(id),
    FOREIGN KEY(genre_id) REFERENCES genre(id) ON UPDATE CASCADE
 );
 
-CREATE TABLE author_book
+CREATE TABLE usr.author_book
 (
    author_id integer NOT NULL,
    book_id integer NOT NULL,
@@ -32,9 +34,10 @@ CREATE TABLE author_book
    FOREIGN KEY(book_id) REFERENCES book(id) ON UPDATE CASCADE
 );
 
+CREATE SEQUENCE book_comment_id_seq;
 CREATE TABLE book_comment
 (
-   id integer auto_increment NOT NULL,
+   id integer default book_comment_id_seq.nextval PRIMARY KEY,
    create_date TIMESTAMP WITH TIME ZONE NOT NULL,
    text varchar(255) NOT NULL,
    book_id integer NOT NULL,

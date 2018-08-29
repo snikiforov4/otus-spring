@@ -4,6 +4,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import javax.annotation.Nullable;
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Optional;
@@ -11,7 +12,7 @@ import java.util.Optional;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Entity
-@Table(name = "book")
+@Table(name = "book", schema = "usr")
 public class Book {
 
     @Id
@@ -21,14 +22,16 @@ public class Book {
     @Column(name = "title")
     private String title;
 
+    @Nullable
     @ManyToOne
     @JoinColumn(name="genre_id")
     private Genre genre;
 
+    @Nullable
     @ManyToMany
-    @JoinTable(name="author_book",
-            joinColumns = @JoinColumn(name="book_id", referencedColumnName="ID"),
-            inverseJoinColumns = @JoinColumn(name="author_id", referencedColumnName="ID")
+    @JoinTable(name="author_book", schema = "usr",
+            joinColumns = @JoinColumn(name="book_id", referencedColumnName="id"),
+            inverseJoinColumns = @JoinColumn(name="author_id", referencedColumnName="id")
     )
     private Collection<Author> authors;
 
@@ -59,7 +62,7 @@ public class Book {
         return Optional.ofNullable(genre);
     }
 
-    public void setGenre(Genre genre) {
+    public void setGenre(@Nullable Genre genre) {
         this.genre = genre;
     }
 

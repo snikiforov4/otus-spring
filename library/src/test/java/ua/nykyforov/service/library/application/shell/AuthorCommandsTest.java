@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.nykyforov.service.library.core.application.AuthorService;
+import ua.nykyforov.service.library.application.repository.AuthorRepository;
 
 import java.util.Objects;
 
@@ -19,13 +19,13 @@ import static org.mockito.Mockito.verify;
 class AuthorCommandsTest {
 
     @Mock
-    private AuthorService authorService;
+    private AuthorRepository authorRepository;
 
     private AuthorCommands sut;
 
     @BeforeEach
     void setUp() {
-        sut = new AuthorCommands(authorService);
+        sut = new AuthorCommands(authorRepository);
     }
 
     @Nested
@@ -39,7 +39,7 @@ class AuthorCommandsTest {
 
             sut.addAuthor(firstName, lastName);
 
-            verify(authorService, times(1))
+            verify(authorRepository, times(1))
                     .save(argThat(argument -> Objects.equals(firstName, argument.getFirstName())
                             && Objects.equals(lastName, argument.getLastName())));
         }

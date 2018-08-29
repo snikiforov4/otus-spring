@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.time.Instant;
 
 @Entity
-@Table(name = "book_comment")
+@Table(name = "book_comment", schema = "usr")
 public class BookComment {
 
     @Id

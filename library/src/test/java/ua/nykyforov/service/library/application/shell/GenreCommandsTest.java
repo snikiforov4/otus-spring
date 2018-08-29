@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import ua.nykyforov.service.library.core.application.GenreService;
+import ua.nykyforov.service.library.application.repository.GenreRepository;
 
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.times;
@@ -17,13 +17,13 @@ import static org.mockito.Mockito.verify;
 class GenreCommandsTest {
 
     @Mock
-    private GenreService genreService;
+    private GenreRepository genreRepository;
 
     private GenreCommands sut;
 
     @BeforeEach
     void setUp() {
-        sut = new GenreCommands(genreService);
+        sut = new GenreCommands(genreRepository);
     }
 
     @Nested
@@ -36,7 +36,7 @@ class GenreCommandsTest {
 
             sut.addGenre(genreName);
 
-            verify(genreService, times(1))
+            verify(genreRepository, times(1))
                     .save(argThat(argument -> genreName.equals(argument.getName())));
         }
 
