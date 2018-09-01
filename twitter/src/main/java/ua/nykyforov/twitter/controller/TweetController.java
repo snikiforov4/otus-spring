@@ -3,18 +3,17 @@ package ua.nykyforov.twitter.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import ua.nykyforov.twitter.domain.Tweet;
+import ua.nykyforov.twitter.dto.TweetDto;
 import ua.nykyforov.twitter.service.TweetService;
 
 import java.util.Collection;
+import java.util.stream.Collectors;
 
-@Controller
+@RestController
+@RequestMapping("/tweet")
 public class TweetController {
     private static final Logger logger = LoggerFactory.getLogger(TweetController.class);
 
@@ -26,15 +25,11 @@ public class TweetController {
     }
 
     @GetMapping("/")
-    public String getAllTweets(Model model) {
-        Collection<Tweet> tweets = tweetService.findAll();
-        model.addAttribute("tweets", tweets);
-        return "index";
-    }
-
-    @GetMapping("/add")
-    public String addPage() {
-        return "add";
+    public Collection<TweetDto> getAllTweets() {
+        return tweetService.findAll()
+                .stream()
+                .map(Tweet::toDto)
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/add")
