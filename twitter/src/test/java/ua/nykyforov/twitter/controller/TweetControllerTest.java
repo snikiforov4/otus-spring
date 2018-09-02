@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -54,16 +55,18 @@ class TweetControllerTest {
     }
 
     @Nested
-    @Disabled("Broken! Rewrite by use of REST Controller")
-    @DisplayName("/add")
-    class Add {
+    @DisplayName("POST /")
+    class SaveNewEntity {
 
         @Test
         void shouldSaveEntity() throws Exception {
             String tweetText = "What's happening?";
-            mockMvc.perform(post("/add").param("text", tweetText))
-                    .andExpect(view().name("redirect:/"))
-                    .andExpect(status().is3xxRedirection());
+            doReturn(new Tweet(tweetText)).when(tweetService).save(any(Tweet.class));
+
+            mockMvc.perform(post("/tweet/").param("text", tweetText))
+                    .andExpect(jsonPath("$", notNullValue()))
+                    .andExpect(jsonPath("$.text", equalTo(tweetText)))
+                    .andExpect(jsonPath("$.created", notNullValue()));
             verify(tweetService, times(1)).save(argThat(e ->
                     e != null && Objects.equals(tweetText, e.getText())
             ));
@@ -134,7 +137,7 @@ class TweetControllerTest {
     }
 
     @Nested
-    @DisplayName("/")
+    @DisplayName("GET /")
     class GetAllTweets {
 
         @Test

@@ -33,11 +33,11 @@ public class TweetController {
                 .collect(toList());
     }
 
-    @PostMapping("/add")
-    public String saveNewTweet(@RequestParam("text") String tweetText) {
+    @PostMapping
+    public TweetDto saveNewTweet(@RequestParam("text") String tweetText) {
         Tweet tweet = tweetService.save(new Tweet(tweetText));
         logger.info("Saved tweet: {}", tweet);
-        return "redirect:/";
+        return tweet.toDto();
     }
 
     @GetMapping("/edit/{id}")
