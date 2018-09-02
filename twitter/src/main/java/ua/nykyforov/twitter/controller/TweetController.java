@@ -10,7 +10,8 @@ import ua.nykyforov.twitter.dto.TweetDto;
 import ua.nykyforov.twitter.service.TweetService;
 
 import java.util.Collection;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping("/tweet")
@@ -24,12 +25,12 @@ public class TweetController {
         this.tweetService = tweetService;
     }
 
-    @GetMapping("/")
+    @GetMapping
     public Collection<TweetDto> getAllTweets() {
         return tweetService.findAll()
                 .stream()
                 .map(Tweet::toDto)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     @PostMapping("/add")

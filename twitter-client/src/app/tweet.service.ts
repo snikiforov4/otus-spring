@@ -11,7 +11,7 @@ export class TweetService {
   constructor(private http: HttpClient) { }
 
   getAll(): Observable<Tweet[]> {
-    return this.http.get<Tweet[]>('//localhost:8080/tweet');
+    return this.http.get<Tweet[]>('/tweet/');
   }
 
 }
