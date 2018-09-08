@@ -25,4 +25,9 @@ export class TweetsListComponent implements OnInit {
     }
   }
 
+  deleteTweet(tweetId: string) {
+    this.tweetsService.delete(tweetId).subscribe(_ => {
+      this.tweets = this.tweets.filter(e => e.id != tweetId);
+    })
+  }
 }
