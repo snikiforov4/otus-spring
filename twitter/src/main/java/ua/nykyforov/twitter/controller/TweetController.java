@@ -50,10 +50,9 @@ public class TweetController {
         return tweet.toDto();
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteTweet(@PathVariable("id") String id) {
+    @DeleteMapping("/{id}")
+    public void deleteTweet(@PathVariable("id") String id) {
         tweetService.deleteById(id);
-        return "redirect:/";
     }
 
 }

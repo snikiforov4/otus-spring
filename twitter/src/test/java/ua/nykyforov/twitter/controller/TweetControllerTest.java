@@ -46,13 +46,33 @@ class TweetControllerTest {
     void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(wac)
                 .alwaysExpect(status().isOk())
-                .alwaysExpect(content().contentType("application/json;charset=UTF-8"))
                 .build();
     }
 
     @AfterEach
     void tearDown() {
         Mockito.reset(tweetService);
+    }
+
+    @Nested
+    @DisplayName("GET /")
+    class GetAllTweets {
+
+        @Test
+        void shouldReturnAllTweets() throws Exception {
+            String firstTweetText = "What is happening?";
+            String secondTweetText = "Spring Web Mvc is awesome!";
+            List<Tweet> tweets = Lists.newArrayList(new Tweet(firstTweetText), new Tweet(secondTweetText));
+            doReturn(tweets).when(tweetService).findAll();
+
+            mockMvc.perform(get("/tweet/"))
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+                    .andExpect(jsonPath("$", hasSize(2)))
+                    .andExpect(jsonPath("$[0].text", equalTo(firstTweetText)))
+                    .andExpect(jsonPath("$[1].text", equalTo(secondTweetText)));
+            verify(tweetService).findAll();
+        }
+
     }
 
     @Nested
@@ -68,6 +88,7 @@ class TweetControllerTest {
 
             mockMvc.perform(post("/tweet/").contentType(MediaType.APPLICATION_JSON_UTF8)
                     .content(mapper.writeValueAsString(tweetDto)))
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                     .andExpect(jsonPath("$", notNullValue()))
                     .andExpect(jsonPath("$.text", equalTo(tweetText)))
                     .andExpect(jsonPath("$.created", notNullValue()));
@@ -83,7 +104,7 @@ class TweetControllerTest {
     class UpdateTweet {
 
         @Test
-        void shouldSaveEntity() throws Exception {
+        void shouldUpdateEntity() throws Exception {
             final String tweetId = "42";
             final String tweetText = "What's happening?";
             Tweet tweet = new Tweet(tweetId, tweetText);
@@ -92,6 +113,7 @@ class TweetControllerTest {
 
             mockMvc.perform(put("/tweet/").contentType(MediaType.APPLICATION_JSON_UTF8)
                     .content(mapper.writeValueAsString(tweet.toDto())))
+                    .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                     .andExpect(jsonPath("$", notNullValue()))
                     .andExpect(jsonPath("$.id", equalTo(tweetId)))
                     .andExpect(jsonPath("$.text", equalTo(tweetText)))
@@ -104,38 +126,16 @@ class TweetControllerTest {
     }
 
     @Nested
-    @Disabled("Broken! Rewrite by REST Controller")
-    @DisplayName("/delete/{id}")
+    @DisplayName("DELETE /{id}")
     class Delete {
 
         @Test
-        void shouldReturnPage() throws Exception {
+        void shouldDeleteEntity() throws Exception {
             final String tweetId = "tweetId";
 
-            mockMvc.perform(get("/delete/{id}", tweetId))
-                    .andExpect(view().name("redirect:/"))
-                    .andExpect(status().is3xxRedirection());
+            mockMvc.perform(delete("/tweet/{id}", tweetId));
+
             verify(tweetService, times(1)).deleteById(eq(tweetId));
-        }
-
-    }
-
-    @Nested
-    @DisplayName("GET /")
-    class GetAllTweets {
-
-        @Test
-        void shouldReturnAllTweets() throws Exception {
-            String firstTweetText = "What is happening?";
-            String secondTweetText = "Spring Web Mvc is awesome!";
-            List<Tweet> tweets = Lists.newArrayList(new Tweet(firstTweetText), new Tweet(secondTweetText));
-            doReturn(tweets).when(tweetService).findAll();
-
-            mockMvc.perform(get("/tweet/"))
-                    .andExpect(jsonPath("$", hasSize(2)))
-                    .andExpect(jsonPath("$[0].text", equalTo(firstTweetText)))
-                    .andExpect(jsonPath("$[1].text", equalTo(secondTweetText)));
-            verify(tweetService).findAll();
         }
 
     }
