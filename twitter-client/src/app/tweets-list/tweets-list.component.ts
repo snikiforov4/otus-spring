@@ -1,6 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {Tweet} from "../tweet";
 import {TweetService} from "../tweet.service";
+import {TweetDialogComponent} from "../tweet-dialog/tweet-dialog.component";
+import {MatDialog} from "@angular/material";
 
 @Component({
   selector: 'app-tweets-list',
@@ -11,10 +13,10 @@ export class TweetsListComponent implements OnInit {
 
   tweets: Array<Tweet>;
 
-  constructor(private tweetsService: TweetService) { }
+  constructor(public dialog: MatDialog, private tweetService: TweetService) { }
 
   ngOnInit() {
-    this.tweetsService.getAll().subscribe(data => {
+    this.tweetService.getAll().subscribe(data => {
       this.tweets = data;
     });
   }
@@ -25,9 +27,35 @@ export class TweetsListComponent implements OnInit {
     }
   }
 
+  updateTweet(tweet: Tweet) {
+    if (tweet) {
+      let idx = this.tweets.findIndex(e => e.id == tweet.id);
+      if (idx > 0) {
+        this.tweets[idx] = tweet;
+      }
+    }
+  }
+
   deleteTweet(tweetId: string) {
-    this.tweetsService.delete(tweetId).subscribe(_ => {
+    this.tweetService.delete(tweetId).subscribe(_ => {
       this.tweets = this.tweets.filter(e => e.id != tweetId);
     })
   }
+
+  openEditTweetDialog(tweet: Tweet): void {
+    const dialogRef = this.dialog.open(TweetDialogComponent, {
+      width: '550px',
+      data: {title: 'Edit Tweet', actionButtonText: 'Edit', tweet: tweet}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.tweetService.edit(result).subscribe(updatedTweet => {
+          this.updateTweet(updatedTweet);
+          console.log('Tweet was successfully updated: {}', updatedTweet);
+        })
+      }
+    });
+  }
+
 }

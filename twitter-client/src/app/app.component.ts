@@ -20,7 +20,7 @@ export class AppComponent {
 
   openComposeNewTweetDialog(): void {
     const dialogRef = this.dialog.open(TweetDialogComponent, {
-      width: '350px',
+      width: '550px',
       data: {title: 'Compose new Tweet', actionButtonText: 'Tweet', tweet: new Tweet()}
     });
 

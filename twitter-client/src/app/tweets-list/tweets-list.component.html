@@ -5,7 +5,7 @@
       @{{tweet.created}}
     </mat-card-content>
     <mat-card-actions>
-      <button mat-icon-button>
+      <button mat-icon-button (click)="openEditTweetDialog(tweet)">
         <mat-icon aria-label="Edit">edit</mat-icon>
       </button>
       <button mat-icon-button (click)="deleteTweet(tweet.id)">

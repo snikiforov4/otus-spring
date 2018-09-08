@@ -22,6 +22,13 @@ export class TweetService {
     return this.http.post<Tweet>(this.tweetUrl, tweet);
   }
 
+  edit(tweet: Tweet): Observable<Tweet> {
+    return this.http.put<Tweet>(this.tweetUrl, tweet)
+      .pipe(
+        tap(e => console.log(`edit tweet=${e}`)),
+      );
+  }
+
   delete(tweet: Tweet | string): Observable<Tweet> {
     const id = typeof tweet === 'string' ? tweet : tweet.id;
     const url = `${this.tweetUrl}${id}`;
