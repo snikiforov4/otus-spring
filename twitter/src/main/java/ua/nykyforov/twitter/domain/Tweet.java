@@ -27,6 +27,11 @@ public class Tweet {
     public Tweet() {
     }
 
+    public Tweet(String id, String text) {
+        this(text);
+        setId(id);
+    }
+
     public Tweet(String text) {
         setText(text);
         this.createDate = Instant.now();
@@ -55,6 +60,14 @@ public class Tweet {
 
     public void setCreateDate(Instant createDate) {
         this.createDate = createDate;
+    }
+
+    public static Tweet fromDto(TweetDto dto) {
+        Tweet tweet = new Tweet();
+        tweet.setId(dto.getId());
+        tweet.setText(dto.getText());
+        tweet.setCreateDate(dto.getCreateDate());
+        return tweet;
     }
 
     public TweetDto toDto() {

@@ -1,9 +1,9 @@
 package ua.nykyforov.twitter.controller;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ua.nykyforov.twitter.domain.Tweet;
 import ua.nykyforov.twitter.dto.TweetDto;
@@ -11,6 +11,7 @@ import ua.nykyforov.twitter.service.TweetService;
 
 import java.util.Collection;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.stream.Collectors.toList;
 
 @RestController
@@ -40,19 +41,13 @@ public class TweetController {
         return tweet.toDto();
     }
 
-    @GetMapping("/edit/{id}")
-    public String editPage(@PathVariable("id") String id, Model model) {
-        Tweet tweet = tweetService.findById(id).orElseThrow(NotFoundException::new);
-        model.addAttribute("tweet", tweet);
-        return "edit";
-    }
-
-    @PostMapping("/edit")
-    public String updateTweet(@RequestParam("id") String id, @RequestParam("text") String tweetText) {
-        Tweet tweet = tweetService.findById(id).orElseThrow(NotFoundException::new);
-        tweet.setText(tweetText);
+    @PutMapping
+    public TweetDto updateTweet(@RequestBody TweetDto tweetDto) {
+        checkArgument(StringUtils.isNotBlank(tweetDto.getId()), "id is blank");
+        Tweet tweet = tweetService.findById(tweetDto.getId()).orElseThrow(NotFoundException::new);
+        tweet.setText(tweetDto.getText());
         tweetService.save(tweet);
-        return "redirect:/";
+        return tweet.toDto();
     }
 
     @GetMapping("/delete/{id}")

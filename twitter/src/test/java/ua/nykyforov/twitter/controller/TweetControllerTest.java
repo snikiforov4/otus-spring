@@ -1,8 +1,8 @@
 package ua.nykyforov.twitter.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.assertj.core.util.Lists;
-import org.hamcrest.core.IsSame;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 import ua.nykyforov.twitter.Main;
 import ua.nykyforov.twitter.domain.Tweet;
@@ -28,8 +27,7 @@ import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SuppressWarnings("WeakerAccess")
@@ -66,7 +64,7 @@ class TweetControllerTest {
             String tweetText = "What's happening?";
             TweetDto tweetDto = new TweetDto(null, tweetText, null);
             doReturn(new Tweet(tweetText)).when(tweetService).save(any(Tweet.class));
-            ObjectMapper mapper = new ObjectMapper();
+            ObjectMapper mapper = createMapper();
 
             mockMvc.perform(post("/tweet/").contentType(MediaType.APPLICATION_JSON_UTF8)
                     .content(mapper.writeValueAsString(tweetDto)))
@@ -81,45 +79,25 @@ class TweetControllerTest {
     }
 
     @Nested
-    @Disabled("Broken! Rewrite by REST Controller")
-    @DisplayName("/edit")
-    class Edit {
-
-        @Test
-        void shouldReturnPage() throws Exception {
-            final String tweetId = "tweetId";
-            Tweet tweet = new Tweet("What's happening?");
-            doReturn(Optional.of(tweet)).when(tweetService).findById(eq(tweetId));
-
-            mockMvc.perform(get("/edit/{id}", tweetId))
-                    .andExpect(view().name("edit"))
-                    .andExpect(status().isOk())
-                    .andExpect(model().attribute("tweet", IsSame.sameInstance(tweet)));
-            verify(tweetService, times(1)).findById(eq(tweetId));
-        }
-
-    }
-
-    @Nested
-    @Disabled("Broken! Rewrite by REST Controller")
-    @DisplayName("/edit/{id}")
-    class EditById {
+    @DisplayName("PUT /")
+    class UpdateTweet {
 
         @Test
         void shouldSaveEntity() throws Exception {
-            final String tweetId = "id";
+            final String tweetId = "42";
             final String tweetText = "What's happening?";
-            Tweet tweet = new Tweet(tweetText);
+            Tweet tweet = new Tweet(tweetId, tweetText);
             doReturn(Optional.of(tweet)).when(tweetService).findById(eq(tweetId));
+            ObjectMapper mapper = createMapper();
 
-            LinkedMultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-            params.add("id", tweetId);
-            params.add("text", tweetText);
-            mockMvc.perform(post("/edit").params(params))
-                    .andExpect(view().name("redirect:/"))
-                    .andExpect(status().is3xxRedirection());
+            mockMvc.perform(put("/tweet/").contentType(MediaType.APPLICATION_JSON_UTF8)
+                    .content(mapper.writeValueAsString(tweet.toDto())))
+                    .andExpect(jsonPath("$", notNullValue()))
+                    .andExpect(jsonPath("$.id", equalTo(tweetId)))
+                    .andExpect(jsonPath("$.text", equalTo(tweetText)))
+                    .andExpect(jsonPath("$.created", notNullValue()));
             verify(tweetService, times(1)).save(argThat(e ->
-                    e != null && Objects.equals(tweetText, e.getText())
+                    e != null && Objects.equals(tweetId, e.getId()) && Objects.equals(tweetText, e.getText())
             ));
         }
 
@@ -162,5 +140,10 @@ class TweetControllerTest {
 
     }
 
+    private ObjectMapper createMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        return mapper;
+    }
 
 }
