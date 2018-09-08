@@ -1,11 +1,13 @@
 package ua.nykyforov.twitter.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.assertj.core.util.Lists;
 import org.hamcrest.core.IsSame;
 import org.junit.jupiter.api.*;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -13,6 +15,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 import ua.nykyforov.twitter.Main;
 import ua.nykyforov.twitter.domain.Tweet;
+import ua.nykyforov.twitter.dto.TweetDto;
 import ua.nykyforov.twitter.service.TweetService;
 
 import java.util.List;
@@ -61,9 +64,12 @@ class TweetControllerTest {
         @Test
         void shouldSaveEntity() throws Exception {
             String tweetText = "What's happening?";
+            TweetDto tweetDto = new TweetDto(null, tweetText, null);
             doReturn(new Tweet(tweetText)).when(tweetService).save(any(Tweet.class));
+            ObjectMapper mapper = new ObjectMapper();
 
-            mockMvc.perform(post("/tweet/").param("text", tweetText))
+            mockMvc.perform(post("/tweet/").contentType(MediaType.APPLICATION_JSON_UTF8)
+                    .content(mapper.writeValueAsString(tweetDto)))
                     .andExpect(jsonPath("$", notNullValue()))
                     .andExpect(jsonPath("$.text", equalTo(tweetText)))
                     .andExpect(jsonPath("$.created", notNullValue()));

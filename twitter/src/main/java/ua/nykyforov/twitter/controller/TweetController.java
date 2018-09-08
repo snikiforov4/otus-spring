@@ -34,8 +34,8 @@ public class TweetController {
     }
 
     @PostMapping
-    public TweetDto saveNewTweet(@RequestParam("text") String tweetText) {
-        Tweet tweet = tweetService.save(new Tweet(tweetText));
+    public TweetDto saveNewTweet(@RequestBody TweetDto tweetDto) {
+        Tweet tweet = tweetService.save(new Tweet(tweetDto.getText()));
         logger.info("Saved tweet: {}", tweet);
         return tweet.toDto();
     }
