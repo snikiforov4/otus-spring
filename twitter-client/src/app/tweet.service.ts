@@ -14,4 +14,8 @@ export class TweetService {
     return this.http.get<Tweet[]>('/tweet/');
   }
 
+  save(tweet: Tweet): Observable<Tweet> {
+    return this.http.post<Tweet>('/tweet/', tweet);
+  }
+
 }

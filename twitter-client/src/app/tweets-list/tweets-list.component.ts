@@ -19,4 +19,10 @@ export class TweetsListComponent implements OnInit {
     });
   }
 
+  addNewTweet(tweet: Tweet) {
+    if (tweet) {
+      this.tweets.unshift(tweet);
+    }
+  }
+
 }

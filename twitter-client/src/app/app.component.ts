@@ -1,7 +1,9 @@
-import {Component} from '@angular/core';
+import {Component, ViewChild} from '@angular/core';
 import {MatDialog} from "@angular/material";
 import {TweetDialogComponent} from "./tweet-dialog/tweet-dialog.component";
 import {Tweet} from "./tweet";
+import {TweetService} from "./tweet.service";
+import {TweetsListComponent} from "./tweets-list/tweets-list.component";
 
 @Component({
   selector: 'app-root',
@@ -10,7 +12,11 @@ import {Tweet} from "./tweet";
 })
 export class AppComponent {
 
-  constructor(public dialog: MatDialog) {}
+  @ViewChild(TweetsListComponent)
+  private tweetsListComponent: TweetsListComponent;
+
+  constructor(public dialog: MatDialog, private tweetService: TweetService) {
+  }
 
   openComposeNewTweetDialog(): void {
     const dialogRef = this.dialog.open(TweetDialogComponent, {
@@ -19,8 +25,12 @@ export class AppComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('New Tweet was successfully added');
-      console.log(result);
+      if (result) {
+        this.tweetService.save(result).subscribe(savedTweet => {
+          this.tweetsListComponent.addNewTweet(savedTweet);
+          console.log('Tweet was successfully added: {}', savedTweet);
+        })
+      }
     });
   }
 
