@@ -3,7 +3,7 @@ package ua.nykyforov.service.library.application.repository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import ua.nykyforov.service.library.application.domain.Author;
@@ -15,7 +15,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootApplication
+@DataMongoTest
 @SpringJUnitConfig(classes = {MongoConfig.class})
 class BookRepositoryTest {
 
@@ -41,10 +41,12 @@ class BookRepositoryTest {
         notPersistedBook.addAuthor(author);
         Book savedBook = sut.save(notPersistedBook);
 
-        assertThat(savedBook).isNotNull();
-        final String id = savedBook.getId();
-        assertThat(id).isNotNull();
+        assertThat(savedBook).satisfies(b -> {
+            assertThat(b).isNotNull();
+            assertThat(b.getId()).isNotBlank();
+        });
 
+        final String id = savedBook.getId();
         Optional<Book> book = sut.findById(id);
 
         assertThat(book)
@@ -66,7 +68,6 @@ class BookRepositoryTest {
         Collection<Book> books = sut.findAllByTitleLike("*Java*");
 
         assertThat(books)
-                .hasSize(2)
                 .usingElementComparatorOnFields("id", "title")
                 .containsExactlyInAnyOrder(
                         firstBookStub,

@@ -4,6 +4,6 @@ spring:
       authentication-database: admin
       database: test
       host: localhost
-      port: 27073
+      port: 0
       username: sa
       password:
