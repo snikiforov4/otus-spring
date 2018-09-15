@@ -6,6 +6,6 @@ import org.springframework.test.context.TestPropertySource;
 
 @Configuration
 @ComponentScan(basePackageClasses = JdbcBookDao.class)
-@TestPropertySource("classpath:application-test.yml")
+@TestPropertySource("classpath:application.yml")
 public class DataSourceConfig {
 }

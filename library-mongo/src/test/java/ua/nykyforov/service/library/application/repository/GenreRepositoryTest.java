@@ -3,7 +3,7 @@ package ua.nykyforov.service.library.application.repository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import ua.nykyforov.service.library.application.domain.Genre;
@@ -12,7 +12,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootApplication
+@DataMongoTest
 @SpringJUnitConfig(classes = {MongoConfig.class})
 class GenreRepositoryTest {
 
@@ -30,11 +30,16 @@ class GenreRepositoryTest {
     @Test
     void shouldSaveEntity() {
         final String genreName = "Horror";
-        Genre savedGenre = sut.save(new Genre(genreName));
-        assertThat(savedGenre).isNotNull();
-        assertThat(savedGenre.getId()).isNotNull();
 
-        Optional<Genre> genre = sut.findById(savedGenre.getId());
+        Genre savedGenre = sut.save(new Genre(genreName));
+
+        assertThat(savedGenre).satisfies(g -> {
+            assertThat(g).isNotNull();
+            assertThat(g.getId()).isNotBlank();
+        });
+
+        final String id = savedGenre.getId();
+        Optional<Genre> genre = sut.findById(id);
 
         assertThat(genre)
                 .isPresent()
