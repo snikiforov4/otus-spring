@@ -11,6 +11,6 @@ import ua.nykyforov.service.library.core.domain.Book;
 @EntityScan(basePackageClasses = Book.class)
 @EnableJpaRepositories(basePackageClasses = AuthorRepository.class)
 @AutoConfigurationPackage
-@TestPropertySource("classpath:application-test.yml")
+@TestPropertySource("classpath:application.yml")
 public class DataSourceConfig {
 }
