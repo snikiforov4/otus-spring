@@ -12,6 +12,7 @@
         <module>quiz</module>
         <module>library-core</module>
         <module>library</module>
+        <module>library-mongo</module>
     </modules>
 
     <name>OTUS Spring</name>
@@ -32,6 +33,9 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <jackson.version>2.9.4</jackson.version>
         <guava.version>25.1-jre</guava.version>
+        <junit.jupiter.version>5.2.0</junit.jupiter.version>
+        <junit.platform.version>1.2.0</junit.platform.version>
+        <mockito.version>2.18.3</mockito.version>
     </properties>
 
     <build>

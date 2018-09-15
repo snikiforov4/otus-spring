@@ -7,7 +7,7 @@ docker pull postgres:10.5
 
 #### Run container
 Before run container <br /> 
-`export POSTGRES_VOLUME=/Users/user/postgresql/data` <br />
+`export POSTGRES_VOLUME=/Users/$(whoami)/postgresql/data` <br />
 Path should be absolute <br />
 
 ```
