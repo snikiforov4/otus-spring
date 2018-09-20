@@ -1,9 +1,9 @@
 package ua.nykyforov.twitter.repository;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories;
 
 @Configuration
-@EnableMongoRepositories(basePackageClasses = TweetRepository.class)
+@EnableReactiveMongoRepositories(basePackageClasses = TweetRepository.class)
 public class MongoConfig {
 }
