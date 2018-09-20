@@ -8,12 +8,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ua.nykyforov.twitter.domain.Tweet;
 import ua.nykyforov.twitter.repository.TweetRepository;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.same;
@@ -37,16 +35,17 @@ class TweetServiceImplTest {
     class FindAll {
 
         @Test
+        @SuppressWarnings("UnassignedFluxMonoInstance")
         void shouldCallRepository() {
-            List<Tweet> tweetsStub = Lists.newArrayList();
-            doReturn(tweetsStub).when(tweetRepository).findAll();
+            Flux<Tweet> tweetsFluxStub = Flux.fromIterable(Lists.newArrayList());
+            doReturn(tweetsFluxStub).when(tweetRepository).findAll();
 
-            Collection<Tweet> returnedTweets = sut.findAll();
+            Flux<Tweet> returnedTweets = sut.findAll();
 
             verify(tweetRepository, times(1)).findAll();
             assertThat(returnedTweets)
                     .isNotNull()
-                    .isSameAs(tweetsStub);
+                    .isSameAs(tweetsFluxStub);
         }
 
     }
@@ -56,12 +55,13 @@ class TweetServiceImplTest {
     class Save {
 
         @Test
+        @SuppressWarnings("UnassignedFluxMonoInstance")
         void shouldCallRepository() {
             Tweet argTweet = new Tweet("What's happening?");
-            Tweet retTweet = new Tweet("What's happening?");
+            Mono<Tweet> retTweet = Mono.just(new Tweet("What's happening?"));
             doReturn(retTweet).when(tweetRepository).save(same(argTweet));
 
-            Tweet actualTweet = sut.save(argTweet);
+            Mono<Tweet> actualTweet = sut.save(argTweet);
 
             verify(tweetRepository, times(1)).save(same(argTweet));
             assertThat(actualTweet)
@@ -76,12 +76,13 @@ class TweetServiceImplTest {
     class FindById {
 
         @Test
+        @SuppressWarnings("UnassignedFluxMonoInstance")
         void shouldCallRepository() {
             String tweetId = "42";
-            Optional<Tweet> retTweet = Optional.of(new Tweet("What's happening?"));
+            Mono<Tweet> retTweet = Mono.just(new Tweet("What's happening?"));
             doReturn(retTweet).when(tweetRepository).findById(eq(tweetId));
 
-            Optional<Tweet> actualTweet = sut.findById(tweetId);
+            Mono<Tweet> actualTweet = sut.findById(tweetId);
 
             verify(tweetRepository, times(1)).findById(eq(tweetId));
             assertThat(actualTweet)
@@ -96,13 +97,16 @@ class TweetServiceImplTest {
     class DeleteById {
 
         @Test
+        @SuppressWarnings("UnassignedFluxMonoInstance")
         void shouldCallRepository() {
             String tweetId = "42";
-            doNothing().when(tweetRepository).deleteById(eq(tweetId));
+            Mono<Void> expectedRes = Mono.empty();
+            doReturn(expectedRes).when(tweetRepository).deleteById(eq(tweetId));
 
-            sut.deleteById(tweetId);
+            Mono<Void> actualRes = sut.deleteById(tweetId);
 
             verify(tweetRepository, times(1)).deleteById(eq(tweetId));
+            assertThat(actualRes).isNotNull().isSameAs(expectedRes);
         }
 
     }
