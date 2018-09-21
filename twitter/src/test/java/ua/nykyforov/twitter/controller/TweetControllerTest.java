@@ -95,7 +95,7 @@ class TweetControllerTest {
                     .uri("/tweet/")
                     .body(BodyInserters.fromObject(tweetDto))
                     .exchange()
-                    .expectStatus().isOk()
+                    .expectStatus().isCreated()
                     .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
                     .expectBody(TweetDto.class)
                     .returnResult().getResponseBody();
@@ -161,7 +161,7 @@ class TweetControllerTest {
             webClient.delete()
                     .uri("/tweet/{id}", tweetId)
                     .exchange()
-                    .expectStatus().isOk()
+                    .expectStatus().isNoContent()
                     .expectBody()
                     .isEmpty();
             verify(tweetService, times(1)).deleteById(eq(tweetId));

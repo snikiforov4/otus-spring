@@ -2,6 +2,7 @@ package ua.nykyforov.twitter.controller;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -29,6 +30,7 @@ public class TweetController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Mono<TweetDto> saveNewTweet(@RequestBody TweetDto tweetDto) {
         return tweetService.save(new Tweet(tweetDto.getText()))
                 .map(Tweet::toDto);
@@ -44,6 +46,7 @@ public class TweetController {
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<Void> deleteTweet(@PathVariable("id") String id) {
         return tweetService.deleteById(id);
     }
