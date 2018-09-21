@@ -1,17 +1,18 @@
 package ua.nykyforov.twitter.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import org.springframework.web.reactive.function.BodyInserters;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ua.nykyforov.twitter.Main;
 import ua.nykyforov.twitter.domain.Tweet;
 import ua.nykyforov.twitter.dto.TweetDto;
@@ -19,33 +20,30 @@ import ua.nykyforov.twitter.service.TweetService;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SuppressWarnings("WeakerAccess")
-@SpringJUnitWebConfig(classes = Main.class)
+@ExtendWith(SpringExtension.class)
+@SpringBootTest(classes = Main.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class TweetControllerTest {
 
-    @Autowired
-    WebApplicationContext wac;
+    @LocalServerPort
+    private int port;
 
     @MockBean
     TweetService tweetService;
 
-    private MockMvc mockMvc;
+    private WebTestClient webClient;
 
     @BeforeEach
     void setup() {
-        this.mockMvc = MockMvcBuilders.webAppContextSetup(wac)
-                .alwaysExpect(status().isOk())
+        this.webClient = WebTestClient
+                .bindToServer()
+                .baseUrl(String.format("http://localhost:%d", port))
                 .build();
     }
 
@@ -56,20 +54,27 @@ class TweetControllerTest {
 
     @Nested
     @DisplayName("GET /")
+    @SuppressWarnings("UnassignedFluxMonoInstance")
     class GetAllTweets {
 
         @Test
-        void shouldReturnAllTweets() throws Exception {
+        void shouldReturnAllTweets() {
             String firstTweetText = "What is happening?";
             String secondTweetText = "Spring Web Mvc is awesome!";
-            List<Tweet> tweets = Lists.newArrayList(new Tweet(firstTweetText), new Tweet(secondTweetText));
-            doReturn(tweets).when(tweetService).findAll();
+            List<Tweet> expectedTweets = Lists.newArrayList(new Tweet(firstTweetText), new Tweet(secondTweetText));
+            doReturn(Flux.fromIterable(expectedTweets)).when(tweetService).findAll();
 
-            mockMvc.perform(get("/tweet/"))
-                    .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                    .andExpect(jsonPath("$", hasSize(2)))
-                    .andExpect(jsonPath("$[0].text", equalTo(firstTweetText)))
-                    .andExpect(jsonPath("$[1].text", equalTo(secondTweetText)));
+            List<TweetDto> actualTweets = webClient.get()
+                    .uri("/tweet/")
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                    .expectBodyList(TweetDto.class)
+                    .returnResult().getResponseBody();
+
+            assertThat(actualTweets).isNotNull()
+                    .usingElementComparatorOnFields("text")
+                    .containsExactlyInAnyOrder(expectedTweets.stream().map(Tweet::toDto).toArray(TweetDto[]::new));
             verify(tweetService).findAll();
         }
 
@@ -77,21 +82,29 @@ class TweetControllerTest {
 
     @Nested
     @DisplayName("POST /")
+    @SuppressWarnings("UnassignedFluxMonoInstance")
     class SaveNewEntity {
 
         @Test
-        void shouldSaveEntity() throws Exception {
+        void shouldSaveEntity() {
             String tweetText = "What's happening?";
             TweetDto tweetDto = new TweetDto(null, tweetText, null);
-            doReturn(new Tweet(tweetText)).when(tweetService).save(any(Tweet.class));
-            ObjectMapper mapper = createMapper();
+            doReturn(Mono.just(new Tweet(tweetText))).when(tweetService).save(any(Tweet.class));
 
-            mockMvc.perform(post("/tweet/").contentType(MediaType.APPLICATION_JSON_UTF8)
-                    .content(mapper.writeValueAsString(tweetDto)))
-                    .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                    .andExpect(jsonPath("$", notNullValue()))
-                    .andExpect(jsonPath("$.text", equalTo(tweetText)))
-                    .andExpect(jsonPath("$.created", notNullValue()));
+            TweetDto response = webClient.post()
+                    .uri("/tweet/")
+                    .body(BodyInserters.fromObject(tweetDto))
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                    .expectBody(TweetDto.class)
+                    .returnResult().getResponseBody();
+
+            assertThat(response).isNotNull()
+                    .satisfies(t -> {
+                        assertThat(t.getText()).isEqualTo(tweetText);
+                        assertThat(t.getCreateDate()).isNotNull();
+                    });
             verify(tweetService, times(1)).save(argThat(e ->
                     e != null && Objects.equals(tweetText, e.getText())
             ));
@@ -101,25 +114,36 @@ class TweetControllerTest {
 
     @Nested
     @DisplayName("PUT /")
+    @SuppressWarnings("UnassignedFluxMonoInstance")
     class UpdateTweet {
 
         @Test
-        void shouldUpdateEntity() throws Exception {
+        void shouldUpdateEntity() {
             final String tweetId = "42";
-            final String tweetText = "What's happening?";
-            Tweet tweet = new Tweet(tweetId, tweetText);
-            doReturn(Optional.of(tweet)).when(tweetService).findById(eq(tweetId));
-            ObjectMapper mapper = createMapper();
+            final String rawTweetText = "What's happening?";
+            final String editedTweetText = "What's happening? (Edited)";
+            Tweet rawTweet = new Tweet(tweetId, rawTweetText);
+            doReturn(Mono.just(rawTweet)).when(tweetService).findById(eq(tweetId));
+            Tweet editedTweet = new Tweet(tweetId, editedTweetText);
+            doReturn(Mono.just(editedTweet)).when(tweetService).save(any(Tweet.class));
 
-            mockMvc.perform(put("/tweet/").contentType(MediaType.APPLICATION_JSON_UTF8)
-                    .content(mapper.writeValueAsString(tweet.toDto())))
-                    .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                    .andExpect(jsonPath("$", notNullValue()))
-                    .andExpect(jsonPath("$.id", equalTo(tweetId)))
-                    .andExpect(jsonPath("$.text", equalTo(tweetText)))
-                    .andExpect(jsonPath("$.created", notNullValue()));
+            TweetDto response = webClient.put()
+                    .uri("/tweet/")
+                    .body(BodyInserters.fromObject(editedTweet.toDto()))
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectHeader().contentType(MediaType.APPLICATION_JSON_UTF8)
+                    .expectBody(TweetDto.class)
+                    .returnResult().getResponseBody();
+
+            assertThat(response).isNotNull()
+                    .satisfies(t -> {
+                        assertThat(t.getId()).isEqualTo(tweetId);
+                        assertThat(t.getText()).isEqualTo(editedTweetText);
+                        assertThat(t.getCreateDate()).isNotNull();
+                    });
             verify(tweetService, times(1)).save(argThat(e ->
-                    e != null && Objects.equals(tweetId, e.getId()) && Objects.equals(tweetText, e.getText())
+                    e != null && Objects.equals(tweetId, e.getId()) && Objects.equals(editedTweetText, e.getText())
             ));
         }
 
@@ -127,23 +151,22 @@ class TweetControllerTest {
 
     @Nested
     @DisplayName("DELETE /{id}")
+    @SuppressWarnings("UnassignedFluxMonoInstance")
     class Delete {
 
         @Test
-        void shouldDeleteEntity() throws Exception {
+        void shouldDeleteEntity() {
             final String tweetId = "tweetId";
 
-            mockMvc.perform(delete("/tweet/{id}", tweetId));
-
+            webClient.delete()
+                    .uri("/tweet/{id}", tweetId)
+                    .exchange()
+                    .expectStatus().isOk()
+                    .expectBody()
+                    .isEmpty();
             verify(tweetService, times(1)).deleteById(eq(tweetId));
         }
 
-    }
-
-    private ObjectMapper createMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.registerModule(new JavaTimeModule());
-        return mapper;
     }
 
 }
