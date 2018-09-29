@@ -1,14 +1,10 @@
 package ua.nykyforov.twitter.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
@@ -26,19 +22,9 @@ public class SecurityConfig {
                 .pathMatchers(HttpMethod.DELETE, "/tweet/*").authenticated()
                 .anyExchange().permitAll()
                 .and()
-                .httpBasic()
+                .formLogin()
                 .and()
                 .build();
-    }
-
-    @Bean
-    @Autowired
-    public MapReactiveUserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-        UserDetails user = User.withUsername("user")
-                .password(passwordEncoder.encode("pass"))
-                .roles("USER")
-                .build();
-        return new MapReactiveUserDetailsService(user);
     }
 
     @Bean
