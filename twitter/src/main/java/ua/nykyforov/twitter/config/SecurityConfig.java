@@ -15,15 +15,15 @@ public class SecurityConfig {
 
     @Bean
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-        return http.csrf().disable()
-                .authorizeExchange()
+        return http.authorizeExchange()
                 .pathMatchers(HttpMethod.PUT, "/tweet*").authenticated()
                 .pathMatchers(HttpMethod.POST, "/tweet*").authenticated()
                 .pathMatchers(HttpMethod.DELETE, "/tweet/*").authenticated()
                 .anyExchange().permitAll()
                 .and()
-                .formLogin()
-                .and()
+                .csrf().disable()
+                .formLogin().disable()
+                .logout().disable()
                 .build();
     }
 
