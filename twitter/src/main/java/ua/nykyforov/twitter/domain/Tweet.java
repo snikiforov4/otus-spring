@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import ua.nykyforov.twitter.dto.TweetDto;
 
 import java.time.Instant;
 
@@ -24,6 +25,11 @@ public class Tweet {
     private Instant createDate;
 
     public Tweet() {
+    }
+
+    public Tweet(String id, String text) {
+        this(text);
+        setId(id);
     }
 
     public Tweet(String text) {
@@ -54,6 +60,18 @@ public class Tweet {
 
     public void setCreateDate(Instant createDate) {
         this.createDate = createDate;
+    }
+
+    public static Tweet fromDto(TweetDto dto) {
+        Tweet tweet = new Tweet();
+        tweet.setId(dto.getId());
+        tweet.setText(dto.getText());
+        tweet.setCreateDate(dto.getCreateDate());
+        return tweet;
+    }
+
+    public TweetDto toDto() {
+        return new TweetDto(id, text, createDate);
     }
 
     @Override
