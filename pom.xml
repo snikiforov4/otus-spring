@@ -13,6 +13,7 @@
         <module>library-core</module>
         <module>library</module>
         <module>library-mongo</module>
+        <module>twitter</module>
     </modules>
 
     <name>OTUS Spring</name>
@@ -36,6 +37,7 @@
         <junit.jupiter.version>5.2.0</junit.jupiter.version>
         <junit.platform.version>1.2.0</junit.platform.version>
         <mockito.version>2.18.3</mockito.version>
+        <commons-lang3.version>3.7</commons-lang3.version>
     </properties>
 
     <build>

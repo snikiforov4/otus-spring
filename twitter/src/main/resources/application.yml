@@ -1,0 +1,9 @@
+spring:
+  data:
+    mongodb:
+      authentication-database: admin
+      database: twitter
+      host: localhost
+      port: 27018
+      username: dbuser
+      password: dbsecret
