@@ -3,6 +3,8 @@ import {Router} from '@angular/router';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {FormBuilder, Validators} from "@angular/forms";
+import {UserService} from "../user.service";
+import {User} from "../user";
 
 @Component({
   selector: 'app-login',
@@ -13,7 +15,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private http: HttpClient
+    private http: HttpClient,
+    private userService: UserService
   ) {
   }
 
@@ -49,8 +52,10 @@ export class LoginComponent implements OnInit {
   }
 
   onRegistration() {
-    // todo register user
-    console.warn(this.loginForm.value);
+    let user = new User(this.username.value, this.password.value);
+    this.userService.register(user).subscribe(user => {
+      console.log('User has been successfully registered: {}', user);
+    });
   }
 
   get username() {
