@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
+import ua.nykyforov.twitter.dto.UserDto;
 import ua.nykyforov.twitter.security.UserDetailsImpl;
 
 import java.util.Collection;
@@ -60,7 +61,7 @@ public class User {
     }
 
     public Collection<String> getRoles() {
-        return roles;
+        return roles == null ? ImmutableSet.of() : ImmutableSet.copyOf(roles);
     }
 
     public void setRoles(Collection<String> roles) {
@@ -70,6 +71,10 @@ public class User {
     public UserDetails toUserDetails() {
         return new UserDetailsImpl(username, password,
                 AuthorityUtils.createAuthorityList(roles.toArray(new String[0])));
+    }
+
+    public UserDto toDto() {
+        return new UserDto(username, password);
     }
 
     @Override
