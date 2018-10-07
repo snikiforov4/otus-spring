@@ -13,7 +13,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
-import org.springframework.security.web.server.context.WebSessionServerSecurityContextRepository;
+import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 import ua.nykyforov.twitter.security.TokenAuthenticationConverter;
 import ua.nykyforov.twitter.security.UnauthorizedAuthenticationEntryPoint;
 import ua.nykyforov.twitter.security.jwt.JWTHeadersExchangeMatcher;
@@ -26,7 +26,6 @@ public class SecurityConfig {
 
     private final ReactiveUserDetailsService reactiveUserDetailsService;
     private final TokenProvider tokenProvider;
-
 
     @Autowired
     public SecurityConfig(ReactiveUserDetailsService reactiveUserDetailsService,
@@ -47,26 +46,27 @@ public class SecurityConfig {
                 .authenticationEntryPoint(entryPoint)
                 .and()
                 .authorizeExchange()
-                .pathMatchers(HttpMethod.PUT, "/tweet*").authenticated()
-                .pathMatchers(HttpMethod.POST, "/tweet*").authenticated()
-                .pathMatchers(HttpMethod.DELETE, "/tweet/*").authenticated()
-                .anyExchange().permitAll()
+                .pathMatchers(HttpMethod.OPTIONS).permitAll()
+                .pathMatchers("/auth/**").permitAll()
+                .pathMatchers(HttpMethod.POST, "/user/**").permitAll()
+                .pathMatchers(HttpMethod.GET, "/tweet/**").permitAll()
+                .anyExchange().authenticated()
                 .and()
-                .addFilterAt(webFilter(), SecurityWebFiltersOrder.AUTHORIZATION)
+                .addFilterAt(webFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
                 .build();
     }
 
     @Bean
     public AuthenticationWebFilter webFilter() {
-        AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(reactiveAuthenticationManager());
+        AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(authenticationManager());
         authenticationWebFilter.setAuthenticationConverter(new TokenAuthenticationConverter(tokenProvider));
         authenticationWebFilter.setRequiresAuthenticationMatcher(new JWTHeadersExchangeMatcher());
-        authenticationWebFilter.setSecurityContextRepository(new WebSessionServerSecurityContextRepository());
+        authenticationWebFilter.setSecurityContextRepository(NoOpServerSecurityContextRepository.getInstance());
         return authenticationWebFilter;
     }
 
     @Bean
-    public ReactiveAuthenticationManager reactiveAuthenticationManager() {
+    public ReactiveAuthenticationManager authenticationManager() {
         return new JWTReactiveAuthenticationManager(reactiveUserDetailsService, passwordEncoder());
     }
 

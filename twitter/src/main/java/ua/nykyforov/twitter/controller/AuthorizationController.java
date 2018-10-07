@@ -30,8 +30,8 @@ public class AuthorizationController {
 
     @PostMapping("/auth")
     public Mono<JWTToken> authorize(@RequestBody UserDto userDto) {
-        Authentication authenticationToken =
-                new UsernamePasswordAuthenticationToken(userDto.getUsername(), userDto.getPassword());
+        Authentication authenticationToken = new UsernamePasswordAuthenticationToken(
+                userDto.getUsername(), userDto.getPassword());
 
         Mono<Authentication> authentication = this.authenticationManager.authenticate(authenticationToken);
         authentication.doOnError(e -> {throw new BadCredentialsException("Bad credentials", e);});

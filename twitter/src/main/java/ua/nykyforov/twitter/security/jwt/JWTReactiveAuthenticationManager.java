@@ -33,28 +33,25 @@ public class JWTReactiveAuthenticationManager implements ReactiveAuthenticationM
         return Mono.just(authentication)
                 .switchIfEmpty(Mono.defer(() -> raiseBadCredentials(null)))
                 .cast(UsernamePasswordAuthenticationToken.class)
-                .flatMap(this::authenticateToken)
+                .flatMap(this::toUserDetails)
                 .publishOn(Schedulers.parallel())
                 .onErrorResume(this::raiseBadCredentials)
                 .filter(u -> passwordEncoder.matches((String) authentication.getCredentials(), u.getPassword()))
                 .switchIfEmpty(Mono.defer(() -> raiseBadCredentials(null)))
-                .map(u -> new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), u.getAuthorities()));
+                .map(u -> new UsernamePasswordAuthenticationToken(u.getUsername(), u.getPassword(), u.getAuthorities()));
     }
 
     private <T> Mono<T> raiseBadCredentials(Throwable e) {
         return Mono.error(new BadCredentialsException("Invalid Credentials", e));
     }
 
-    private Mono<UserDetails> authenticateToken(final UsernamePasswordAuthenticationToken authenticationToken) {
+    private Mono<UserDetails> toUserDetails(final UsernamePasswordAuthenticationToken authenticationToken) {
         String username = authenticationToken.getName();
-
-        logger.info("Checking authentication for user: {}", username);
-
+        logger.info("Checking authentication for user={}", username);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            logger.info("Authenticated user: {}, setting security context", username);
+            logger.info("Setting security context for user={}", username);
             return this.userDetailsService.findByUsername(username);
         }
-
         return null;
     }
 }

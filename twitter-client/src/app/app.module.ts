@@ -10,13 +10,15 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatTabsModule} from '@angular/material/tabs';
-import {HttpClientModule} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {TweetService} from "./tweet.service";
 import {TweetsListComponent} from './tweets-list/tweets-list.component';
 import {TweetDialogComponent} from './tweet-dialog/tweet-dialog.component';
 import {LoginComponent} from './login/login.component';
 import {HomeComponent} from './home/home.component';
 import {routing} from './app.routing';
+import {UserService} from "./user.service";
+import {AuthInterceptor} from "./auth/auth.interceptor";
 
 @NgModule({
   declarations: [
@@ -43,7 +45,11 @@ import {routing} from './app.routing';
     routing,
   ],
   entryComponents: [TweetDialogComponent],
-  providers: [TweetService],
+  providers: [
+    TweetService,
+    UserService,
+    {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

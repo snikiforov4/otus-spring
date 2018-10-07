@@ -1,13 +1,22 @@
 <mat-toolbar color="primary">
   <span>Welcome to App!</span>
-  <button mat-button (click)="openComposeNewTweetDialog()">
-    <mat-icon aria-label="Add">add_circle_outline</mat-icon>
-    Tweet
-  </button>
-  <button mat-button routerLink="/login">
-    <mat-icon aria-label="Login">input</mat-icon>
-    Login
-  </button>
+  <ng-template [ngIf]="authorized" [ngIfElse]="notAuthorized">
+    <button mat-button (click)="openComposeNewTweetDialog()">
+      <mat-icon aria-label="Add">add_circle_outline</mat-icon>
+      Tweet
+    </button>
+    <button mat-button (click)="logout()">
+      <mat-icon aria-label="Logout">exit_to_app</mat-icon>
+      Logout
+    </button>
+  </ng-template>
+
+  <ng-template #notAuthorized>
+    <button mat-button routerLink="/login">
+      <mat-icon aria-label="Login">input</mat-icon>
+      Login
+    </button>
+  </ng-template>
 </mat-toolbar>
 
 <app-tweets-list></app-tweets-list>

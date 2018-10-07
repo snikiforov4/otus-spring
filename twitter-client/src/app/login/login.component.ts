@@ -5,6 +5,7 @@ import {FormBuilder, Validators} from "@angular/forms";
 import {UserService} from "../user.service";
 import {User} from "../user";
 import {TokenHolder} from "../token-holder";
+import {AuthService} from "../auth/auth.service";
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,8 @@ export class LoginComponent implements OnInit {
     private fb: FormBuilder,
     private router: Router,
     private http: HttpClient,
-    private userService: UserService
+    private userService: UserService,
+    private authService: AuthService
   ) {
   }
 
@@ -26,7 +28,7 @@ export class LoginComponent implements OnInit {
   });
 
   ngOnInit() {
-    sessionStorage.setItem('token', '');
+    this.authService.removeToken();
   }
 
   onLogin() {
@@ -35,7 +37,7 @@ export class LoginComponent implements OnInit {
     this.http.post<TokenHolder>(url, user).subscribe(token => {
       if (token) {
         sessionStorage.setItem('token', token.token);
-        this.router.navigateByUrl('/');
+        this.router.navigateByUrl('');
       } else {
         console.warn("Authentication failed.")
       }
