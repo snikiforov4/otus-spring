@@ -1,0 +1,60 @@
+package ua.nykyforov.twitter.security.jwt;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+
+public class JWTReactiveAuthenticationManager implements ReactiveAuthenticationManager {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    private final ReactiveUserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
+
+    public JWTReactiveAuthenticationManager(ReactiveUserDetailsService userDetailsService,
+                                            PasswordEncoder passwordEncoder) {
+        this.userDetailsService = userDetailsService;
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Override
+    public Mono<Authentication> authenticate(final Authentication authentication) {
+        if (authentication.isAuthenticated()) {
+            return Mono.just(authentication);
+        }
+        return Mono.just(authentication)
+                .switchIfEmpty(Mono.defer(() -> raiseBadCredentials(null)))
+                .cast(UsernamePasswordAuthenticationToken.class)
+                .flatMap(this::authenticateToken)
+                .publishOn(Schedulers.parallel())
+                .onErrorResume(this::raiseBadCredentials)
+                .filter(u -> passwordEncoder.matches((String) authentication.getCredentials(), u.getPassword()))
+                .switchIfEmpty(Mono.defer(() -> raiseBadCredentials(null)))
+                .map(u -> new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials(), u.getAuthorities()));
+    }
+
+    private <T> Mono<T> raiseBadCredentials(Throwable e) {
+        return Mono.error(new BadCredentialsException("Invalid Credentials", e));
+    }
+
+    private Mono<UserDetails> authenticateToken(final UsernamePasswordAuthenticationToken authenticationToken) {
+        String username = authenticationToken.getName();
+
+        logger.info("Checking authentication for user: {}", username);
+
+        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            logger.info("Authenticated user: {}, setting security context", username);
+            return this.userDetailsService.findByUsername(username);
+        }
+
+        return null;
+    }
+}

@@ -6,12 +6,17 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ua.nykyforov.twitter.dto.UserDto;
 import ua.nykyforov.twitter.security.UserDetailsImpl;
 
 import java.util.Collection;
+import java.util.List;
+
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.collections4.CollectionUtils.emptyIfNull;
 
 @Document(collection = "users")
 public class User {
@@ -69,8 +74,11 @@ public class User {
     }
 
     public UserDetails toUserDetails() {
-        return new UserDetailsImpl(username, password,
-                AuthorityUtils.createAuthorityList(roles.toArray(new String[0])));
+        List<GrantedAuthority> authorityList = emptyIfNull(roles)
+                .stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(toList());
+        return new UserDetailsImpl(username, password, authorityList);
     }
 
     public UserDto toDto() {

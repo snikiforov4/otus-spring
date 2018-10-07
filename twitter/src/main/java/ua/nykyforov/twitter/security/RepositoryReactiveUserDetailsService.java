@@ -12,23 +12,21 @@ import ua.nykyforov.twitter.domain.User;
 import ua.nykyforov.twitter.service.UserService;
 
 @Service
-public class UserDetailsServiceImpl implements ReactiveUserDetailsService {
-    private static final Logger logger = LoggerFactory.getLogger(UserDetailsServiceImpl.class);
+public class RepositoryReactiveUserDetailsService implements ReactiveUserDetailsService {
+    private static final Logger logger = LoggerFactory.getLogger(RepositoryReactiveUserDetailsService.class);
 
     private final UserService userService;
 
     @Autowired
-    public UserDetailsServiceImpl(UserService userService) {
+    public RepositoryReactiveUserDetailsService(UserService userService) {
         this.userService = userService;
     }
 
     @Override
     public Mono<UserDetails> findByUsername(String username) {
-        logger.info("Find by username: {}", username);
+        logger.debug("Find by username: {}", username);
         return userService.findByUsername(username)
-                .switchIfEmpty(Mono.defer(() ->
-                        Mono.error(new UsernameNotFoundException("User Not Found"))
-                ))
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new UsernameNotFoundException("User Not Found"))))
                 .map(User::toUserDetails);
     }
 }
