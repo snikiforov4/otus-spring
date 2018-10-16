@@ -1,14 +1,13 @@
 package ua.nykyforov.twitter.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import reactor.core.publisher.Flux;
 import ua.nykyforov.twitter.domain.Tweet;
 
-import java.util.Collection;
-
-public interface TweetRepository extends CrudRepository<Tweet, String> {
+public interface TweetRepository extends ReactiveCrudRepository<Tweet, String> {
 
     @SuppressWarnings("NullableProblems")
     @Override
-    Collection<Tweet> findAll();
+    Flux<Tweet> findAll();
 
 }

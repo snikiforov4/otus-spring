@@ -1,18 +1,17 @@
 package ua.nykyforov.twitter.service;
 
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import ua.nykyforov.twitter.domain.Tweet;
-
-import java.util.Collection;
-import java.util.Optional;
 
 public interface TweetService {
 
-    Collection<Tweet> findAll();
+    Flux<Tweet> findAll();
 
-    Tweet save(Tweet tweet);
+    Mono<Tweet> save(Tweet tweet);
 
-    Optional<Tweet> findById(String id);
+    Mono<Tweet> findById(String id);
 
-    void deleteById(String id);
+    Mono<Void> deleteById(String id);
 
 }
