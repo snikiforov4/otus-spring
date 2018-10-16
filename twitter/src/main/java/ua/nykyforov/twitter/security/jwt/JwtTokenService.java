@@ -10,51 +10,48 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.Date;
-import java.util.stream.Collectors;
 
-@Component
-public class TokenProvider {
+import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.concurrent.TimeUnit.HOURS;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toList;
 
-    private final Logger logger = LoggerFactory.getLogger(TokenProvider.class);
+@Service
+public class JwtTokenService {
+
+    private final Logger logger = LoggerFactory.getLogger(JwtTokenService.class);
 
     private static final String SALT_KEY = "JpxM4e858rc673syopdZnMFb*ExeqJtUc0HJ_iOxu~jiSYu+yPdPw93OBBjF";
-    private static final int TOKEN_VALIDITY = 86400; // Value in second
-
+    private static final long TOKEN_VALIDITY = HOURS.toMillis(24);
     private static final String AUTHORITIES_KEY = "auth";
-
-    private final Base64.Encoder encoder = Base64.getEncoder();
 
     private String secretKey;
 
-    private long tokenValidityInMilliseconds;
-
     @PostConstruct
     public void init() {
-        this.secretKey = encoder.encodeToString(SALT_KEY.getBytes(StandardCharsets.UTF_8));
-        this.tokenValidityInMilliseconds = 1000 * TOKEN_VALIDITY;
+        this.secretKey = Base64.getEncoder().encodeToString(SALT_KEY.getBytes(StandardCharsets.UTF_8));
     }
 
     public String createToken(Authentication authentication) {
+        checkNotNull(authentication, "authentication");
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(","));
-
-        long now = (new Date()).getTime();
-        Date validity = new Date(now + this.tokenValidityInMilliseconds);
+                .collect(joining(","));
 
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
                 .signWith(SignatureAlgorithm.HS512, secretKey)
-                .setExpiration(validity)
+                .setExpiration(Date.from(Instant.now().plusMillis(TOKEN_VALIDITY)))
                 .compact();
     }
 
@@ -71,14 +68,14 @@ public class TokenProvider {
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(",", -1))
                         .filter(StringUtils::isNotEmpty)
                         .map(SimpleGrantedAuthority::new)
-                        .collect(Collectors.toList());
+                        .collect(toList());
 
         User principal = new User(claims.getSubject(), "", authorities);
 
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
-    public boolean validateToken(String authToken) {
+    private boolean validateToken(String authToken) {
         try {
             Jwts.parser().setSigningKey(secretKey).parseClaimsJws(authToken);
             return true;

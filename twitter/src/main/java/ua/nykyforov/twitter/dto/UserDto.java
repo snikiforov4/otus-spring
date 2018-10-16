@@ -3,9 +3,11 @@ package ua.nykyforov.twitter.dto;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class UserDto {
+public final class UserDto {
 
+    @JsonProperty("username")
     private final String username;
+    @JsonProperty("password")
     private final String password;
 
     @JsonCreator

@@ -13,13 +13,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
-public class JWTReactiveAuthenticationManager implements ReactiveAuthenticationManager {
+import javax.annotation.Nullable;
+
+public class JwtReactiveAuthenticationManager implements ReactiveAuthenticationManager {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final ReactiveUserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
 
-    public JWTReactiveAuthenticationManager(ReactiveUserDetailsService userDetailsService,
+    public JwtReactiveAuthenticationManager(ReactiveUserDetailsService userDetailsService,
                                             PasswordEncoder passwordEncoder) {
         this.userDetailsService = userDetailsService;
         this.passwordEncoder = passwordEncoder;
@@ -31,17 +33,21 @@ public class JWTReactiveAuthenticationManager implements ReactiveAuthenticationM
             return Mono.just(authentication);
         }
         return Mono.just(authentication)
-                .switchIfEmpty(Mono.defer(() -> raiseBadCredentials(null)))
+                .switchIfEmpty(Mono.defer(this::raiseBadCredentials))
                 .cast(UsernamePasswordAuthenticationToken.class)
                 .flatMap(this::toUserDetails)
                 .publishOn(Schedulers.parallel())
                 .onErrorResume(this::raiseBadCredentials)
                 .filter(u -> passwordEncoder.matches((String) authentication.getCredentials(), u.getPassword()))
-                .switchIfEmpty(Mono.defer(() -> raiseBadCredentials(null)))
+                .switchIfEmpty(Mono.defer(this::raiseBadCredentials))
                 .map(u -> new UsernamePasswordAuthenticationToken(u.getUsername(), u.getPassword(), u.getAuthorities()));
     }
 
-    private <T> Mono<T> raiseBadCredentials(Throwable e) {
+    private <T> Mono<T> raiseBadCredentials() {
+        return raiseBadCredentials(null);
+    }
+
+    private <T> Mono<T> raiseBadCredentials(@Nullable Throwable e) {
         return Mono.error(new BadCredentialsException("Invalid Credentials", e));
     }
 

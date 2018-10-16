@@ -1,24 +1,24 @@
 package ua.nykyforov.twitter.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
 
 import java.time.Instant;
 
-public class TweetDto {
+public final class TweetDto {
 
     @JsonProperty("id")
-    private String id;
-
+    private final String id;
     @JsonProperty("text")
-    private String text;
-
+    private final String text;
     @JsonProperty("created")
-    private Instant createDate;
+    private final Instant createDate;
 
-    public TweetDto() {
-    }
-
-    public TweetDto(String id, String text, Instant createDate) {
+    @JsonCreator
+    public TweetDto(@JsonProperty("id") String id,
+                    @JsonProperty("text") String text,
+                    @JsonProperty("created") Instant createDate) {
         this.id = id;
         this.text = text;
         this.createDate = createDate;
@@ -28,23 +28,21 @@ public class TweetDto {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getText() {
         return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
     }
 
     public Instant getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(Instant createDate) {
-        this.createDate = createDate;
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .omitNullValues()
+                .add("id", id)
+                .add("text", text)
+                .add("createDate", createDate)
+                .toString();
     }
 }

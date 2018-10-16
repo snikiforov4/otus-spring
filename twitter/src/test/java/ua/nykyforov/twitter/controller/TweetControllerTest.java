@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -86,6 +87,7 @@ class TweetControllerTest {
     class SaveNewEntity {
 
         @Test
+        @WithMockUser
         void shouldSaveEntity() {
             String tweetText = "What's happening?";
             TweetDto tweetDto = new TweetDto(null, tweetText, null);
@@ -118,6 +120,7 @@ class TweetControllerTest {
     class UpdateTweet {
 
         @Test
+        @WithMockUser
         void shouldUpdateEntity() {
             final String tweetId = "42";
             final String rawTweetText = "What's happening?";
@@ -155,6 +158,7 @@ class TweetControllerTest {
     class Delete {
 
         @Test
+        @WithMockUser
         void shouldDeleteEntity() {
             final String tweetId = "tweetId";
 

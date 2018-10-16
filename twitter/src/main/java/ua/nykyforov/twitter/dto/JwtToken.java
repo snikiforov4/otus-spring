@@ -1,14 +1,14 @@
-package ua.nykyforov.twitter.security.jwt;
+package ua.nykyforov.twitter.dto;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class JWTToken {
+public final class JwtToken {
     @JsonProperty("token")
     private final String token;
 
     @JsonCreator
-    public JWTToken(@JsonProperty("token") String token) {
+    public JwtToken(@JsonProperty("token") String token) {
         this.token = token;
     }
 

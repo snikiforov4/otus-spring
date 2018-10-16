@@ -10,37 +10,34 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
+import ua.nykyforov.twitter.dto.JwtToken;
 import ua.nykyforov.twitter.dto.UserDto;
-import ua.nykyforov.twitter.security.jwt.JWTToken;
-import ua.nykyforov.twitter.security.jwt.TokenProvider;
+import ua.nykyforov.twitter.security.jwt.JwtTokenService;
 
 
 @RestController
 public class AuthorizationController {
 
-    private final TokenProvider tokenProvider;
+    private final JwtTokenService tokenProvider;
     private final ReactiveAuthenticationManager authenticationManager;
 
     @Autowired
-    public AuthorizationController(TokenProvider tokenProvider,
+    public AuthorizationController(JwtTokenService tokenProvider,
                                    ReactiveAuthenticationManager authenticationManager) {
         this.tokenProvider = tokenProvider;
         this.authenticationManager = authenticationManager;
     }
 
     @PostMapping("/auth")
-    public Mono<JWTToken> authorize(@RequestBody UserDto userDto) {
+    public Mono<JwtToken> authorize(@RequestBody UserDto userDto) {
         Authentication authenticationToken = new UsernamePasswordAuthenticationToken(
                 userDto.getUsername(), userDto.getPassword());
-
-        Mono<Authentication> authentication = this.authenticationManager.authenticate(authenticationToken);
-        authentication.doOnError(e -> {throw new BadCredentialsException("Bad credentials", e);});
-        ReactiveSecurityContextHolder.withAuthentication(authenticationToken);
-
-        return authentication.map(auth -> {
-            String jwt = tokenProvider.createToken(auth);
-            return new JWTToken(jwt);
-        });
+        return this.authenticationManager.authenticate(authenticationToken)
+                .doOnError(e -> {
+                    throw new BadCredentialsException("Bad credentials", e);
+                })
+                .doOnNext(auth -> ReactiveSecurityContextHolder.withAuthentication(authenticationToken))
+                .map(auth -> new JwtToken(tokenProvider.createToken(auth)));
     }
 
 }
