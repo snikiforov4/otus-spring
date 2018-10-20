@@ -18,26 +18,28 @@ import ua.nykyforov.twitter.security.jwt.JwtTokenService;
 @RestController
 public class AuthorizationController {
 
-    private final JwtTokenService tokenProvider;
+    private final JwtTokenService tokenService;
     private final ReactiveAuthenticationManager authenticationManager;
 
     @Autowired
-    public AuthorizationController(JwtTokenService tokenProvider,
+    public AuthorizationController(JwtTokenService tokenService,
                                    ReactiveAuthenticationManager authenticationManager) {
-        this.tokenProvider = tokenProvider;
+        this.tokenService = tokenService;
         this.authenticationManager = authenticationManager;
     }
 
     @PostMapping("/auth")
     public Mono<JwtToken> authorize(@RequestBody UserDto userDto) {
-        Authentication authenticationToken = new UsernamePasswordAuthenticationToken(
-                userDto.getUsername(), userDto.getPassword());
-        return this.authenticationManager.authenticate(authenticationToken)
+        return this.authenticationManager.authenticate(toAuthentication(userDto))
                 .doOnError(e -> {
                     throw new BadCredentialsException("Bad credentials", e);
                 })
-                .doOnNext(auth -> ReactiveSecurityContextHolder.withAuthentication(authenticationToken))
-                .map(auth -> new JwtToken(tokenProvider.createToken(auth)));
+                .doOnNext(ReactiveSecurityContextHolder::withAuthentication)
+                .map(auth -> new JwtToken(tokenService.createToken(auth)));
+    }
+
+    private Authentication toAuthentication(UserDto userDto) {
+        return new UsernamePasswordAuthenticationToken(userDto.getUsername(), userDto.getPassword());
     }
 
 }
