@@ -40,7 +40,7 @@ public class JwtReactiveAuthenticationManager implements ReactiveAuthenticationM
                 .onErrorResume(this::raiseBadCredentials)
                 .filter(u -> passwordEncoder.matches((String) authentication.getCredentials(), u.getPassword()))
                 .switchIfEmpty(Mono.defer(this::raiseBadCredentials))
-                .map(u -> new UsernamePasswordAuthenticationToken(u.getUsername(), u.getPassword(), u.getAuthorities()));
+                .map(u -> new UsernamePasswordAuthenticationToken(u, u.getPassword(), u.getAuthorities()));
     }
 
     private <T> Mono<T> raiseBadCredentials() {
