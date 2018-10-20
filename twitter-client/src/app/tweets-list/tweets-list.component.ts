@@ -58,7 +58,6 @@ export class TweetsListComponent implements OnInit {
       if (result) {
         this.tweetService.edit(result).subscribe(updatedTweet => {
           this.updateTweet(updatedTweet);
-          console.log('Tweet was successfully updated: {}', updatedTweet);
         })
       }
     });

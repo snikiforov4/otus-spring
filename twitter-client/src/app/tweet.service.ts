@@ -19,13 +19,16 @@ export class TweetService {
   }
 
   save(tweet: Tweet): Observable<Tweet> {
-    return this.http.post<Tweet>(this.tweetUrl, tweet);
+    return this.http.post<Tweet>(this.tweetUrl, tweet)
+      .pipe(
+        tap(e => console.log(`Tweet was successfully saved`, e))
+      );
   }
 
   edit(tweet: Tweet): Observable<Tweet> {
     return this.http.put<Tweet>(this.tweetUrl, tweet)
       .pipe(
-        tap(e => console.log(`edit tweet=${e}`)),
+        tap(e => console.log(`Edited tweet`, e)),
       );
   }
 
@@ -34,7 +37,7 @@ export class TweetService {
     const url = `${this.tweetUrl}${id}`;
     return this.http.delete<Tweet>(url)
       .pipe(
-        tap(_ => console.log(`deleted tweet id=${id}`)),
+        tap(_ => console.log(`Deleted tweet id=${id}`)),
       );
   }
 

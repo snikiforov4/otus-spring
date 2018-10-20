@@ -34,7 +34,6 @@ export class HomeComponent implements OnInit {
       if (result) {
         this.tweetService.save(result).subscribe(savedTweet => {
           this.tweetsListComponent.addNewTweet(savedTweet);
-          console.log('Tweet was successfully added: {}', savedTweet);
         })
       }
     });
