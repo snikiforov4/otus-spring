@@ -5,13 +5,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-public class UserDetailsImpl implements UserDetails {
+public class CustomUserDetails implements UserDetails {
 
     private String username;
     private String password;
     private Collection<? extends GrantedAuthority> roles;
 
-    public UserDetailsImpl(String username, String password, Collection<? extends GrantedAuthority> roles) {
+    public CustomUserDetails(String username, String password, Collection<? extends GrantedAuthority> roles) {
         this.username = username;
         this.password = password;
         this.roles = roles;

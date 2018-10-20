@@ -8,9 +8,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import ua.nykyforov.twitter.dto.UserDto;
-import ua.nykyforov.twitter.security.UserDetailsImpl;
+import ua.nykyforov.twitter.security.CustomUserDetails;
 
 import java.util.Collection;
 import java.util.List;
@@ -73,12 +72,12 @@ public class User {
         this.roles = ImmutableSet.copyOf(roles);
     }
 
-    public UserDetails toUserDetails() {
+    public CustomUserDetails toUserDetails() {
         List<GrantedAuthority> authorityList = emptyIfNull(roles)
                 .stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(toList());
-        return new UserDetailsImpl(username, password, authorityList);
+        return new CustomUserDetails(username, password, authorityList);
     }
 
     public UserDto toDto() {
