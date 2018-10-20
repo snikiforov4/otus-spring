@@ -77,7 +77,7 @@ public class User {
                 .stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(toList());
-        return new CustomUserDetails(username, password, authorityList);
+        return new CustomUserDetails(id, username, password, authorityList);
     }
 
     public UserDto toDto() {
