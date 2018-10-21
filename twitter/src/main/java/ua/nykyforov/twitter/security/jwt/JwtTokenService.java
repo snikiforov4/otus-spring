@@ -6,11 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticatedPrincipal;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+import ua.nykyforov.twitter.security.CustomAuthenticatedPrincipal;
+import ua.nykyforov.twitter.security.CustomUserDetails;
 
 import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
@@ -33,6 +35,7 @@ public class JwtTokenService {
     private static final String SALT_KEY = "JpxM4e858rc673syopdZnMFb*ExeqJtUc0HJ_iOxu~jiSYu+yPdPw93OBBjF";
     private static final long TOKEN_VALIDITY = HOURS.toMillis(24);
     private static final String AUTHORITIES_KEY = "auth";
+    private static final String USER_ID_KEY = "uid";
 
     private String secretKey;
 
@@ -46,10 +49,11 @@ public class JwtTokenService {
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(joining(","));
-
+        String userId = ((CustomUserDetails) authentication.getPrincipal()).getId();
         return Jwts.builder()
                 .setSubject(authentication.getName())
                 .claim(AUTHORITIES_KEY, authorities)
+                .claim(USER_ID_KEY, userId)
                 .signWith(SignatureAlgorithm.HS512, secretKey)
                 .setExpiration(Date.from(Instant.now().plusMillis(TOKEN_VALIDITY)))
                 .compact();
@@ -63,15 +67,15 @@ public class JwtTokenService {
                 .setSigningKey(secretKey)
                 .parseClaimsJws(token)
                 .getBody();
-
         Collection<? extends GrantedAuthority> authorities =
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(",", -1))
                         .filter(StringUtils::isNotEmpty)
                         .map(SimpleGrantedAuthority::new)
                         .collect(toList());
-
-        User principal = new User(claims.getSubject(), "", authorities);
-
+        AuthenticatedPrincipal principal = new CustomAuthenticatedPrincipal(
+                claims.get(USER_ID_KEY, String.class),
+                claims.getSubject()
+        );
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 

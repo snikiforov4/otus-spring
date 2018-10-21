@@ -18,6 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringJUnitConfig(classes = {MongoConfig.class})
 class TweetRepositoryTest {
 
+    private static final String USER_ID_STUB = "42";
+
     @Autowired
     private MongoTemplate mongoTemplate;
 
@@ -32,13 +34,11 @@ class TweetRepositoryTest {
     @Test
     void shouldSaveEntity() {
         String tweetText = "This is the text of a tweet";
-        Tweet savedTweet = sut.save(new Tweet(tweetText)).block(Duration.ofSeconds(5));
+        Tweet savedTweet = sut.save(new Tweet(USER_ID_STUB, tweetText)).block(Duration.ofSeconds(5));
 
         assertThat(savedTweet)
                 .isNotNull()
-                .satisfies(t -> {
-                    assertThat(t.getId()).isNotNull();
-                });
+                .satisfies(t -> assertThat(t.getId()).isNotNull());
 
         final String id = savedTweet.getId();
 

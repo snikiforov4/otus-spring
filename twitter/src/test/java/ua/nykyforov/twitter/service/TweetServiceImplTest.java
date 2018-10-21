@@ -20,6 +20,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class TweetServiceImplTest {
 
+    private static final String USER_ID_STUB = "42";
+
     @Mock
     private TweetRepository tweetRepository;
 
@@ -57,8 +59,8 @@ class TweetServiceImplTest {
         @Test
         @SuppressWarnings("UnassignedFluxMonoInstance")
         void shouldCallRepository() {
-            Tweet argTweet = new Tweet("What's happening?");
-            Mono<Tweet> retTweet = Mono.just(new Tweet("What's happening?"));
+            Tweet argTweet = new Tweet(USER_ID_STUB, "What's happening?");
+            Mono<Tweet> retTweet = Mono.just(new Tweet(USER_ID_STUB, "What's happening?"));
             doReturn(retTweet).when(tweetRepository).save(same(argTweet));
 
             Mono<Tweet> actualTweet = sut.save(argTweet);
@@ -79,7 +81,7 @@ class TweetServiceImplTest {
         @SuppressWarnings("UnassignedFluxMonoInstance")
         void shouldCallRepository() {
             String tweetId = "42";
-            Mono<Tweet> retTweet = Mono.just(new Tweet("What's happening?"));
+            Mono<Tweet> retTweet = Mono.just(new Tweet(USER_ID_STUB, "What's happening?"));
             doReturn(retTweet).when(tweetRepository).findById(eq(tweetId));
 
             Mono<Tweet> actualTweet = sut.findById(tweetId);

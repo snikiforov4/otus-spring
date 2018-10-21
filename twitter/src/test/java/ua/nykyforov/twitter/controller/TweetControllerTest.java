@@ -1,14 +1,18 @@
 package ua.nykyforov.twitter.controller;
 
+import com.google.common.collect.ImmutableList;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import org.springframework.web.reactive.function.BodyInserters;
@@ -17,6 +21,7 @@ import reactor.core.publisher.Mono;
 import ua.nykyforov.twitter.Main;
 import ua.nykyforov.twitter.domain.Tweet;
 import ua.nykyforov.twitter.dto.TweetDto;
+import ua.nykyforov.twitter.security.CustomAuthenticatedPrincipal;
 import ua.nykyforov.twitter.service.TweetService;
 
 import java.util.List;
@@ -26,25 +31,32 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.reactive.server.SecurityMockServerConfigurers.springSecurity;
 
 @SuppressWarnings("WeakerAccess")
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = Main.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ContextConfiguration(classes = Main.class)
 class TweetControllerTest {
 
-    @LocalServerPort
-    private int port;
+    private static final String USER_ID_STUB = "42";
+
+    @Autowired
+    ApplicationContext context;
 
     @MockBean
     TweetService tweetService;
 
-    private WebTestClient webClient;
+    private WebTestClient rest;
 
     @BeforeEach
     void setup() {
-        this.webClient = WebTestClient
-                .bindToServer()
-                .baseUrl(String.format("http://localhost:%d", port))
+        CustomAuthenticatedPrincipal principal = new CustomAuthenticatedPrincipal(USER_ID_STUB, "user");
+        Authentication authentication = new UsernamePasswordAuthenticationToken(principal,
+                "password", ImmutableList.of());
+        this.rest = WebTestClient
+                .bindToApplicationContext(this.context)
+                .apply(springSecurity())
+                .apply(SecurityMockServerConfigurers.mockAuthentication(authentication))
                 .build();
     }
 
@@ -62,10 +74,13 @@ class TweetControllerTest {
         void shouldReturnAllTweets() {
             String firstTweetText = "What is happening?";
             String secondTweetText = "Spring Web Mvc is awesome!";
-            List<Tweet> expectedTweets = Lists.newArrayList(new Tweet(firstTweetText), new Tweet(secondTweetText));
+            List<Tweet> expectedTweets = Lists.newArrayList(
+                    new Tweet(USER_ID_STUB, firstTweetText),
+                    new Tweet(USER_ID_STUB, secondTweetText)
+            );
             doReturn(Flux.fromIterable(expectedTweets)).when(tweetService).findAll();
 
-            List<TweetDto> actualTweets = webClient.get()
+            List<TweetDto> actualTweets = rest.get()
                     .uri("/tweet/")
                     .exchange()
                     .expectStatus().isOk()
@@ -87,13 +102,13 @@ class TweetControllerTest {
     class SaveNewEntity {
 
         @Test
-        @WithMockUser
         void shouldSaveEntity() {
             String tweetText = "What's happening?";
             TweetDto tweetDto = new TweetDto(null, tweetText, null);
-            doReturn(Mono.just(new Tweet(tweetText))).when(tweetService).save(any(Tweet.class));
+            doReturn(Mono.just(new Tweet(USER_ID_STUB, tweetText))).when(tweetService).save(any(Tweet.class));
 
-            TweetDto response = webClient.post()
+            TweetDto response = rest
+                    .post()
                     .uri("/tweet/")
                     .body(BodyInserters.fromObject(tweetDto))
                     .exchange()
@@ -108,7 +123,7 @@ class TweetControllerTest {
                         assertThat(t.getCreateDate()).isNotNull();
                     });
             verify(tweetService, times(1)).save(argThat(e ->
-                    e != null && Objects.equals(tweetText, e.getText())
+                    e != null && Objects.equals(tweetText, e.getText()) && Objects.equals(e.getUserId(), "42")
             ));
         }
 
@@ -120,17 +135,16 @@ class TweetControllerTest {
     class UpdateTweet {
 
         @Test
-        @WithMockUser
         void shouldUpdateEntity() {
             final String tweetId = "42";
             final String rawTweetText = "What's happening?";
             final String editedTweetText = "What's happening? (Edited)";
-            Tweet rawTweet = new Tweet(tweetId, rawTweetText);
+            Tweet rawTweet = new Tweet(tweetId, USER_ID_STUB, rawTweetText);
             doReturn(Mono.just(rawTweet)).when(tweetService).findById(eq(tweetId));
-            Tweet editedTweet = new Tweet(tweetId, editedTweetText);
+            Tweet editedTweet = new Tweet(tweetId, USER_ID_STUB, editedTweetText);
             doReturn(Mono.just(editedTweet)).when(tweetService).save(any(Tweet.class));
 
-            TweetDto response = webClient.put()
+            TweetDto response = rest.put()
                     .uri("/tweet/")
                     .body(BodyInserters.fromObject(editedTweet.toDto()))
                     .exchange()
@@ -158,11 +172,10 @@ class TweetControllerTest {
     class Delete {
 
         @Test
-        @WithMockUser
         void shouldDeleteEntity() {
             final String tweetId = "tweetId";
 
-            webClient.delete()
+            rest.delete()
                     .uri("/tweet/{id}", tweetId)
                     .exchange()
                     .expectStatus().isNoContent()
