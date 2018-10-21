@@ -1,5 +1,6 @@
 package ua.nykyforov.twitter.security;
 
+import com.google.common.base.MoreObjects;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -57,5 +58,16 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .omitNullValues()
+                .add("id", id)
+                .add("username", username)
+                .add("password", "[PROTECTED]")
+                .add("roles", roles)
+                .toString();
     }
 }

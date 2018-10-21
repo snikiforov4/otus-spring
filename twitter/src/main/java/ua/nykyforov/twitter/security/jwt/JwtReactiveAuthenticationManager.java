@@ -30,8 +30,10 @@ public class JwtReactiveAuthenticationManager implements ReactiveAuthenticationM
     @Override
     public Mono<Authentication> authenticate(final Authentication authentication) {
         if (authentication.isAuthenticated()) {
+            logger.info("username={} skip authentication", authentication.getName());
             return Mono.just(authentication);
         }
+        logger.info("username={} authenticate", authentication.getName());
         return Mono.just(authentication)
                 .switchIfEmpty(Mono.defer(this::raiseBadCredentials))
                 .cast(UsernamePasswordAuthenticationToken.class)
@@ -53,9 +55,7 @@ public class JwtReactiveAuthenticationManager implements ReactiveAuthenticationM
 
     private Mono<UserDetails> toUserDetails(final UsernamePasswordAuthenticationToken authenticationToken) {
         String username = authenticationToken.getName();
-        logger.info("Checking authentication for user={}", username);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            logger.info("Setting security context for user={}", username);
             return this.userDetailsService.findByUsername(username);
         }
         return null;
