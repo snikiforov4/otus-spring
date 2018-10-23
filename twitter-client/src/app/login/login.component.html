@@ -1,0 +1,24 @@
+<h1>Login form</h1>
+<form class="form" [formGroup]="loginForm">
+  <mat-form-field class="full-width">
+    <input matInput placeholder="Login" formControlName="username">
+    <mat-error *ngIf="username.hasError('required')">
+      Login is <strong>required</strong>
+    </mat-error>
+  </mat-form-field>
+  <br/>
+  <mat-form-field class="full-width">
+    <input matInput type="password" placeholder="Password" formControlName="password">
+    <mat-error *ngIf="password.hasError('required')">
+      Password is <strong>required</strong>
+    </mat-error>
+  </mat-form-field>
+  <br/>
+  <button mat-button [disabled]="!loginForm.valid" (click)="onLogin()">Sign in</button>
+  <button mat-button [disabled]="!loginForm.valid" (click)="onRegistration()">Sign up</button>
+
+</form>
+
+
+
+

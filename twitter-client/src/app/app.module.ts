@@ -9,16 +9,24 @@ import {MatIconModule} from '@angular/material/icon';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
-import {HttpClientModule} from '@angular/common/http';
+import {MatTabsModule} from '@angular/material/tabs';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {TweetService} from "./tweet.service";
 import {TweetsListComponent} from './tweets-list/tweets-list.component';
 import {TweetDialogComponent} from './tweet-dialog/tweet-dialog.component';
+import {LoginComponent} from './login/login.component';
+import {HomeComponent} from './home/home.component';
+import {routing} from './app.routing';
+import {UserService} from "./user.service";
+import {AuthInterceptor} from "./auth/auth.interceptor";
 
 @NgModule({
   declarations: [
     AppComponent,
     TweetsListComponent,
     TweetDialogComponent,
+    LoginComponent,
+    HomeComponent,
   ],
   imports: [
     BrowserModule,
@@ -28,14 +36,20 @@ import {TweetDialogComponent} from './tweet-dialog/tweet-dialog.component';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
+    MatTabsModule,
     MatIconModule,
     MatToolbarModule,
     MatCardModule,
     MatButtonModule,
     MatDialogModule,
+    routing,
   ],
   entryComponents: [TweetDialogComponent],
-  providers: [TweetService],
+  providers: [
+    TweetService,
+    UserService,
+    {provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

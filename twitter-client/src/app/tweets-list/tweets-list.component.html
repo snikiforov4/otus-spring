@@ -4,7 +4,7 @@
       {{tweet.text}}
       @{{tweet.created}}
     </mat-card-content>
-    <mat-card-actions>
+    <mat-card-actions *ngIf="authorized">
       <button mat-icon-button (click)="openEditTweetDialog(tweet)">
         <mat-icon aria-label="Edit">edit</mat-icon>
       </button>
