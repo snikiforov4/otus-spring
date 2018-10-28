@@ -12,6 +12,5 @@ public interface TweetService {
 
     Mono<Tweet> findById(String id);
 
-    Mono<Void> deleteById(String id);
-
+    Mono<Void> delete(Tweet tweet);
 }

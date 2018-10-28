@@ -174,6 +174,9 @@ class TweetControllerTest {
         @Test
         void shouldDeleteEntity() {
             final String tweetId = "tweetId";
+            Tweet tweet = new Tweet(tweetId, USER_ID_STUB, "Text");
+            doReturn(Mono.just(tweet)).when(tweetService).findById(eq(tweetId));
+            doReturn(Mono.empty()).when(tweetService).delete(same(tweet));
 
             rest.delete()
                     .uri("/tweet/{id}", tweetId)
@@ -181,7 +184,7 @@ class TweetControllerTest {
                     .expectStatus().isNoContent()
                     .expectBody()
                     .isEmpty();
-            verify(tweetService, times(1)).deleteById(eq(tweetId));
+            verify(tweetService, times(1)).delete(same(tweet));
         }
 
     }

@@ -101,13 +101,13 @@ class TweetServiceImplTest {
         @Test
         @SuppressWarnings("UnassignedFluxMonoInstance")
         void shouldCallRepository() {
-            String tweetId = "42";
+            Tweet tweet = new Tweet("42", "42", "Text");
             Mono<Void> expectedRes = Mono.empty();
-            doReturn(expectedRes).when(tweetRepository).deleteById(eq(tweetId));
+            doReturn(expectedRes).when(tweetRepository).delete(same(tweet));
 
-            Mono<Void> actualRes = sut.deleteById(tweetId);
+            Mono<Void> actualRes = sut.delete(tweet);
 
-            verify(tweetRepository, times(1)).deleteById(eq(tweetId));
+            verify(tweetRepository, times(1)).delete(same(tweet));
             assertThat(actualRes).isNotNull().isSameAs(expectedRes);
         }
 
