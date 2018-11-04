@@ -20,6 +20,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class TweetServiceImplTest {
 
+    private static final String USER_ID_STUB = "42";
+
     @Mock
     private TweetRepository tweetRepository;
 
@@ -57,8 +59,8 @@ class TweetServiceImplTest {
         @Test
         @SuppressWarnings("UnassignedFluxMonoInstance")
         void shouldCallRepository() {
-            Tweet argTweet = new Tweet("What's happening?");
-            Mono<Tweet> retTweet = Mono.just(new Tweet("What's happening?"));
+            Tweet argTweet = new Tweet(USER_ID_STUB, "What's happening?");
+            Mono<Tweet> retTweet = Mono.just(new Tweet(USER_ID_STUB, "What's happening?"));
             doReturn(retTweet).when(tweetRepository).save(same(argTweet));
 
             Mono<Tweet> actualTweet = sut.save(argTweet);
@@ -79,7 +81,7 @@ class TweetServiceImplTest {
         @SuppressWarnings("UnassignedFluxMonoInstance")
         void shouldCallRepository() {
             String tweetId = "42";
-            Mono<Tweet> retTweet = Mono.just(new Tweet("What's happening?"));
+            Mono<Tweet> retTweet = Mono.just(new Tweet(USER_ID_STUB, "What's happening?"));
             doReturn(retTweet).when(tweetRepository).findById(eq(tweetId));
 
             Mono<Tweet> actualTweet = sut.findById(tweetId);
@@ -99,13 +101,13 @@ class TweetServiceImplTest {
         @Test
         @SuppressWarnings("UnassignedFluxMonoInstance")
         void shouldCallRepository() {
-            String tweetId = "42";
+            Tweet tweet = new Tweet("42", "42", "Text");
             Mono<Void> expectedRes = Mono.empty();
-            doReturn(expectedRes).when(tweetRepository).deleteById(eq(tweetId));
+            doReturn(expectedRes).when(tweetRepository).delete(same(tweet));
 
-            Mono<Void> actualRes = sut.deleteById(tweetId);
+            Mono<Void> actualRes = sut.delete(tweet);
 
-            verify(tweetRepository, times(1)).deleteById(eq(tweetId));
+            verify(tweetRepository, times(1)).delete(same(tweet));
             assertThat(actualRes).isNotNull().isSameAs(expectedRes);
         }
 

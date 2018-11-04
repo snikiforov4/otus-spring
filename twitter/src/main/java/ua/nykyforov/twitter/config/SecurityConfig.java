@@ -14,7 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.authentication.AuthenticationWebFilter;
-import org.springframework.security.web.server.context.NoOpServerSecurityContextRepository;
 import reactor.core.publisher.Mono;
 import ua.nykyforov.twitter.security.TokenAuthenticationConverter;
 import ua.nykyforov.twitter.security.jwt.JwtHeadersExchangeMatcher;
@@ -49,8 +48,8 @@ public class SecurityConfig {
                 .and()
                 .authorizeExchange()
                 .pathMatchers(HttpMethod.OPTIONS).permitAll()
-                .pathMatchers("/auth/**").permitAll()
-                .pathMatchers(HttpMethod.POST, "/user/**").permitAll()
+                .pathMatchers("/auth/").permitAll()
+                .pathMatchers(HttpMethod.POST, "/user/").permitAll()
                 .pathMatchers(HttpMethod.GET, "/tweet/**").permitAll()
                 .anyExchange().authenticated()
                 .and()
@@ -63,7 +62,6 @@ public class SecurityConfig {
         AuthenticationWebFilter authenticationWebFilter = new AuthenticationWebFilter(authenticationManager());
         authenticationWebFilter.setAuthenticationConverter(new TokenAuthenticationConverter(tokenProvider));
         authenticationWebFilter.setRequiresAuthenticationMatcher(new JwtHeadersExchangeMatcher());
-        authenticationWebFilter.setSecurityContextRepository(NoOpServerSecurityContextRepository.getInstance());
         return authenticationWebFilter;
     }
 

@@ -1,20 +1,28 @@
 package ua.nykyforov.twitter.security;
 
+import com.google.common.base.MoreObjects;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
-public class UserDetailsImpl implements UserDetails {
+public class CustomUserDetails implements UserDetails {
 
-    private String username;
-    private String password;
-    private Collection<? extends GrantedAuthority> roles;
+    private final String id;
+    private final String username;
+    private final String password;
+    private final Collection<? extends GrantedAuthority> roles;
 
-    public UserDetailsImpl(String username, String password, Collection<? extends GrantedAuthority> roles) {
+    public CustomUserDetails(String id, String username, String password,
+                             Collection<? extends GrantedAuthority> roles) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.roles = roles;
+    }
+
+    public String getId() {
+        return id;
     }
 
     @Override
@@ -50,5 +58,16 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .omitNullValues()
+                .add("id", id)
+                .add("username", username)
+                .add("password", "[PROTECTED]")
+                .add("roles", roles)
+                .toString();
     }
 }

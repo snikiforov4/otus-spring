@@ -1,6 +1,7 @@
 package ua.nykyforov.twitter.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -23,6 +24,7 @@ public class TweetServiceImpl implements TweetService {
     }
 
     @Override
+    @PreAuthorize("#tweet.userId == principal.userId")
     public Mono<Tweet> save(Tweet tweet) {
         return tweetRepository.save(tweet);
     }
@@ -33,7 +35,8 @@ public class TweetServiceImpl implements TweetService {
     }
 
     @Override
-    public Mono<Void> deleteById(String id) {
-        return tweetRepository.deleteById(id);
+    @PreAuthorize("#tweet.userId == principal.userId")
+    public Mono<Void> delete(Tweet tweet) {
+        return tweetRepository.delete(tweet);
     }
 }

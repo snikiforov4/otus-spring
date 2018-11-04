@@ -3,11 +3,13 @@ package ua.nykyforov.twitter.controller;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ua.nykyforov.twitter.domain.Tweet;
 import ua.nykyforov.twitter.dto.TweetDto;
+import ua.nykyforov.twitter.security.CustomAuthenticatedPrincipal;
 import ua.nykyforov.twitter.service.TweetService;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -31,8 +33,9 @@ public class TweetController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Mono<TweetDto> saveNewTweet(@RequestBody TweetDto tweetDto) {
-        return tweetService.save(new Tweet(tweetDto.getText()))
+    public Mono<TweetDto> saveNewTweet(@RequestBody TweetDto tweetDto, Authentication authentication) {
+        String userId = ((CustomAuthenticatedPrincipal) authentication.getPrincipal()).getUserId();
+        return tweetService.save(new Tweet(userId, tweetDto.getText()))
                 .map(Tweet::toDto);
     }
 
@@ -48,7 +51,8 @@ public class TweetController {
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public Mono<Void> deleteTweet(@PathVariable("id") String id) {
-        return tweetService.deleteById(id);
+        return tweetService.findById(id)
+                .flatMap(tweetService::delete);
     }
 
 }
