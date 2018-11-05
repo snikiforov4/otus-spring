@@ -1,36 +1,25 @@
 package ua.nykyforov.migratetool.config;
 
-import org.springframework.batch.core.Job;
-import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
-import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.repository.support.JobRepositoryFactoryBean;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.PlatformTransactionManager;
 
-import static ua.nykyforov.migratetool.JobNames.RDB_TO_NO_SQL;
+import javax.sql.DataSource;
 
 @Configuration
-@EnableBatchProcessing
 public class BatchConfig {
 
-    private final JobBuilderFactory jobBuilderFactory;
-
-    @Autowired
-    public BatchConfig(JobBuilderFactory jobBuilderFactory) {
-        this.jobBuilderFactory = jobBuilderFactory;
-    }
-
     @Bean
-    public Job rdbToNoSqlJob() {
-        return this.jobBuilderFactory.get(RDB_TO_NO_SQL)
-                .start(loadRdbEntry())
-                // .end()
-                .build();
-    }
-
-    private Step loadRdbEntry() { // todo
-        return null;
+    public JobRepository jobRepository(@Qualifier("h2DataSource") DataSource dataSource,
+                                       PlatformTransactionManager transactionManager) throws Exception {
+        JobRepositoryFactoryBean factory = new JobRepositoryFactoryBean();
+        factory.setDataSource(dataSource);
+        factory.setTransactionManager(transactionManager);
+        factory.setIsolationLevelForCreate("ISOLATION_REPEATABLE_READ");
+        return factory.getObject();
     }
 
 }
