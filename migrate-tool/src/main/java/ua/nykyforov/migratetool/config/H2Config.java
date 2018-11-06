@@ -9,8 +9,6 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
 
-import static java.util.Objects.requireNonNull;
-
 @Configuration
 @PropertySource("h2.properties")
 public class H2Config {
@@ -25,10 +23,10 @@ public class H2Config {
     @Bean
     public DataSource h2DataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(requireNonNull(env.getProperty("jdbc.driverClassName")));
-        dataSource.setUrl(requireNonNull(env.getProperty("jdbc.url")));
-        dataSource.setUsername(requireNonNull(env.getProperty("jdbc.username")));
-        dataSource.setPassword(requireNonNull(env.getProperty("jdbc.password")));
+        dataSource.setDriverClassName(env.getRequiredProperty("jdbc.driverClassName"));
+        dataSource.setUrl(env.getRequiredProperty("jdbc.url"));
+        dataSource.setUsername(env.getRequiredProperty("jdbc.username"));
+        dataSource.setPassword(env.getRequiredProperty("jdbc.password"));
         return dataSource;
     }
 
