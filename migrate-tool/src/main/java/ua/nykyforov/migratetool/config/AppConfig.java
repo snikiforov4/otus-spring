@@ -1,5 +1,6 @@
 package ua.nykyforov.migratetool.config;
 
+import org.hibernate.SessionFactory;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.JobRegistry;
@@ -18,7 +19,6 @@ import org.springframework.batch.item.database.builder.HibernateCursorItemReader
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import ua.nykyforov.service.library.core.domain.Author;
 
 import static ua.nykyforov.migratetool.JobNames.RDB_TO_NO_SQL;
@@ -73,10 +73,10 @@ public class AppConfig {
     }
 
     @Bean
-    public ItemReader<Author> authorReader(LocalSessionFactoryBean sessionFactory) {
+    public ItemReader<Author> authorReader(SessionFactory sessionFactory) {
         return new HibernateCursorItemReaderBuilder<Author>()
                 .name("authorReader")
-                .sessionFactory(sessionFactory.getObject())
+                .sessionFactory(sessionFactory)
                 .queryString("from Author")
                 .useStatelessSession(true)
                 .build();

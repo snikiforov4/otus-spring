@@ -3,7 +3,6 @@ package ua.nykyforov.migratetool.config;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -21,7 +20,6 @@ import java.util.Properties;
 @Configuration
 @EnableTransactionManagement
 @PropertySource("postgres.properties")
-@EntityScan(basePackageClasses = Book.class)
 public class PostgresConfig {
 
     private final Environment env;
@@ -35,7 +33,7 @@ public class PostgresConfig {
     public LocalSessionFactoryBean sessionFactory(@Qualifier("postgresDataSource") DataSource dataSource) {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource);
-        sessionFactory.setPackagesToScan("ua.nykyforov.service.library.core.domain");
+        sessionFactory.setPackagesToScan(Book.class.getPackage().getName());
         sessionFactory.setHibernateProperties(hibernateProperties());
         return sessionFactory;
     }
@@ -51,7 +49,6 @@ public class PostgresConfig {
     }
 
     @Bean
-    @Autowired
     public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
         HibernateTransactionManager txManager = new HibernateTransactionManager();
         txManager.setSessionFactory(sessionFactory);
