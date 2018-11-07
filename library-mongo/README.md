@@ -20,5 +20,5 @@ docker run --name library-mongo \
 
 #### Connect to MongoDB
 ```
-mongo --port 27017 -u 'dbuser' -p 'dbsecret' --authenticationDatabase 'admin'
+docker exec -it library-mongo mongo --port 27017 -u 'dbuser' -p 'dbsecret' --authenticationDatabase 'admin'
 ```
