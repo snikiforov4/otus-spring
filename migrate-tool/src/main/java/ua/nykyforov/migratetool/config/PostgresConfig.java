@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
@@ -42,7 +41,6 @@ public class PostgresConfig {
     }
 
     @Bean
-    @Primary
     public DataSource postgresDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(env.getRequiredProperty("datasource.driver-class-name"));
@@ -71,6 +69,7 @@ public class PostgresConfig {
         props.setProperty("hibernate.dialect", env.getRequiredProperty("hibernate.dialect"));
         props.setProperty("hibernate.show_sql", env.getRequiredProperty("hibernate.show-sql"));
         props.setProperty("hibernate.globally_quoted_identifiers", "true");
+        props.setProperty("hibernate.temp.use_jdbc_metadata_defaults", "false");
         return props;
     }
 

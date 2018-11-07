@@ -2,9 +2,16 @@ package ua.nykyforov.migratetool.config;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.JobRegistry;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.support.JobRegistryBeanPostProcessor;
+import org.springframework.batch.core.explore.JobExplorer;
+import org.springframework.batch.core.launch.JobLauncher;
+import org.springframework.batch.core.launch.JobOperator;
+import org.springframework.batch.core.launch.support.SimpleJobOperator;
+import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.database.builder.HibernateCursorItemReaderBuilder;
@@ -30,6 +37,24 @@ public class AppConfig {
     }
 
     @Bean
+    public JobOperator jobOperator(JobExplorer jobExplorer, JobLauncher jobLauncher,
+                                   JobRegistry jobRegistry, JobRepository jobRepository) {
+        SimpleJobOperator jobOperator = new SimpleJobOperator();
+        jobOperator.setJobExplorer(jobExplorer);
+        jobOperator.setJobLauncher(jobLauncher);
+        jobOperator.setJobRegistry(jobRegistry);
+        jobOperator.setJobRepository(jobRepository);
+        return jobOperator;
+    }
+
+    @Bean
+    public JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor(JobRegistry jobRegistry) {
+        JobRegistryBeanPostProcessor jobRegistryBeanPostProcessor = new JobRegistryBeanPostProcessor();
+        jobRegistryBeanPostProcessor.setJobRegistry(jobRegistry);
+        return jobRegistryBeanPostProcessor;
+    }
+
+    @Bean(RDB_TO_NO_SQL)
     public Job rdbToNoSqlJob(Step processAuthors) {
         return this.jobBuilderFactory.get(RDB_TO_NO_SQL)
                 .flow(processAuthors)
@@ -53,6 +78,7 @@ public class AppConfig {
                 .name("authorReader")
                 .sessionFactory(sessionFactory.getObject())
                 .queryString("from Author")
+                .useStatelessSession(true)
                 .build();
     }
 
