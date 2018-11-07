@@ -23,7 +23,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import ua.nykyforov.migratetool.converter.AuthorConverter;
+import ua.nykyforov.migratetool.converter.GenreConverter;
 import ua.nykyforov.service.library.core.domain.Author;
+import ua.nykyforov.service.library.core.domain.Genre;
 
 import static ua.nykyforov.migratetool.JobNames.RDB_TO_NO_SQL;
 
@@ -34,13 +36,15 @@ public class AppConfig {
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
     private final AuthorConverter authorConverter;
+    private final GenreConverter genreConverter;
 
     @Autowired
     public AppConfig(JobBuilderFactory jobBuilderFactory, StepBuilderFactory stepBuilderFactory,
-                     AuthorConverter authorConverter) {
+                     AuthorConverter authorConverter, GenreConverter genreConverter) {
         this.jobBuilderFactory = jobBuilderFactory;
         this.stepBuilderFactory = stepBuilderFactory;
         this.authorConverter = authorConverter;
+        this.genreConverter = genreConverter;
     }
 
     @Bean
@@ -62,17 +66,17 @@ public class AppConfig {
     }
 
     @Bean(RDB_TO_NO_SQL)
-    public Job rdbToNoSqlJob(Step processAuthors) {
+    public Job rdbToNoSqlJob(Step processAuthors, Step processGenres) {
         return this.jobBuilderFactory.get(RDB_TO_NO_SQL)
-                .flow(processAuthors)
-                .end()
+                .start(processAuthors)
+                .next(processGenres)
                 .build();
     }
 
     @Bean
     public Step processAuthors(ItemReader<Author> authorReader,
                                ItemWriter<ua.nykyforov.service.library.application.domain.Author> authorWriter) {
-        return this.stepBuilderFactory.get("step1")
+        return this.stepBuilderFactory.get("authors")
                 .<Author, ua.nykyforov.service.library.application.domain.Author>chunk(10)
                 .reader(authorReader)
                 .processor((ItemProcessor<Author, ua.nykyforov.service.library.application.domain.Author>)
@@ -95,6 +99,36 @@ public class AppConfig {
     public ItemWriter<ua.nykyforov.service.library.application.domain.Author> authorWriter(MongoTemplate mongoTemplate) {
         return new MongoItemWriterBuilder<ua.nykyforov.service.library.application.domain.Author>()
                 .collection("authors")
+                .template(mongoTemplate)
+                .build();
+    }
+
+    @Bean
+    public Step processGenres(ItemReader<Genre> genreReader,
+                              ItemWriter<ua.nykyforov.service.library.application.domain.Genre> genreWriter) {
+        return this.stepBuilderFactory.get("genres")
+                .<Genre, ua.nykyforov.service.library.application.domain.Genre>chunk(10)
+                .reader(genreReader)
+                .processor((ItemProcessor<Genre, ua.nykyforov.service.library.application.domain.Genre>)
+                        genreConverter::convert)
+                .writer(genreWriter)
+                .build();
+    }
+
+    @Bean
+    public ItemReader<Genre> genreReader(SessionFactory sessionFactory) {
+        return new HibernateCursorItemReaderBuilder<Genre>()
+                .name("genreReader")
+                .sessionFactory(sessionFactory)
+                .queryString("from Genre")
+                .useStatelessSession(true)
+                .build();
+    }
+
+    @Bean
+    public ItemWriter<ua.nykyforov.service.library.application.domain.Genre> genreWriter(MongoTemplate mongoTemplate) {
+        return new MongoItemWriterBuilder<ua.nykyforov.service.library.application.domain.Genre>()
+                .collection("genres")
                 .template(mongoTemplate)
                 .build();
     }
