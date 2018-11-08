@@ -1,57 +1,49 @@
-package ua.nykyforov.service.library.application.domain;
+package ua.nykyforov.migratetool.domain;
+
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.DBRef;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import javax.annotation.Nullable;
+import javax.persistence.*;
 import java.util.Collection;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
-@Document(collection = "books")
-public class Book {
+@Entity(name = "Book")
+@Table(name = "book", schema = "usr")
+public class PostgresBook {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
+    @Column(name = "title")
     private String title;
 
     @Nullable
-    @DBRef
-    @Field("genreId")
-    private Genre genre;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="genre_id")
+    private PostgresGenre genre;
 
     @Nullable
-    @DBRef
-    @Field("authors")
-    private Collection<Author> authors;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name="author_book", schema = "usr",
+            joinColumns = @JoinColumn(name="book_id", referencedColumnName="id"),
+            inverseJoinColumns = @JoinColumn(name="author_id", referencedColumnName="id")
+    )
+    private Collection<PostgresAuthor> authors;
 
-    public Book() {
+    public PostgresBook() {
     }
 
-    public Book(String title) {
-        this.title = title;
-    }
-
-    public Book(String id, String title, @Nullable Genre genre, @Nullable Collection<Author> authors) {
-        this.id = id;
-        this.title = title;
-        this.genre = genre;
-        this.authors = isEmpty(authors) ? null : ImmutableList.copyOf(authors);
-    }
-
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -63,15 +55,15 @@ public class Book {
         this.title = title;
     }
 
-    public Optional<Genre> getGenre() {
+    public Optional<PostgresGenre> getGenre() {
         return Optional.ofNullable(genre);
     }
 
-    public void setGenre(@Nullable Genre genre) {
+    public void setGenre(@Nullable PostgresGenre genre) {
         this.genre = genre;
     }
 
-    public void addAuthor(Author author) {
+    public void addAuthor(PostgresAuthor author) {
         checkNotNull(author, "author");
         if (authors == null) {
             authors = Lists.newArrayList();
@@ -79,7 +71,7 @@ public class Book {
         authors.add(author);
     }
 
-    public Collection<Author> getAuthors() {
+    public Collection<PostgresAuthor> getAuthors() {
         return authors == null ? ImmutableList.of() : ImmutableList.copyOf(authors);
     }
 

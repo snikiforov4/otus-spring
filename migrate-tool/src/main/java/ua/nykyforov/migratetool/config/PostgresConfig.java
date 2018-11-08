@@ -12,7 +12,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import ua.nykyforov.service.library.core.domain.Book;
+import ua.nykyforov.migratetool.domain.PostgresBook;
 
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -33,7 +33,7 @@ public class PostgresConfig {
     public LocalSessionFactoryBean sessionFactory(@Qualifier("postgresDataSource") DataSource dataSource) {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource);
-        sessionFactory.setPackagesToScan(Book.class.getPackage().getName());
+        sessionFactory.setPackagesToScan(PostgresBook.class.getPackage().getName());
         sessionFactory.setHibernateProperties(hibernateProperties());
         return sessionFactory;
     }
