@@ -98,7 +98,6 @@ public class AppConfig {
                 .name("bookReader")
                 .sessionFactory(sessionFactory)
                 .queryString("from Book")
-                // .useStatelessSession(true)
                 .build();
     }
 
