@@ -9,5 +9,15 @@
 
     <int:annotation-config/>
 
+    <int:inbound-channel-adapter id="ordersAdapter" channel="orders" ref="ordersQueue" method="nextOrder">
+        <int:poller max-messages-per-poll="1" fixed-rate="1000"/>
+    </int:inbound-channel-adapter>
+
+    <int:channel id="orders"/>
+
+    <int:service-activator input-channel="orders" ref="ordersLogger"/>
+
+    <beans:bean id="ordersQueue" class="ua.nykyforov.integration.OrdersQueue"/>
+    <beans:bean id="ordersLogger" class="ua.nykyforov.integration.OrdersLogger"/>
 
 </beans:beans>
