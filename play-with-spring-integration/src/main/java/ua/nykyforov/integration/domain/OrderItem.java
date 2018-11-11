@@ -2,9 +2,9 @@ package ua.nykyforov.integration.domain;
 
 public class OrderItem {
 
-	private int orderNumber;
-	private PizzaType type;
-	private int cnt;
+	private final int orderNumber;
+	private final PizzaType type;
+	private final int cnt;
 
     @SuppressWarnings("WeakerAccess")
     public OrderItem(int orderNumber, PizzaType type, int cnt) {
@@ -17,30 +17,18 @@ public class OrderItem {
 		return this.orderNumber;
 	}
 
-	public void setOrderNumber(int orderNumber) {
-		this.orderNumber = orderNumber;
-	}
-
 	public PizzaType getType() {
 		return type;
-	}
-
-	public void setType(PizzaType type) {
-		this.type = type;
 	}
 
 	public int getCnt() {
 		return cnt;
 	}
 
-	public void setCnt(int cnt) {
-		this.cnt = cnt;
-	}
-
 	@Override
 	public String toString() {
 		return String.valueOf(cnt) +
-                " delicious " +
-                type.name();
+                " of " +
+                type.name() + " pizza(s)";
 	}
 }
