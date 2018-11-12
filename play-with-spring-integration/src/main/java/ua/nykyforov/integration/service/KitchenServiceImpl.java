@@ -1,4 +1,4 @@
-package ua.nykyforov.integration;
+package ua.nykyforov.integration.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,12 +11,11 @@ public class KitchenServiceImpl implements KitchenService {
     @Override
     public OrderItem cookItem(Message<OrderItem> message) throws InterruptedException {
         OrderItem item = message.getPayload();
-        System.out.println(message.getHeaders());
-        logger.info("order#{} start cooking pizza with type={}",
-                item.getOrderNumber(), item.getType().name());
+        logger.info("order#{} start cooking pizza {}",
+                item.getOrderNumber(), item.getType().getName());
         Thread.sleep(item.getType().getCookingTime());
-        logger.info("order#{} finished cooking pizza with type={}",
-                item.getOrderNumber(), item.getType().name());
+        logger.info("order#{} finished cooking pizza {}",
+                item.getOrderNumber(), item.getType().getName());
         return item;
     }
 

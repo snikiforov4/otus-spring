@@ -1,4 +1,4 @@
-package ua.nykyforov.integration;
+package ua.nykyforov.integration.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -3,7 +3,7 @@ package ua.nykyforov.integration.domain;
 import java.util.List;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.collect.ImmutableList.toImmutableList;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 
 public class Delivery {
@@ -11,11 +11,18 @@ public class Delivery {
     private final int orderNumber;
     private final List<String> items;
 
-    @SuppressWarnings("WeakerAccess")
-    public Delivery(List<OrderItem> preparedItems) {
+    public static Delivery fromPreparedItems(List<OrderItem> preparedItems) {
         checkArgument(isNotEmpty(preparedItems), "preparedItems is empty");
-        this.orderNumber = preparedItems.get(0).getOrderNumber();
-        this.items = preparedItems.stream().map(item -> item.getType().name()).collect(toImmutableList());
+        int orderNumber = preparedItems.get(0).getOrderNumber();
+        List<String> items = preparedItems.stream()
+                .map(item -> item.getType().getName())
+                .collect(toList());
+        return new Delivery(orderNumber, items);
+    }
+
+    private Delivery(int orderNumber, List<String> items) {
+        this.orderNumber = orderNumber;
+        this.items = items;
     }
 
     @Override

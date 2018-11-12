@@ -1,4 +1,4 @@
-package ua.nykyforov.integration;
+package ua.nykyforov.integration.service;
 
 import org.springframework.messaging.Message;
 import ua.nykyforov.integration.domain.OrderItem;
