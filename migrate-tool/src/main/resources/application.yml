@@ -1,0 +1,12 @@
+spring:
+  h2:
+    console:
+      enabled: true
+  data:
+    mongodb:
+      authentication-database: admin
+      database: library
+      host: localhost
+      port: 27017
+      username: dbuser
+      password: dbsecret

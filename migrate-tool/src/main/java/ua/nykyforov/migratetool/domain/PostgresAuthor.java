@@ -1,41 +1,36 @@
-package ua.nykyforov.service.library.application.domain;
+package ua.nykyforov.migratetool.domain;
 
 import com.google.common.base.MoreObjects;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document(collection = "authors")
-public class Author {
+import javax.persistence.*;
+
+@Entity(name = "Author")
+@Table(name = "author", schema = "usr")
+public class PostgresAuthor {
 
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
-    @Field("firstName")
+    @Column(name = "first_name")
     private String firstName;
 
-    @Field("lastName")
+    @Column(name = "last_name")
     private String lastName;
 
-    public Author() {
+    public PostgresAuthor() {
     }
 
-    public Author(String id, String firstName, String lastName) {
-        this.id = id;
+    public PostgresAuthor(String firstName, String lastName) {
         this.firstName = firstName;
         this.lastName = lastName;
     }
 
-    public Author(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
-
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
