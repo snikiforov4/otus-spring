@@ -15,6 +15,7 @@
         <module>library-mongo</module>
         <module>twitter</module>
         <module>migrate-tool</module>
+        <module>play-with-spring-integration</module>
     </modules>
 
     <name>OTUS Spring</name>

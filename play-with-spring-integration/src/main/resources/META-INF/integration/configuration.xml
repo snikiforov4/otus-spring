@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns:int="http://www.springframework.org/schema/integration"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:beans="http://www.springframework.org/schema/beans"
+             xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/integration
+			http://www.springframework.org/schema/integration/spring-integration.xsd">
+
+    <int:annotation-config/>
+
+    <int:inbound-channel-adapter id="ordersAdapter" channel="orders" ref="ordersQueue" method="nextOrder">
+        <int:poller max-messages-per-poll="1" fixed-rate="3000"/>
+    </int:inbound-channel-adapter>
+
+    <int:channel id="orders"/>
+
+    <int:splitter input-channel="orders" expression="payload.items" output-channel="rawItems"/>
+
+    <int:channel id="rawItems">
+        <int:queue capacity="10"/>
+    </int:channel>
+    <int:service-activator input-channel="rawItems" ref="kitchenService" method="cookItem" output-channel="preparedItems"/>
+
+    <int:channel id="preparedItems"/>
+    <int:aggregator input-channel="preparedItems" method="prepareDelivery" output-channel="deliveries">
+        <beans:bean class="ua.nykyforov.integration.service.ItemsPacker"/>
+    </int:aggregator>
+
+    <int:channel id="deliveries"/>
+
+    <int:service-activator input-channel="deliveries" ref="deliveryService"/>
+
+    <beans:bean id="ordersQueue" class="ua.nykyforov.integration.OrdersQueue"/>
+    <beans:bean id="kitchenService" class="ua.nykyforov.integration.service.KitchenServiceImpl"/>
+    <beans:bean id="deliveryService" class="ua.nykyforov.integration.service.DeliveryService"/>
+
+    <int:poller id="poller" default="true" fixed-delay="1000"/>
+
+</beans:beans>
