@@ -51,6 +51,7 @@ public class SecurityConfig {
                 .pathMatchers("/auth/").permitAll()
                 .pathMatchers(HttpMethod.POST, "/user/").permitAll()
                 .pathMatchers(HttpMethod.GET, "/tweet/**").permitAll()
+                .pathMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                 .anyExchange().authenticated()
                 .and()
                 .addFilterAt(webFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
