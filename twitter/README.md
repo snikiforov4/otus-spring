@@ -12,7 +12,7 @@ Before run container. Set up variable (path **must** be absolute!): <br />
 `export MONGO_VOLUME=/Users/$(whoami)/mongo/twitter-data` <br />
 
 ```
-docker run --name twitter \
+docker run --name twitter-mongo \
 	-v $MONGO_VOLUME:/data/db \
 	-e MONGO_INITDB_ROOT_USERNAME=dbuser \
 	-e MONGO_INITDB_ROOT_PASSWORD=dbsecret \
@@ -22,5 +22,5 @@ docker run --name twitter \
 
 #### Connect to MongoDB
 ```
-mongo --port 27017 -u 'dbuser' -p 'dbsecret' --authenticationDatabase 'admin'
+docker exec -it twitter-mongo mongo --port 27017 -u 'dbuser' -p 'dbsecret' --authenticationDatabase 'admin'
 ```
