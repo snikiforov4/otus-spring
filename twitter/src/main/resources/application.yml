@@ -7,3 +7,10 @@ spring:
       port: 27018
       username: dbuser
       password: dbsecret
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, logfile, metrics
+logging:
+  path: "target/log/"
