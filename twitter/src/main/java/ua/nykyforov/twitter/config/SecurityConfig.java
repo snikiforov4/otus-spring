@@ -1,15 +1,22 @@
 package ua.nykyforov.twitter.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.security.reactive.EndpointRequest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
+import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
 import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
+import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
@@ -51,7 +58,6 @@ public class SecurityConfig {
                 .pathMatchers("/auth/").permitAll()
                 .pathMatchers(HttpMethod.POST, "/user/").permitAll()
                 .pathMatchers(HttpMethod.GET, "/tweet/**").permitAll()
-                .pathMatchers(HttpMethod.GET, "/actuator/**").permitAll()
                 .anyExchange().authenticated()
                 .and()
                 .addFilterAt(webFilter(), SecurityWebFiltersOrder.AUTHENTICATION)
@@ -67,6 +73,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Primary
     public ReactiveAuthenticationManager authenticationManager() {
         return new JwtReactiveAuthenticationManager(reactiveUserDetailsService, passwordEncoder());
     }
@@ -74,6 +81,37 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    @Order(1)
+    public SecurityWebFilterChain
+    endpointsSecurityFilterChain(ServerHttpSecurity http,
+                                 @Qualifier("Endpoint") ReactiveAuthenticationManager authenticationManager) {
+        return http
+                .securityMatcher(EndpointRequest.toAnyEndpoint())
+                .authorizeExchange()
+                .pathMatchers(HttpMethod.GET, "/actuator").permitAll()
+                .pathMatchers(HttpMethod.GET, "/actuator/health").permitAll()
+                .anyExchange().hasAuthority("ENDPOINT_USER")
+                .and()
+                .httpBasic()
+                .authenticationManager(authenticationManager)
+                .and()
+                .authenticationManager(authenticationManager)
+                .build();
+    }
+
+    @Bean("Endpoint")
+    public ReactiveAuthenticationManager endpointsAuthenticationManager() {
+        return new UserDetailsRepositoryReactiveAuthenticationManager(endpointsUserDetailsService());
+    }
+
+    @Bean
+    public ReactiveUserDetailsService endpointsUserDetailsService() {
+        return new MapReactiveUserDetailsService(
+                User.withUsername("user").password("{noop}pass").authorities("ENDPOINT_USER").build()
+        );
     }
 
 }

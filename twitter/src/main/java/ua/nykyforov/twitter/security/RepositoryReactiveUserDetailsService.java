@@ -3,6 +3,7 @@ package ua.nykyforov.twitter.security;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.ReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,7 +13,9 @@ import ua.nykyforov.twitter.domain.User;
 import ua.nykyforov.twitter.service.UserService;
 
 @Service
+@Primary
 public class RepositoryReactiveUserDetailsService implements ReactiveUserDetailsService {
+
     private static final Logger logger = LoggerFactory.getLogger(RepositoryReactiveUserDetailsService.class);
 
     private final UserService userService;
@@ -29,4 +32,5 @@ public class RepositoryReactiveUserDetailsService implements ReactiveUserDetails
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new UsernameNotFoundException("User Not Found"))))
                 .map(User::toUserDetails);
     }
+
 }

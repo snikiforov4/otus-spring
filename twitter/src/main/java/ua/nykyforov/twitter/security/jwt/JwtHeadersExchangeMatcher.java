@@ -1,5 +1,6 @@
 package ua.nykyforov.twitter.security.jwt;
 
+import com.google.common.collect.ImmutableList;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.security.web.server.util.matcher.ServerWebExchangeMatcher;
@@ -13,7 +14,9 @@ public class JwtHeadersExchangeMatcher implements ServerWebExchangeMatcher {
         return Mono.just(exchange)
                 .map(ServerWebExchange::getRequest)
                 .map(ServerHttpRequest::getHeaders)
-                .filter(h -> h.containsKey(HttpHeaders.AUTHORIZATION))
+                .flatMapIterable(h -> h.getOrDefault(HttpHeaders.AUTHORIZATION, ImmutableList.of()))
+                .any(h -> h.startsWith("Bearer"))
+                .filter($ -> $)
                 .flatMap($ -> MatchResult.match())
                 .switchIfEmpty(MatchResult.notMatch());
     }
